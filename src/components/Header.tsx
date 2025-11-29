@@ -15,7 +15,7 @@ export default function Header() {
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-semibold leading-none">Санитарные Решения</span>
-            <span className="text-xs text-muted-foreground">Новосибирск</span>
+            <span className="text-xs text-muted-foreground">Дезинфекция • Новосибирск</span>
           </div>
         </div>
         
