@@ -2,9 +2,20 @@ import { Button } from "./ui/button";
 import { ArrowRight, Shield } from "lucide-react";
 import { getCopy } from "@/config/copyMap";
 import { useABTest } from "@/hooks/useABTest";
+import { reachGoal } from "@/lib/yandexMetrika";
 
 export default function Hero() {
   const { variantId, intent, isLoading } = useABTest();
+  
+  const handleCTAClick = (type: 'primary' | 'secondary') => {
+    reachGoal('hero_cta_click', { variant: variantId, button: type });
+    
+    if (type === 'primary') {
+      document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
   
   if (isLoading) {
     return (
@@ -50,7 +61,7 @@ export default function Hero() {
             <Button 
               size="lg" 
               className="bg-white text-primary hover:bg-white/90 font-semibold shadow-elevated"
-              onClick={() => document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => handleCTAClick('primary')}
             >
               {copy.cta_primary}
               <ArrowRight className="ml-2 h-5 w-5" />
@@ -59,7 +70,7 @@ export default function Hero() {
               size="lg" 
               variant="outline" 
               className="border-white/30 bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm"
-              onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => handleCTAClick('secondary')}
             >
               {copy.cta_secondary}
             </Button>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getTrackingContext } from "@/lib/tracking";
 import { useABTest } from "@/hooks/useABTest";
 import { Calculator as CalcIcon, Sparkles } from "lucide-react";
+import { reachGoal } from "@/lib/yandexMetrika";
 
 const objectTypes = [
   { value: "apartment", label: "Квартира", basePrice: 2500 },
@@ -36,6 +37,8 @@ const services = [
 export default function Calculator() {
   const { toast } = useToast();
   const { variantId, intent, impressionId } = useABTest();
+  const calcRef = useRef<HTMLElement>(null);
+  const hasTrackedOpen = useRef(false);
   
   const [formData, setFormData] = useState({
     name: "",
@@ -49,6 +52,27 @@ export default function Calculator() {
 
   const [calculatedPrice, setCalculatedPrice] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Track calculator visibility with Intersection Observer
+  useEffect(() => {
+    if (!calcRef.current || hasTrackedOpen.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !hasTrackedOpen.current) {
+            hasTrackedOpen.current = true;
+            reachGoal('calc_open');
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    observer.observe(calcRef.current);
+
+    return () => observer.disconnect();
+  }, []);
 
   const calculatePrice = () => {
     if (!formData.objectType || !formData.area || !formData.service) {
@@ -84,6 +108,14 @@ export default function Calculator() {
     const discountedPrice = Math.round(totalPrice * (1 - discount));
 
     setCalculatedPrice(discountedPrice);
+    
+    // Track calculation
+    reachGoal('calc_calculate', {
+      service: formData.service,
+      objectType: formData.objectType,
+      area: area,
+      price: discountedPrice
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -147,6 +179,14 @@ export default function Calculator() {
         description: "Мы свяжемся с вами в ближайшее время"
       });
 
+      // Track lead submission
+      reachGoal('lead_submit', {
+        price: calculatedPrice,
+        service: formData.service,
+        objectType: formData.objectType,
+        variant: variantId
+      });
+
       // Reset form
       setFormData({
         name: "",
@@ -172,7 +212,7 @@ export default function Calculator() {
   };
 
   return (
-    <section id="calculator" className="py-20 bg-background">
+    <section id="calculator" ref={calcRef} className="py-20 bg-background">
       <div className="container px-4">
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 mb-4">

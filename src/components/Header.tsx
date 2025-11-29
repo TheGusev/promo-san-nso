@@ -1,7 +1,11 @@
 import { Phone } from "lucide-react";
 import { Button } from "./ui/button";
+import { reachGoal } from "@/lib/yandexMetrika";
 
 export default function Header() {
+  const handlePhoneClick = () => {
+    reachGoal('phone_click');
+  };
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4">
@@ -34,11 +38,16 @@ export default function Header() {
           <a 
             href="tel:+7XXXXXXXXXX" 
             className="hidden sm:flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors"
+            onClick={handlePhoneClick}
           >
             <Phone className="h-4 w-4" />
             <span>+7 (XXX) XXX-XX-XX</span>
           </a>
-          <Button size="sm" className="bg-gradient-hero hover:opacity-90">
+          <Button 
+            size="sm" 
+            className="bg-gradient-hero hover:opacity-90"
+            onClick={() => document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' })}
+          >
             Рассчитать
           </Button>
         </div>
