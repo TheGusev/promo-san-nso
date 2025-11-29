@@ -1,14 +1,17 @@
 import { Phone, Mail, MapPin } from "lucide-react";
 import Map2GIS from "./Map2GIS";
+import { AnimatedSection } from "@/components/ui/animated-section";
 
 export default function Footer() {
   return (
     <footer className="bg-muted/50 border-t">
       <div className="container px-4 py-12">
         {/* 2GIS Map Section */}
-        <div className="mb-12">
-          <Map2GIS />
-        </div>
+        <AnimatedSection animation="fade-up" threshold={0.1}>
+          <div className="mb-12">
+            <Map2GIS />
+          </div>
+        </AnimatedSection>
 
         <div className="border-t pt-12"></div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
