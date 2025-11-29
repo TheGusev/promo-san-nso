@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star, ExternalLink } from "lucide-react";
 import { AnimatedSection } from "@/components/ui/animated-section";
 
 export default function Reviews() {
@@ -74,9 +74,19 @@ export default function Reviews() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               Отзывы <span className="text-primary">наших клиентов</span>
             </h2>
-            <p className="text-muted-foreground text-lg">
+            <p className="text-muted-foreground text-lg mb-6">
               Более 500 довольных клиентов за последний год
             </p>
+            <Button asChild variant="outline" className="gap-2">
+              <a
+                href="https://go.2gis.com/oSzHM"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <ExternalLink className="h-4 w-4" />
+                Все отзывы на 2GIS
+              </a>
+            </Button>
           </div>
         </AnimatedSection>
 

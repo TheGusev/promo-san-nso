@@ -1,6 +1,5 @@
 import { MapPin, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 export default function Map2GIS() {
   const organizationUrl = "https://go.2gis.com/oSzHM";
@@ -15,29 +14,22 @@ export default function Map2GIS() {
           <MapPin className="h-5 w-5 text-primary" />
           Наше расположение
         </h3>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="gap-2"
-            >
-              <ExternalLink className="h-4 w-4" />
-              Открыть в 2GIS
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-4xl h-[85vh]">
-            <DialogHeader>
-              <DialogTitle>Санитарные Решения — Новосибирск</DialogTitle>
-            </DialogHeader>
-            <iframe
-              src={organizationUrl}
-              className="w-full h-full rounded-md"
-              title="2GIS - ООО Санитарные Решения"
-              allow="geolocation"
-            />
-          </DialogContent>
-        </Dialog>
+        <Button 
+          variant="outline" 
+          size="sm"
+          asChild
+          className="gap-2"
+        >
+          <a
+            href={organizationUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Открыть в 2GIS"
+          >
+            <ExternalLink className="h-4 w-4" />
+            Открыть в 2GIS
+          </a>
+        </Button>
       </div>
 
       <div className="relative w-full h-[300px] md:h-[400px] rounded-lg overflow-hidden border border-border bg-muted">
@@ -51,25 +43,19 @@ export default function Map2GIS() {
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button className="w-full sm:w-auto gap-2">
-              <MapPin className="h-4 w-4" />
-              Построить маршрут
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-4xl h-[85vh]">
-            <DialogHeader>
-              <DialogTitle>Построить маршрут — 2GIS</DialogTitle>
-            </DialogHeader>
-            <iframe
-              src={organizationUrl}
-              className="w-full h-full rounded-md"
-              title="2GIS маршрут - ООО Санитарные Решения"
-              allow="geolocation"
-            />
-          </DialogContent>
-        </Dialog>
+        <Button 
+          asChild
+          className="w-full sm:w-auto gap-2"
+        >
+          <a
+            href={organizationUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <MapPin className="h-4 w-4" />
+            Построить маршрут
+          </a>
+        </Button>
         <p className="text-sm text-muted-foreground">
           Мы обслуживаем Новосибирск и Новосибирскую область
         </p>
