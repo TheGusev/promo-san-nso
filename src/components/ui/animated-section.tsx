@@ -12,6 +12,15 @@ interface AnimatedSectionProps {
   threshold?: number;
 }
 
+const animationClasses: Record<AnimationType, string> = {
+  'fade-up': 'animate-fade-up',
+  'fade-down': 'animate-fade-down',
+  'fade-left': 'animate-fade-left',
+  'fade-right': 'animate-fade-right',
+  'scale-up': 'animate-scale-up',
+  'blur-in': 'animate-blur-in',
+};
+
 export function AnimatedSection({ 
   children, 
   animation = 'fade-up',
@@ -25,11 +34,13 @@ export function AnimatedSection({
     <div
       ref={ref}
       className={cn(
-        'opacity-0',
-        isInView && `animate-${animation}`,
+        !isInView && 'opacity-0',
+        isInView && animationClasses[animation],
         className
       )}
-      style={{ animationDelay: `${delay}ms` }}
+      style={{ 
+        animationDelay: isInView ? `${delay}ms` : undefined 
+      }}
     >
       {children}
     </div>
