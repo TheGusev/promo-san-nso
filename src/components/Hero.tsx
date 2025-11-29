@@ -48,7 +48,7 @@ export default function Hero() {
             {copy.highlight && (
               <>
                 <br />
-                <span className="text-secondary">{copy.highlight}</span>
+                <span className="text-white/90 underline decoration-secondary decoration-4 underline-offset-4">{copy.highlight}</span>
               </>
             )}
           </h1>
