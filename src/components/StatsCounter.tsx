@@ -86,7 +86,7 @@ export default function StatsCounter() {
               { Icon: Home, value: `${counts.area}+ м²`, label: "обработано", delay: 150 },
               { Icon: CheckCircle, value: `${counts.guarantee}%`, label: "гарантия результата", delay: 300 },
             ].map((stat) => (
-              <AnimatedSection key={stat.label} animation="scale-up" delay={stat.delay}>
+              <AnimatedSection key={stat.label} animation="fade-up" delay={stat.delay}>
                 <div className="space-y-2">
                   <stat.Icon className="h-12 w-12 mx-auto mb-4 opacity-90" />
                   <div className="text-5xl font-bold min-h-[3.5rem] flex items-center justify-center" style={{ fontVariantNumeric: 'tabular-nums', contain: 'layout' }}>{stat.value}</div>
