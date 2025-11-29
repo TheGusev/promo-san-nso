@@ -25,7 +25,7 @@ export default function Articles() {
       readTime: "5 мин",
       title: "Как подготовить помещение к дезинфекции",
       description: "Пошаговая инструкция по подготовке квартиры или офиса перед приездом специалистов",
-      date: "20 ноября 2024",
+      date: "28 ноября 2025",
     },
     {
       category: "disinfection",
@@ -33,7 +33,7 @@ export default function Articles() {
       readTime: "7 мин",
       title: "Виды дезинфекции: холодный и горячий туман",
       description: "Разбираем основные методы обработки помещений и их эффективность",
-      date: "18 ноября 2024",
+      date: "20 ноября 2025",
     },
     {
       category: "disinsection",
@@ -41,7 +41,7 @@ export default function Articles() {
       readTime: "6 мин",
       title: "Борьба с тараканами: мифы и реальность",
       description: "Развенчиваем популярные заблуждения о народных методах борьбы с насекомыми",
-      date: "15 ноября 2024",
+      date: "11 ноября 2025",
     },
     {
       category: "disinfection",
@@ -49,7 +49,7 @@ export default function Articles() {
       readTime: "5 мин",
       title: "Озонирование: что это и когда нужно",
       description: "Всё о методе озонирования помещений и его преимуществах",
-      date: "12 ноября 2024",
+      date: "2 ноября 2025",
     },
     {
       category: "deratization",
@@ -57,7 +57,7 @@ export default function Articles() {
       readTime: "8 мин",
       title: "Грызуны в доме: признаки и методы борьбы",
       description: "Как распознать присутствие мышей и крыс и что делать в этой ситуации",
-      date: "10 ноября 2024",
+      date: "23 октября 2025",
     },
     {
       category: "tips",
@@ -65,7 +65,7 @@ export default function Articles() {
       readTime: "6 мин",
       title: "Сезонность вредителей: когда ждать проблем",
       description: "Календарь активности насекомых и грызунов по месяцам года",
-      date: "5 ноября 2024",
+      date: "14 октября 2025",
     },
     {
       category: "disinfection",
@@ -73,7 +73,7 @@ export default function Articles() {
       readTime: "7 мин",
       title: "Дезинфекция офисных помещений: обязательства работодателя",
       description: "Правовые аспекты санитарной обработки рабочих мест",
-      date: "1 ноября 2024",
+      date: "3 октября 2025",
     },
     {
       category: "disinsection",
@@ -81,7 +81,7 @@ export default function Articles() {
       readTime: "9 мин",
       title: "Постельные клопы: как обнаружить и уничтожить",
       description: "Подробное руководство по выявлению и профессиональной борьбе с клопами",
-      date: "28 октября 2024",
+      date: "18 сентября 2025",
     },
   ];
 
