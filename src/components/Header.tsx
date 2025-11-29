@@ -42,12 +42,12 @@ export default function Header() {
 
         <div className="flex items-center gap-3">
           <a 
-            href="tel:+79139999999" 
+            href="tel:+73833121660" 
             className="hidden sm:flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors"
             onClick={handlePhoneClick}
           >
             <Phone className="h-4 w-4" />
-            <span>+7 (913) 999-99-99</span>
+            <span>+7 (383) 312-16-60</span>
           </a>
           <Button 
             size="sm" 

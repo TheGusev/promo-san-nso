@@ -16,7 +16,7 @@ export default function Footer() {
               </div>
             </div>
             <p className="text-sm text-muted-foreground">
-              Профессиональные санитарные услуги для дома и бизнеса
+              Профессиональные услуги дезинфекции, дезинсекции и дератизации для дома и бизнеса
             </p>
           </div>
 
@@ -44,8 +44,8 @@ export default function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2">
                 <Phone className="h-4 w-4 text-primary mt-0.5" />
-                <a href="tel:+7XXXXXXXXXX" className="hover:text-primary transition-colors">
-                  +7 (XXX) XXX-XX-XX
+                <a href="tel:+73833121660" className="hover:text-primary transition-colors">
+                  +7 (383) 312-16-60
                 </a>
               </li>
               <li className="flex items-start gap-2">
@@ -63,8 +63,8 @@ export default function Footer() {
         </div>
 
         <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
-          <p>© 2024 ООО "Санитарные Решения — Новосибирск". Все права защищены.</p>
-          <p className="mt-2">ИНН: XXXXXXXXXX | ОГРН: XXXXXXXXXXXXXXX</p>
+          <p>© 2024 ООО "Санитарные Решения" — профессиональные услуги дезинфекции, дезинсекции и дератизации. Все права защищены.</p>
+          <p className="mt-2">ИНН: 5410169338 | ОГРН: 1255400030555</p>
         </div>
       </div>
     </footer>

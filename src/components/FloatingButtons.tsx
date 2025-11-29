@@ -6,7 +6,7 @@ export default function FloatingButtons() {
   const handleWhatsAppClick = () => {
     reachGoal('whatsapp_click');
     logTrafficEvent('whatsapp_click');
-    const phone = "79139999999"; // Replace with actual number
+    const phone = "79628265020";
     const message = "Здравствуйте! Интересует дезинфекция/дезинсекция.";
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
   };
