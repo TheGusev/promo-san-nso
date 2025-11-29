@@ -67,7 +67,7 @@ export default function Reviews() {
   ];
 
   return (
-    <section className="py-16 px-4 bg-background">
+    <section className="py-16 px-2 sm:px-4 bg-background">
       <div className="container mx-auto max-w-6xl">
         <AnimatedSection animation="fade-up">
           <div className="text-center mb-12">

@@ -80,7 +80,7 @@ export default function StatsCounter() {
   return (
     <>
       {/* Benefits Section */}
-      <section className="py-8 md:py-12 px-4 bg-background border-b border-border">
+      <section className="py-8 md:py-12 px-2 sm:px-4 bg-background border-b border-border">
         <div className="container mx-auto max-w-6xl">
           <div className="grid md:grid-cols-3 gap-6">
             {benefits.map((benefit, index) => {
@@ -104,7 +104,7 @@ export default function StatsCounter() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-10 md:py-16 px-4 bg-primary text-primary-foreground">
+      <section className="py-10 md:py-16 px-2 sm:px-4 bg-primary text-primary-foreground">
         <div className="container mx-auto max-w-6xl">
           <div className="grid md:grid-cols-3 gap-8 text-center">
             {[
@@ -125,7 +125,7 @@ export default function StatsCounter() {
       </section>
 
       {/* Certifications Section */}
-      <section className="py-8 md:py-12 px-4 bg-muted/30 border-t border-border">
+      <section className="py-8 md:py-12 px-2 sm:px-4 bg-muted/30 border-t border-border">
         <div className="container mx-auto max-w-6xl">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {certifications.map((cert, index) => (

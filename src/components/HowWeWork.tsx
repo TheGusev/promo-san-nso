@@ -30,7 +30,7 @@ export default function HowWeWork() {
   ];
 
   return (
-    <section className="py-16 px-4 bg-muted/30">
+    <section className="py-16 px-2 sm:px-4 bg-muted/30">
       <div className="container mx-auto max-w-6xl">
         <AnimatedSection animation="fade-down">
           <div className="text-center mb-12">

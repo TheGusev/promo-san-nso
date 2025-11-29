@@ -234,7 +234,7 @@ export default function Calculator() {
 
   return (
     <section id="calculator" ref={calcRef} className="py-12 md:py-20 bg-background">
-      <div className="container px-4">
+      <div className="container px-2 sm:px-4">
         <AnimatedSection animation="fade-up">
           <div className="text-center mb-8 md:mb-12">
             <div className="inline-flex items-center gap-2 mb-4">

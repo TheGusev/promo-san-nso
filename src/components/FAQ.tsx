@@ -44,7 +44,7 @@ const faqs = [
 export default function FAQ() {
   return (
     <section id="faq" className="py-20 bg-muted/50">
-      <div className="container px-4">
+      <div className="container px-2 sm:px-4">
         <AnimatedSection animation="fade-up">
           <div className="text-center mb-12">
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">Часто задаваемые вопросы</h2>
