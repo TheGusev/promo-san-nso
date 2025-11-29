@@ -23,6 +23,7 @@ import { getTrackingContext } from "@/lib/tracking";
 import { useABTest } from "@/contexts/ABTestContext";
 import { Calculator as CalcIcon, Sparkles, ChevronDown, Snowflake, Flame, Target, Layers } from "lucide-react";
 import { reachGoal } from "@/lib/yandexMetrika";
+import { logTrafficEvent } from "@/hooks/useTrafficLogging";
 
 const objectTypes = [
   { value: "apartment", label: "Квартира", basePrice: 2500 },
@@ -73,6 +74,7 @@ export default function Calculator() {
           if (entry.isIntersecting && !hasTrackedOpen.current) {
             hasTrackedOpen.current = true;
             reachGoal('calc_open');
+            logTrafficEvent('calc_open', { variant_id: variantId });
           }
         });
       },
@@ -195,6 +197,13 @@ export default function Calculator() {
         service: formData.service,
         objectType: formData.objectType,
         variant: variantId
+      });
+
+      logTrafficEvent('calc_submit', {
+        variant_id: variantId,
+        service: formData.service,
+        object_type: formData.objectType,
+        final_price: calculatedPrice
       });
 
       // Reset form

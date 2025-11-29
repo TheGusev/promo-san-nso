@@ -2,6 +2,7 @@ import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { Shield, Bug, Rat, Wind, Droplets, FileCheck } from "lucide-react";
 import { AnimatedSection } from "@/components/ui/animated-section";
+import { logTrafficEvent } from "@/hooks/useTrafficLogging";
 
 const services = [
   {
@@ -88,7 +89,10 @@ export default function Services() {
                 <Button 
                   className="w-full" 
                   variant="outline"
-                  onClick={() => document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' })}
+                  onClick={() => {
+                    logTrafficEvent('service_click', { service: service.title });
+                    document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
                 >
                   Рассчитать стоимость
                 </Button>
