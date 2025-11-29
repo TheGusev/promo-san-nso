@@ -233,10 +233,10 @@ export default function Calculator() {
   };
 
   return (
-    <section id="calculator" ref={calcRef} className="py-20 bg-background">
+    <section id="calculator" ref={calcRef} className="py-12 md:py-20 bg-background">
       <div className="container px-4">
         <AnimatedSection animation="fade-up">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8 md:mb-12">
             <div className="inline-flex items-center gap-2 mb-4">
               <CalcIcon className="h-8 w-8 text-primary" />
               <h2 className="text-3xl lg:text-4xl font-bold">Рассчитайте стоимость</h2>

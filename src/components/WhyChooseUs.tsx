@@ -41,10 +41,10 @@ export default function WhyChooseUs() {
 
   return (
     <>
-      <section className="py-16 px-4 bg-background">
+      <section className="py-10 md:py-16 px-4 bg-background">
         <div className="container mx-auto max-w-6xl">
           <AnimatedSection animation="fade-up">
-            <div className="text-center mb-12">
+            <div className="text-center mb-8 md:mb-12">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
                 Почему <span className="text-primary">выбирают нас</span>
               </h2>
