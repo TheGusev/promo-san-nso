@@ -10,11 +10,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "./ui/collapsible";
+import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { getTrackingContext } from "@/lib/tracking";
 import { useABTest } from "@/contexts/ABTestContext";
-import { Calculator as CalcIcon, Sparkles } from "lucide-react";
+import { Calculator as CalcIcon, Sparkles, ChevronDown, Snowflake, Flame, Target, Layers } from "lucide-react";
 import { reachGoal } from "@/lib/yandexMetrika";
 
 const objectTypes = [
@@ -39,6 +45,7 @@ export default function Calculator() {
   const { variantId, intent, impressionId } = useABTest();
   const calcRef = useRef<HTMLElement>(null);
   const hasTrackedOpen = useRef(false);
+  const [advancedOpen, setAdvancedOpen] = useState(false);
   
   const [formData, setFormData] = useState({
     name: "",
@@ -47,7 +54,9 @@ export default function Calculator() {
     objectType: "",
     area: "",
     service: "",
-    clientType: "individual"
+    clientType: "individual",
+    method: "cold_fog",
+    frequency: "one_time"
   });
 
   const [calculatedPrice, setCalculatedPrice] = useState<number | null>(null);
@@ -195,7 +204,9 @@ export default function Calculator() {
         objectType: "",
         area: "",
         service: "",
-        clientType: "individual"
+        clientType: "individual",
+        method: "cold_fog",
+        frequency: "one_time"
       });
       setCalculatedPrice(null);
 
@@ -285,6 +296,103 @@ export default function Calculator() {
                 </Select>
               </div>
             </div>
+
+            {/* Advanced Settings */}
+            <Collapsible open={advancedOpen} onOpenChange={setAdvancedOpen}>
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" className="w-full justify-between" type="button">
+                  <span className="font-semibold">Расширенные настройки</span>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${advancedOpen ? 'rotate-180' : ''}`} />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-6 pt-4">
+                {/* Treatment Method */}
+                <div className="space-y-3">
+                  <Label>Метод обработки</Label>
+                  <ToggleGroup 
+                    type="single" 
+                    value={formData.method}
+                    onValueChange={(value) => value && setFormData({ ...formData, method: value })}
+                    className="grid grid-cols-2 gap-2"
+                  >
+                    <ToggleGroupItem value="cold_fog" className="flex flex-col items-center gap-1 h-auto py-3">
+                      <Snowflake className="h-5 w-5" />
+                      <span className="text-xs">Холодный туман</span>
+                    </ToggleGroupItem>
+                    <ToggleGroupItem value="hot_fog" className="flex flex-col items-center gap-1 h-auto py-3">
+                      <Flame className="h-5 w-5" />
+                      <span className="text-xs">Горячий туман</span>
+                    </ToggleGroupItem>
+                    <ToggleGroupItem value="spot" className="flex flex-col items-center gap-1 h-auto py-3">
+                      <Target className="h-5 w-5" />
+                      <span className="text-xs">Точечная</span>
+                    </ToggleGroupItem>
+                    <ToggleGroupItem value="complex" className="flex flex-col items-center gap-1 h-auto py-3">
+                      <Layers className="h-5 w-5" />
+                      <span className="text-xs">Комплексная</span>
+                    </ToggleGroupItem>
+                  </ToggleGroup>
+                </div>
+
+                {/* Frequency */}
+                <div className="space-y-3">
+                  <Label>Периодичность</Label>
+                  <ToggleGroup 
+                    type="single" 
+                    value={formData.frequency}
+                    onValueChange={(value) => value && setFormData({ ...formData, frequency: value })}
+                    className="grid grid-cols-3 gap-2"
+                  >
+                    <ToggleGroupItem value="one_time" className="text-xs">
+                      Разово
+                    </ToggleGroupItem>
+                    <ToggleGroupItem value="monthly" className="text-xs">
+                      Ежемесячно
+                    </ToggleGroupItem>
+                    <ToggleGroupItem value="quarterly" className="text-xs">
+                      Ежеквартально
+                    </ToggleGroupItem>
+                  </ToggleGroup>
+                </div>
+
+                {/* Price Comparison Table */}
+                {formData.area && parseInt(formData.area) === 50 && (
+                  <div className="bg-muted/50 rounded-lg p-4">
+                    <h4 className="font-semibold text-sm mb-3">Сравнение методов при 50 м²</h4>
+                    <div className="space-y-2 text-xs">
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground">Холодный туман:</span>
+                        <div className="flex gap-2 items-center">
+                          <span className="line-through text-muted-foreground">3500₽</span>
+                          <span className="font-semibold text-secondary">2800₽</span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground">Горячий туман:</span>
+                        <div className="flex gap-2 items-center">
+                          <span className="line-through text-muted-foreground">4000₽</span>
+                          <span className="font-semibold text-secondary">3200₽</span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground">Точечная:</span>
+                        <div className="flex gap-2 items-center">
+                          <span className="line-through text-muted-foreground">3000₽</span>
+                          <span className="font-semibold text-secondary">2400₽</span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground">Комплексная:</span>
+                        <div className="flex gap-2 items-center">
+                          <span className="line-through text-muted-foreground">5000₽</span>
+                          <span className="font-semibold text-secondary">4000₽</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </CollapsibleContent>
+            </Collapsible>
 
             {calculatedPrice && (
               <div className="p-6 rounded-lg bg-gradient-hero text-primary-foreground">
