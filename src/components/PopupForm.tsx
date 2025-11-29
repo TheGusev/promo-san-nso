@@ -24,23 +24,25 @@ export default function PopupForm() {
            localStorage.getItem('popup_submitted') === 'true';
   });
   const { toast } = useToast();
-  const { variantId, impressionId } = useABTest();
+  const { variantId, impressionId, isLoading } = useABTest();
 
   useEffect(() => {
-    if (hasBeenShown) return;
+    if (hasBeenShown || isLoading) return;
 
     // Show popup after 30 seconds
     const timer = setTimeout(() => {
-      setOpen(true);
-      setHasBeenShown(true);
-      localStorage.setItem('popup_shown', 'true');
-      reachGoal('popup_open');
-      logTrafficEvent('popup_open', { trigger: 'timer' });
+      if (!isLoading) {
+        setOpen(true);
+        setHasBeenShown(true);
+        localStorage.setItem('popup_shown', 'true');
+        reachGoal('popup_open');
+        logTrafficEvent('popup_open', { trigger: 'timer' });
+      }
     }, 30000);
 
     // Exit intent detection
     const handleMouseLeave = (e: MouseEvent) => {
-      if (e.clientY <= 0 && !open) {
+      if (e.clientY <= 0 && !open && !isLoading) {
         setOpen(true);
         setHasBeenShown(true);
         localStorage.setItem('popup_shown', 'true');
@@ -55,7 +57,7 @@ export default function PopupForm() {
       clearTimeout(timer);
       document.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, [hasBeenShown, open]);
+  }, [hasBeenShown, open, isLoading]);
 
   const handleClose = () => {
     setOpen(false);
@@ -144,7 +146,7 @@ export default function PopupForm() {
     }
   };
 
-  if (hasBeenShown) return null;
+  if (isLoading || hasBeenShown) return null;
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
