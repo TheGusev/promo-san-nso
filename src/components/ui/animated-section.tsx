@@ -39,7 +39,9 @@ export function AnimatedSection({
         className
       )}
       style={{ 
-        animationDelay: isInView ? `${delay}ms` : undefined 
+        animationDelay: isInView ? `${delay}ms` : undefined,
+        willChange: !isInView ? 'transform, opacity' : 'auto',
+        contain: 'layout style paint'
       }}
     >
       {children}

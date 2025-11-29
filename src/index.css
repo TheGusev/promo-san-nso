@@ -109,6 +109,16 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
+  /* Performance optimizations */
+  .animate-fade-up,
+  .animate-fade-down,
+  .animate-fade-left,
+  .animate-fade-right,
+  .animate-scale-up,
+  .animate-blur-in {
+    will-change: transform, opacity;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .animate-fade-up,
     .animate-fade-down,
@@ -120,6 +130,7 @@ All colors MUST be HSL.
       opacity: 1 !important;
       transform: none !important;
       filter: none !important;
+      will-change: auto !important;
     }
   }
 }
