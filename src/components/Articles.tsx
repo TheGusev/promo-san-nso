@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BookOpen, Clock, ArrowRight } from "lucide-react";
+import { AnimatedSection } from "@/components/ui/animated-section";
 
 type Category = "all" | "disinfection" | "disinsection" | "deratization" | "tips";
 
@@ -92,57 +93,61 @@ export default function Articles() {
   return (
     <section className="py-16 px-4 bg-muted/30">
       <div className="container mx-auto max-w-6xl">
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <BookOpen className="h-8 w-8 text-primary" />
-            <h2 className="text-3xl md:text-4xl font-bold">
-              Полезные <span className="text-primary">статьи</span>
-            </h2>
+        <AnimatedSection animation="fade-up">
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <BookOpen className="h-8 w-8 text-primary" />
+              <h2 className="text-3xl md:text-4xl font-bold">
+                Полезные <span className="text-primary">статьи</span>
+              </h2>
+            </div>
+            <p className="text-muted-foreground text-lg">
+              Экспертные советы о дезинфекции, дезинсекции и дератизации
+            </p>
           </div>
-          <p className="text-muted-foreground text-lg">
-            Экспертные советы о дезинфекции, дезинсекции и дератизации
-          </p>
-        </div>
 
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
-          {categories.map((category) => (
-            <Button
-              key={category.id}
-              variant={activeCategory === category.id ? "default" : "outline"}
-              onClick={() => setActiveCategory(category.id)}
-              className="rounded-full"
-            >
-              {category.label}
-            </Button>
-          ))}
-        </div>
+          <div className="flex flex-wrap justify-center gap-2 mb-8">
+            {categories.map((category) => (
+              <Button
+                key={category.id}
+                variant={activeCategory === category.id ? "default" : "outline"}
+                onClick={() => setActiveCategory(category.id)}
+                className="rounded-full"
+              >
+                {category.label}
+              </Button>
+            ))}
+          </div>
+        </AnimatedSection>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredArticles.map((article, index) => (
-            <Card key={index} className="p-6 hover:shadow-elevated transition-all group">
-              <div className="flex items-center gap-2 mb-3">
-                <Badge variant="secondary">{article.categoryLabel}</Badge>
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Clock className="h-3 w-3" />
-                  <span>{article.readTime}</span>
+            <AnimatedSection key={index} animation="fade-up" delay={(index % 3) * 100}>
+              <Card className="p-6 hover:shadow-elevated transition-all group h-full">
+                <div className="flex items-center gap-2 mb-3">
+                  <Badge variant="secondary">{article.categoryLabel}</Badge>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Clock className="h-3 w-3" />
+                    <span>{article.readTime}</span>
+                  </div>
                 </div>
-              </div>
 
-              <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">
-                {article.title}
-              </h3>
+                <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">
+                  {article.title}
+                </h3>
 
-              <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-                {article.description}
-              </p>
+                <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
+                  {article.description}
+                </p>
 
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">{article.date}</span>
-                <button className="text-primary text-sm font-medium flex items-center gap-1 hover:gap-2 transition-all">
-                  Читать <ArrowRight className="h-4 w-4" />
-                </button>
-              </div>
-            </Card>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">{article.date}</span>
+                  <button className="text-primary text-sm font-medium flex items-center gap-1 hover:gap-2 transition-all">
+                    Читать <ArrowRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </Card>
+            </AnimatedSection>
           ))}
         </div>
       </div>

@@ -107,3 +107,19 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-up,
+    .animate-fade-down,
+    .animate-fade-left,
+    .animate-fade-right,
+    .animate-scale-up,
+    .animate-blur-in {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+      filter: none !important;
+    }
+  }
+}
