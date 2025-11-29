@@ -1,5 +1,6 @@
 import { Phone } from "lucide-react";
 import { Button } from "./ui/button";
+import { ThemeToggle } from "./ThemeToggle";
 import { reachGoal } from "@/lib/yandexMetrika";
 
 export default function Header() {
@@ -41,6 +42,7 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
+          <ThemeToggle />
           <a 
             href="tel:+73833121660" 
             className="hidden sm:flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors"
