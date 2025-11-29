@@ -66,13 +66,23 @@ serve(async (req) => {
 
     console.log('MVT optimize request:', { test_name, intent, session_id });
 
-    // Get test configuration
-    const { data: testConfig, error: configError } = await supabase
-      .from('mvt_test_config')
-      .select('*')
-      .eq('test_name', test_name)
-      .eq('is_active', true)
-      .single();
+    // Get test configuration and arm parameters in parallel
+    const [configResult, armResult] = await Promise.all([
+      supabase
+        .from('mvt_test_config')
+        .select('*')
+        .eq('test_name', test_name)
+        .eq('is_active', true)
+        .single(),
+      supabase
+        .from('mvt_arm_params')
+        .select('*')
+        .eq('test_name', test_name)
+        .eq('intent', intent)
+    ]);
+
+    const { data: testConfig, error: configError } = configResult;
+    const { data: armParams, error: armError } = armResult;
 
     if (configError || !testConfig) {
       console.error('Test config not found:', configError);
@@ -86,23 +96,18 @@ serve(async (req) => {
       );
     }
 
-    const variants = testConfig.variants as string[];
-
-    // Get arm parameters for this intent
-    const { data: armParams, error: armError } = await supabase
-      .from('mvt_arm_params')
-      .select('*')
-      .eq('test_name', test_name)
-      .eq('intent', intent);
-
     if (armError) {
       console.error('Error fetching arm params:', armError);
       throw armError;
     }
 
+    const variants = testConfig.variants as string[];
+
     // Initialize missing variants
     const existingVariants = new Set(armParams?.map(p => p.variant_key) || []);
     const missingVariants = variants.filter(v => !existingVariants.has(v));
+
+    let allArmParams = armParams || [];
 
     if (missingVariants.length > 0) {
       const newParams = missingVariants.map(v => ({
@@ -116,23 +121,20 @@ serve(async (req) => {
         revenue_sum: 0
       }));
 
-      const { error: insertError } = await supabase
+      const { data: inserted, error: insertError } = await supabase
         .from('mvt_arm_params')
-        .insert(newParams);
+        .insert(newParams)
+        .select();
 
       if (insertError) {
         console.error('Error inserting missing variants:', insertError);
+      } else {
+        // Merge inserted params with existing ones
+        allArmParams = [...allArmParams, ...(inserted || [])];
       }
     }
 
-    // Refresh arm params
-    const { data: allArmParams } = await supabase
-      .from('mvt_arm_params')
-      .select('*')
-      .eq('test_name', test_name)
-      .eq('intent', intent);
-
-    const armMap = new Map(allArmParams?.map(p => [p.variant_key, p]) || []);
+    const armMap = new Map(allArmParams.map(p => [p.variant_key, p]));
 
     // Check if in exploration phase
     const totalImpressions = allArmParams?.reduce((sum, p) => sum + (p.impressions_count || 0), 0) || 0;
@@ -167,7 +169,7 @@ serve(async (req) => {
       console.log('Thompson Sampling:', { samples, selected: selectedVariant });
     }
 
-    // Log impression
+    // Log impression and increment count in parallel
     const impressionData = {
       session_id,
       test_name,
@@ -178,34 +180,34 @@ serve(async (req) => {
       sampled_theta: sampledTheta
     };
 
-    const { data: impression, error: impressionError } = await supabase
-      .from('mvt_impressions')
-      .insert([impressionData])
-      .select()
-      .single();
+    const [impressionResult, incrementResult] = await Promise.all([
+      supabase
+        .from('mvt_impressions')
+        .insert([impressionData])
+        .select()
+        .single(),
+      supabase.rpc('increment_arm_impressions', {
+        p_test_name: test_name,
+        p_intent: intent,
+        p_variant_key: selectedVariant
+      })
+    ]);
 
-    if (impressionError) {
-      console.error('Error logging impression:', impressionError);
+    if (impressionResult.error) {
+      console.error('Error logging impression:', impressionResult.error);
     } else {
-      console.log('Impression logged:', impression.id);
+      console.log('Impression logged:', impressionResult.data.id);
     }
 
-    // Increment impressions count
-    const { error: incrementError } = await supabase.rpc('increment_arm_impressions', {
-      p_test_name: test_name,
-      p_intent: intent,
-      p_variant_key: selectedVariant
-    });
-
-    if (incrementError) {
-      console.error('Error incrementing impressions:', incrementError);
+    if (incrementResult.error) {
+      console.error('Error incrementing impressions:', incrementResult.error);
     }
 
     return new Response(
       JSON.stringify({ 
         variant: selectedVariant, 
         method,
-        impression_id: impression?.id,
+        impression_id: impressionResult.data?.id,
         sampled_theta: sampledTheta
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

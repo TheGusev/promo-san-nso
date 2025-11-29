@@ -13,7 +13,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { getTrackingContext } from "@/lib/tracking";
-import { useABTest } from "@/hooks/useABTest";
+import { useABTest } from "@/contexts/ABTestContext";
 import { Calculator as CalcIcon, Sparkles } from "lucide-react";
 import { reachGoal } from "@/lib/yandexMetrika";
 
