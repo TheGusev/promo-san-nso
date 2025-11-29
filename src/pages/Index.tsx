@@ -12,14 +12,14 @@ import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
 import FloatingButtons from "@/components/FloatingButtons";
 import PopupForm from "@/components/PopupForm";
-import { useScrollTracking } from "@/hooks/useScrollTracking";
+import { useEngagementTracking } from "@/hooks/useEngagementTracking";
 import { useTrafficLogging } from "@/hooks/useTrafficLogging";
 import { userParams } from "@/lib/yandexMetrika";
 import { getTrackingContext } from "@/lib/tracking";
 
 const Index = () => {
-  // Track scroll milestones
-  useScrollTracking();
+  // Track engagement metrics (time on page, scroll depth, scroll milestones)
+  useEngagementTracking();
   
   // Log page view and traffic events
   useTrafficLogging();

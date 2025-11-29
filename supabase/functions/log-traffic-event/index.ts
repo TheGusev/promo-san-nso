@@ -21,7 +21,13 @@ const ALLOWED_EVENT_TYPES = [
   'whatsapp_click',
   'telegram_click',
   'phone_click',
-  'service_click'
+  'service_click',
+  // Engagement metrics
+  'scroll_25',
+  'scroll_50',
+  'scroll_75',
+  'scroll_100',
+  'engagement_summary'
 ];
 
 serve(async (req) => {
