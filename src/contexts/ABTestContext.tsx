@@ -1,13 +1,24 @@
-import { useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import type { VariantId, Intent } from '@/config/copyMap';
 import { getSessionId, detectIntent, getTrackingContext } from '@/lib/tracking';
 import { supabase } from '@/integrations/supabase/client';
 
-export function useABTest() {
-  const [variantId, setVariantId] = useState<VariantId>('A');
-  const [intent, setIntent] = useState<Intent>('default');
-  const [impressionId, setImpressionId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+interface ABTestContextType {
+  variantId: VariantId;
+  intent: Intent;
+  impressionId: string | null;
+  isLoading: boolean;
+}
+
+const ABTestContext = createContext<ABTestContextType | undefined>(undefined);
+
+export function ABTestProvider({ children }: { children: ReactNode }) {
+  const [state, setState] = useState<ABTestContextType>({
+    variantId: 'A',
+    intent: 'default',
+    impressionId: null,
+    isLoading: true
+  });
 
   useEffect(() => {
     const loadVariant = async () => {
@@ -15,21 +26,22 @@ export function useABTest() {
         const sessionId = getSessionId();
         const detectedIntent = detectIntent() as Intent;
         const trackingContext = getTrackingContext();
-        
-        setIntent(detectedIntent);
 
         // Check if variant is already assigned in session
         const cachedVariant = sessionStorage.getItem(`variant_${detectedIntent}`);
         const cachedImpressionId = sessionStorage.getItem(`impression_${detectedIntent}`);
         
         if (cachedVariant && cachedImpressionId) {
-          setVariantId(cachedVariant as VariantId);
-          setImpressionId(cachedImpressionId);
-          setIsLoading(false);
+          setState({
+            variantId: cachedVariant as VariantId,
+            intent: detectedIntent,
+            impressionId: cachedImpressionId,
+            isLoading: false
+          });
           return;
         }
 
-        // Call mvt-optimize edge function
+        // Call mvt-optimize edge function once
         const { data, error } = await supabase.functions.invoke('mvt-optimize', {
           body: {
             test_name: 'main_variant',
@@ -45,14 +57,24 @@ export function useABTest() {
           // Fallback to random
           const fallbackVariants: VariantId[] = ['A', 'B', 'C', 'D', 'E', 'F'];
           const randomVariant = fallbackVariants[Math.floor(Math.random() * fallbackVariants.length)];
-          setVariantId(randomVariant);
+          setState({
+            variantId: randomVariant,
+            intent: detectedIntent,
+            impressionId: null,
+            isLoading: false
+          });
           sessionStorage.setItem(`variant_${detectedIntent}`, randomVariant);
         } else {
           const selectedVariant = data.variant as VariantId;
           const selectedImpressionId = data.impression_id;
           
-          setVariantId(selectedVariant);
-          setImpressionId(selectedImpressionId);
+          setState({
+            variantId: selectedVariant,
+            intent: detectedIntent,
+            impressionId: selectedImpressionId,
+            isLoading: false
+          });
+          
           sessionStorage.setItem(`variant_${detectedIntent}`, selectedVariant);
           if (selectedImpressionId) {
             sessionStorage.setItem(`impression_${detectedIntent}`, selectedImpressionId);
@@ -67,14 +89,29 @@ export function useABTest() {
         
       } catch (error) {
         console.error('Error loading variant:', error);
-        setVariantId('A'); // Fallback
-      } finally {
-        setIsLoading(false);
+        setState({
+          variantId: 'A',
+          intent: 'default',
+          impressionId: null,
+          isLoading: false
+        });
       }
     };
 
     loadVariant();
   }, []);
 
-  return { variantId, intent, impressionId, isLoading };
+  return (
+    <ABTestContext.Provider value={state}>
+      {children}
+    </ABTestContext.Provider>
+  );
+}
+
+export function useABTest() {
+  const context = useContext(ABTestContext);
+  if (!context) {
+    throw new Error('useABTest must be used within ABTestProvider');
+  }
+  return context;
 }

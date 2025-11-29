@@ -1,7 +1,7 @@
 import { Button } from "./ui/button";
 import { ArrowRight, Shield } from "lucide-react";
 import { getCopy } from "@/config/copyMap";
-import { useABTest } from "@/hooks/useABTest";
+import { useABTest } from "@/contexts/ABTestContext";
 import { reachGoal } from "@/lib/yandexMetrika";
 
 export default function Hero() {
