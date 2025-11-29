@@ -28,6 +28,8 @@ export async function logTrafficEvent(
         utm_term: tracking.utm_term,
         gclid: tracking.gclid,
         yclid: tracking.yclid,
+        variant_id: eventData?.variant_id || null,
+        keyword_raw: tracking.keyword || null,
         event_data: eventData || {}
       }
     });
