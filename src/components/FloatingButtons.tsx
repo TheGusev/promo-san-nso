@@ -1,14 +1,17 @@
 import { MessageCircle, Send } from "lucide-react";
 import { Button } from "./ui/button";
+import { reachGoal } from "@/lib/yandexMetrika";
 
 export default function FloatingButtons() {
   const handleWhatsAppClick = () => {
+    reachGoal('whatsapp_click');
     const phone = "7XXXXXXXXXX"; // Replace with actual number
     const message = "Здравствуйте! Интересует дезинфекция/дезинсекция.";
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   const handleTelegramClick = () => {
+    reachGoal('telegram_click');
     const username = "your_telegram"; // Replace with actual username
     window.open(`https://t.me/${username}`, '_blank');
   };
