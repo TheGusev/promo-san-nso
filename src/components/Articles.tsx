@@ -91,7 +91,7 @@ export default function Articles() {
       : articles.filter((article) => article.category === activeCategory);
 
   return (
-    <section className="py-16 px-4 bg-muted/30">
+    <section className="py-16 px-2 sm:px-4 bg-muted/30">
       <div className="container mx-auto max-w-6xl">
         <AnimatedSection animation="fade-up">
           <div className="text-center mb-12">
@@ -120,7 +120,7 @@ export default function Articles() {
           </div>
         </AnimatedSection>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {filteredArticles.map((article, index) => (
             <AnimatedSection key={index} animation="fade-up" delay={(index % 3) * 100}>
               <Card className="p-6 hover:shadow-elevated transition-all group h-full">

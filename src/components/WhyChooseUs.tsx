@@ -41,7 +41,7 @@ export default function WhyChooseUs() {
 
   return (
     <>
-      <section className="py-10 md:py-16 px-4 bg-background">
+      <section className="py-10 md:py-16 px-2 sm:px-4 bg-background">
         <div className="container mx-auto max-w-6xl">
           <AnimatedSection animation="fade-up">
             <div className="text-center mb-8 md:mb-12">
