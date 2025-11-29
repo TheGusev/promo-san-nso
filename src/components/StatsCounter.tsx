@@ -1,70 +1,152 @@
 import { useEffect, useState } from "react";
-import { Users, Zap, Award } from "lucide-react";
+import { Zap, Shield, Award, Users, Home, CheckCircle } from "lucide-react";
 
 export default function StatsCounter() {
-  const [counts, setCounts] = useState({ clients: 0, treatments: 0, years: 0 });
+  const [counts, setCounts] = useState({
+    clients: 0,
+    area: 0,
+    guarantee: 0,
+  });
 
   useEffect(() => {
     const duration = 2000;
-    const targets = { clients: 500, treatments: 3000, years: 5 };
     const steps = 60;
     const interval = duration / steps;
+
+    const targets = {
+      clients: 500,
+      area: 5000,
+      guarantee: 99.9,
+    };
 
     let step = 0;
     const timer = setInterval(() => {
       step++;
       const progress = step / steps;
-      
+
       setCounts({
         clients: Math.floor(targets.clients * progress),
-        treatments: Math.floor(targets.treatments * progress),
-        years: Math.floor(targets.years * progress),
+        area: Math.floor(targets.area * progress),
+        guarantee: Math.min(targets.guarantee, parseFloat((targets.guarantee * progress).toFixed(1))),
       });
 
       if (step >= steps) {
-        setCounts(targets);
         clearInterval(timer);
+        setCounts(targets);
       }
     }, interval);
 
     return () => clearInterval(timer);
   }, []);
 
+  const benefits = [
+    {
+      icon: Zap,
+      title: "Быстрый выезд",
+      description: "30-60 минут в пределах города",
+    },
+    {
+      icon: Award,
+      title: "Сертификаты",
+      description: "Официальные документы СЭС",
+    },
+    {
+      icon: Shield,
+      title: "Гарантия",
+      description: "До 30 дней сопровождения",
+    },
+  ];
+
+  const certifications = [
+    {
+      title: "Роспотребнадзор",
+      description: "Лицензия на услуги",
+    },
+    {
+      title: "СЭС",
+      description: "Санитарный допуск",
+    },
+    {
+      title: "Экологичность",
+      description: "Безопасные препараты",
+    },
+    {
+      title: "Гарантия 30 дней",
+      description: "Бесплатное повторение",
+    },
+  ];
+
   return (
-    <section className="py-16 bg-muted">
-      <div className="container px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-          <div className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                <Users className="h-8 w-8 text-primary" />
-              </div>
-            </div>
-            <div className="text-4xl font-bold text-primary mb-2">{counts.clients}+</div>
-            <p className="text-sm text-muted-foreground">Довольных клиентов</p>
-          </div>
-          
-          <div className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary/10">
-                <Zap className="h-8 w-8 text-secondary" />
-              </div>
-            </div>
-            <div className="text-4xl font-bold text-secondary mb-2">{counts.treatments}+</div>
-            <p className="text-sm text-muted-foreground">Успешных обработок</p>
-          </div>
-          
-          <div className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent/10">
-                <Award className="h-8 w-8 text-accent" />
-              </div>
-            </div>
-            <div className="text-4xl font-bold text-accent mb-2">{counts.years}+</div>
-            <p className="text-sm text-muted-foreground">Лет на рынке</p>
+    <>
+      {/* Benefits Section */}
+      <section className="py-12 px-4 bg-background border-b border-border">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid md:grid-cols-3 gap-6">
+            {benefits.map((benefit, index) => {
+              const Icon = benefit.icon;
+              return (
+                <div
+                  key={index}
+                  className="flex items-center gap-4 p-4 rounded-lg bg-card border border-border hover:shadow-card transition-all"
+                >
+                  <div className="bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center shrink-0">
+                    <Icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground">{benefit.title}</h3>
+                    <p className="text-sm text-muted-foreground">{benefit.description}</p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-16 px-4 bg-primary text-primary-foreground">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid md:grid-cols-3 gap-8 text-center">
+            <div className="space-y-2">
+              <Users className="h-12 w-12 mx-auto mb-4 opacity-90" />
+              <div className="text-5xl font-bold">{counts.clients}+</div>
+              <div className="text-lg opacity-90">довольных клиентов</div>
+            </div>
+
+            <div className="space-y-2">
+              <Home className="h-12 w-12 mx-auto mb-4 opacity-90" />
+              <div className="text-5xl font-bold">{counts.area}+ м²</div>
+              <div className="text-lg opacity-90">обработано</div>
+            </div>
+
+            <div className="space-y-2">
+              <CheckCircle className="h-12 w-12 mx-auto mb-4 opacity-90" />
+              <div className="text-5xl font-bold">{counts.guarantee}%</div>
+              <div className="text-lg opacity-90">гарантия результата</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Certifications Section */}
+      <section className="py-12 px-4 bg-muted/30 border-t border-border">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {certifications.map((cert, index) => (
+              <div
+                key={index}
+                className="bg-card border border-border rounded-lg p-4 text-center hover:shadow-card transition-all"
+              >
+                <div className="bg-secondary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <CheckCircle className="h-6 w-6 text-secondary" />
+                </div>
+                <h4 className="font-semibold text-sm mb-1">{cert.title}</h4>
+                <p className="text-xs text-muted-foreground">{cert.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
   );
 }

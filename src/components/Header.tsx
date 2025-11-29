@@ -24,24 +24,30 @@ export default function Header() {
             Услуги
           </a>
           <a href="#calculator" className="text-sm font-medium hover:text-primary transition-colors">
-            Цены
-          </a>
-          <a href="#faq" className="text-sm font-medium hover:text-primary transition-colors">
-            Вопросы
+            Калькулятор
           </a>
           <a href="#reviews" className="text-sm font-medium hover:text-primary transition-colors">
             Отзывы
+          </a>
+          <a href="#articles" className="text-sm font-medium hover:text-primary transition-colors">
+            Блог
+          </a>
+          <a href="#faq" className="text-sm font-medium hover:text-primary transition-colors">
+            FAQ
+          </a>
+          <a href="#footer" className="text-sm font-medium hover:text-primary transition-colors">
+            Контакты
           </a>
         </nav>
 
         <div className="flex items-center gap-3">
           <a 
-            href="tel:+7XXXXXXXXXX" 
+            href="tel:+79139999999" 
             className="hidden sm:flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors"
             onClick={handlePhoneClick}
           >
             <Phone className="h-4 w-4" />
-            <span>+7 (XXX) XXX-XX-XX</span>
+            <span>+7 (913) 999-99-99</span>
           </a>
           <Button 
             size="sm" 
