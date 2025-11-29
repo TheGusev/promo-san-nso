@@ -15,22 +15,30 @@ export default function PopupForm() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [agreed, setAgreed] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [hasBeenShown, setHasBeenShown] = useState(() => {
+    return localStorage.getItem('popup_shown') === 'true' ||
+           localStorage.getItem('popup_dismissed') === 'true' ||
+           localStorage.getItem('popup_submitted') === 'true';
+  });
   const { toast } = useToast();
 
   useEffect(() => {
+    if (hasBeenShown) return;
+
     // Show popup after 30 seconds
     const timer = setTimeout(() => {
-      if (!submitted) {
-        setOpen(true);
-        reachGoal('popup_open');
-      }
+      setOpen(true);
+      setHasBeenShown(true);
+      localStorage.setItem('popup_shown', 'true');
+      reachGoal('popup_open');
     }, 30000);
 
     // Exit intent detection
     const handleMouseLeave = (e: MouseEvent) => {
-      if (e.clientY <= 0 && !submitted) {
+      if (e.clientY <= 0 && !open) {
         setOpen(true);
+        setHasBeenShown(true);
+        localStorage.setItem('popup_shown', 'true');
         reachGoal('popup_open', { trigger: 'exit_intent' });
       }
     };
@@ -41,7 +49,13 @@ export default function PopupForm() {
       clearTimeout(timer);
       document.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, [submitted]);
+  }, [hasBeenShown, open]);
+
+  const handleClose = () => {
+    setOpen(false);
+    setHasBeenShown(true);
+    localStorage.setItem('popup_dismissed', 'true');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,7 +105,8 @@ export default function PopupForm() {
         description: "Мы свяжемся с вами в ближайшее время",
       });
 
-      setSubmitted(true);
+      setHasBeenShown(true);
+      localStorage.setItem('popup_submitted', 'true');
       setOpen(false);
     } catch (error) {
       console.error('Error submitting popup form:', error);
@@ -103,13 +118,13 @@ export default function PopupForm() {
     }
   };
 
-  if (submitted) return null;
+  if (hasBeenShown) return null;
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
         <button
-          onClick={() => setOpen(false)}
+          onClick={handleClose}
           className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100"
         >
           <X className="h-4 w-4" />
