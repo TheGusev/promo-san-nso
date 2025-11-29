@@ -6,6 +6,17 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Rate limiting map: IP -> [timestamps]
+const rateLimitMap = new Map<string, number[]>();
+const RATE_LIMIT_WINDOW = 60000; // 1 minute
+const MAX_LEADS_PER_WINDOW = 5; // Max 5 leads per minute per IP
+
+// Validation patterns
+const PHONE_REGEX = /^\+7\d{10}$/; // +7 и 10 цифр
+const MAX_NAME_LENGTH = 100;
+const MAX_EMAIL_LENGTH = 255;
+const MAX_STRING_LENGTH = 500;
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -20,10 +31,41 @@ serve(async (req) => {
     
     console.log('Received lead data:', JSON.stringify(leadData, null, 2));
 
-    // Validate required fields
-    if (!leadData.name || !leadData.phone) {
+    // Rate limiting check
+    const clientIp = req.headers.get('x-forwarded-for') || 'unknown';
+    const now = Date.now();
+    const timestamps = rateLimitMap.get(clientIp) || [];
+    const recentTimestamps = timestamps.filter(ts => now - ts < RATE_LIMIT_WINDOW);
+
+    if (recentTimestamps.length >= MAX_LEADS_PER_WINDOW) {
+      console.log('Rate limit exceeded for IP:', clientIp);
       return new Response(
-        JSON.stringify({ error: 'Name and phone are required' }),
+        JSON.stringify({ error: 'Too many requests. Please try again later.' }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    recentTimestamps.push(now);
+    rateLimitMap.set(clientIp, recentTimestamps);
+
+    // Input validation
+    if (!leadData.name || typeof leadData.name !== 'string' || leadData.name.trim().length === 0 || leadData.name.length > MAX_NAME_LENGTH) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid name' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!leadData.phone || !PHONE_REGEX.test(leadData.phone)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid phone format. Use +7XXXXXXXXXX' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (leadData.email && (typeof leadData.email !== 'string' || leadData.email.length > MAX_EMAIL_LENGTH)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid email' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -37,10 +79,43 @@ serve(async (req) => {
       );
     }
 
+    // Sanitize and truncate string fields
+    const sanitizedLead = {
+      name: leadData.name.trim().substring(0, MAX_NAME_LENGTH),
+      phone: leadData.phone,
+      email: leadData.email?.trim()?.substring(0, MAX_EMAIL_LENGTH) || null,
+      service: leadData.service?.substring(0, MAX_STRING_LENGTH) || null,
+      object_type: leadData.object_type?.substring(0, MAX_STRING_LENGTH) || null,
+      area_m2: typeof leadData.area_m2 === 'number' ? leadData.area_m2 : null,
+      base_price: typeof leadData.base_price === 'number' ? leadData.base_price : null,
+      final_price: typeof leadData.final_price === 'number' ? leadData.final_price : null,
+      discount_amount: typeof leadData.discount_amount === 'number' ? leadData.discount_amount : null,
+      discount_percent: typeof leadData.discount_percent === 'number' ? leadData.discount_percent : null,
+      frequency: leadData.frequency?.substring(0, 50) || null,
+      method: leadData.method?.substring(0, 100) || null,
+      client_type: leadData.client_type?.substring(0, 50) || null,
+      source: leadData.source?.substring(0, 50) || null,
+      session_id: leadData.session_id?.substring(0, 100) || null,
+      device_type: leadData.device_type?.substring(0, 50) || null,
+      intent: leadData.intent?.substring(0, 50) || null,
+      variant_id: leadData.variant_id?.substring(0, 10) || null,
+      mvt_impression_id: leadData.mvt_impression_id || null,
+      utm_source: leadData.utm_source?.substring(0, 100) || null,
+      utm_medium: leadData.utm_medium?.substring(0, 100) || null,
+      utm_campaign: leadData.utm_campaign?.substring(0, 100) || null,
+      utm_content: leadData.utm_content?.substring(0, 100) || null,
+      utm_term: leadData.utm_term?.substring(0, 100) || null,
+      gclid: leadData.gclid?.substring(0, 100) || null,
+      yclid: leadData.yclid?.substring(0, 100) || null,
+      keyword: leadData.keyword?.substring(0, 200) || null,
+      first_landing_url: leadData.first_landing_url?.substring(0, 500) || null,
+      last_page_url: leadData.last_page_url?.substring(0, 500) || null,
+    };
+
     // Insert lead into database
     const { data: lead, error: insertError } = await supabase
       .from('leads')
-      .insert([leadData])
+      .insert([sanitizedLead])
       .select()
       .single();
 
@@ -147,9 +222,8 @@ ${leadData.utm_source ? `📊 UTM Source: ${leadData.utm_source}` : ''}
 
   } catch (error) {
     console.error('Error in handle-lead:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({ error: 'An error occurred. Please try again.' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
