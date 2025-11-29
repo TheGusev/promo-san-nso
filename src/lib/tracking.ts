@@ -46,10 +46,18 @@ export function getUTMParams(): Record<string, string> {
 }
 
 export function getTrackingContext() {
+  const utm = getUTMParams();
   return {
     session_id: getSessionId(),
     intent: detectIntent(),
     device_type: getDeviceType(),
-    ...getUTMParams(),
+    utm_source: utm.utm_source,
+    utm_medium: utm.utm_medium,
+    utm_campaign: utm.utm_campaign,
+    utm_content: utm.utm_content,
+    utm_term: utm.utm_term,
+    keyword: utm.keyword,
+    yclid: utm.yclid,
+    gclid: utm.gclid,
   };
 }

@@ -1,1 +1,10 @@
 project_id = "lurrhrwggthyeicttsot"
+
+[functions.handle-lead]
+verify_jwt = false
+
+[functions.log-traffic-event]
+verify_jwt = false
+
+[functions.mvt-optimize]
+verify_jwt = false
