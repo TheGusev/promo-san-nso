@@ -4,40 +4,14 @@ import { AnimatedSection } from "@/components/ui/animated-section";
 
 export default function StatsCounter() {
   const [counts, setCounts] = useState({
-    clients: 0,
-    area: 0,
-    guarantee: 0,
+    clients: 500,
+    area: 5000,
+    guarantee: 99.9,
   });
 
   useEffect(() => {
-    const duration = 2000;
-    const steps = 60;
-    const interval = duration / steps;
-
-    const targets = {
-      clients: 500,
-      area: 5000,
-      guarantee: 99.9,
-    };
-
-    let step = 0;
-    const timer = setInterval(() => {
-      step++;
-      const progress = step / steps;
-
-      setCounts({
-        clients: Math.floor(targets.clients * progress),
-        area: Math.floor(targets.area * progress),
-        guarantee: Math.min(targets.guarantee, parseFloat((targets.guarantee * progress).toFixed(1))),
-      });
-
-      if (step >= steps) {
-        clearInterval(timer);
-        setCounts(targets);
-      }
-    }, interval);
-
-    return () => clearInterval(timer);
+    // Start with final values to prevent CLS, animate via CSS opacity/transform only
+    return () => {};
   }, []);
 
   const benefits = [

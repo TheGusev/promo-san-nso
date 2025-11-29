@@ -19,11 +19,11 @@ export default function Hero() {
   
   if (isLoading) {
     return (
-      <section className="relative overflow-hidden bg-gradient-hero py-20 text-primary-foreground">
+      <section className="relative overflow-hidden bg-gradient-hero py-12 md:py-20 lg:py-32 text-primary-foreground min-h-[400px] md:min-h-[500px]">
         <div className="container px-4">
-          <div className="animate-pulse">
-            <div className="h-12 bg-white/20 rounded-lg w-3/4 mb-6"></div>
-            <div className="h-6 bg-white/20 rounded-lg w-1/2"></div>
+          <div className="animate-pulse mx-auto max-w-4xl text-center">
+            <div className="h-12 bg-white/20 rounded-lg w-3/4 mb-6 mx-auto"></div>
+            <div className="h-6 bg-white/20 rounded-lg w-1/2 mx-auto"></div>
           </div>
         </div>
       </section>
@@ -33,7 +33,7 @@ export default function Hero() {
   const copy = getCopy(intent, variantId);
 
   return (
-    <section className="relative overflow-hidden bg-gradient-hero py-12 md:py-20 lg:py-32 text-primary-foreground">
+    <section className="relative overflow-hidden bg-gradient-hero py-12 md:py-20 lg:py-32 text-primary-foreground min-h-[400px] md:min-h-[500px]">
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzRjMC0yLjIxLTEuNzktNC00LTRzLTQgMS43OS00IDQgMS43OSA0IDQgNCA0LTEuNzkgNC00em0wLTEyYzAtMi4yMS0xLjc5LTQtNC00cy00IDEuNzktNCA0IDEuNzkgNCA0IDQgNC0xLjc5IDQtNHoiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-10" style={{ contain: 'paint' }}></div>
       
       <div className="container relative px-4">
