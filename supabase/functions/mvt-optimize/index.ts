@@ -215,10 +215,12 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in mvt-optimize:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    // Fallback variant при ошибках
+    const fallbackVariants = ['A', 'B', 'C', 'D', 'E', 'F'];
+    const randomVariant = fallbackVariants[Math.floor(Math.random() * fallbackVariants.length)];
     return new Response(
-      JSON.stringify({ error: errorMessage }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({ variant: randomVariant, method: 'error_fallback' }),
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });
