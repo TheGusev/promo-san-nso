@@ -9,11 +9,14 @@ import { reachGoal } from "@/lib/yandexMetrika";
 import { supabase } from "@/integrations/supabase/client";
 import { getTrackingContext } from "@/lib/tracking";
 import { useToast } from "@/hooks/use-toast";
+import { useABTest } from "@/contexts/ABTestContext";
+import { logTrafficEvent } from "@/hooks/useTrafficLogging";
 
 export default function PopupForm() {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [website, setWebsite] = useState(""); // Honeypot field
   const [agreed, setAgreed] = useState(false);
   const [hasBeenShown, setHasBeenShown] = useState(() => {
     return localStorage.getItem('popup_shown') === 'true' ||
@@ -21,6 +24,7 @@ export default function PopupForm() {
            localStorage.getItem('popup_submitted') === 'true';
   });
   const { toast } = useToast();
+  const { variantId, impressionId } = useABTest();
 
   useEffect(() => {
     if (hasBeenShown) return;
@@ -31,6 +35,7 @@ export default function PopupForm() {
       setHasBeenShown(true);
       localStorage.setItem('popup_shown', 'true');
       reachGoal('popup_open');
+      logTrafficEvent('popup_open', { trigger: 'timer' });
     }, 30000);
 
     // Exit intent detection
@@ -40,6 +45,7 @@ export default function PopupForm() {
         setHasBeenShown(true);
         localStorage.setItem('popup_shown', 'true');
         reachGoal('popup_open', { trigger: 'exit_intent' });
+        logTrafficEvent('popup_open', { trigger: 'exit_intent' });
       }
     };
 
@@ -78,26 +84,46 @@ export default function PopupForm() {
       return;
     }
 
+    // Honeypot check
+    if (website.trim()) {
+      console.log('Bot detected via honeypot');
+      toast({
+        title: "Ошибка",
+        description: "Не удалось отправить заявку. Попробуйте позже.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const tracking = getTrackingContext();
 
-      await supabase.from('leads').insert({
-        name: name.trim(),
-        phone: phone.trim(),
-        source: 'popup',
-        session_id: tracking.session_id,
-        intent: tracking.intent,
-        device_type: tracking.device_type,
-        utm_source: tracking.utm_source,
-        utm_medium: tracking.utm_medium,
-        utm_campaign: tracking.utm_campaign,
-        first_landing_url: window.location.href,
-        last_page_url: window.location.href,
+      const { error } = await supabase.functions.invoke('handle-lead', {
+        body: {
+          name: name.trim(),
+          phone: phone.trim(),
+          source: 'popup',
+          honeypot: website,
+          ...tracking,
+          variant_id: variantId,
+          mvt_impression_id: impressionId,
+          mvt_arm_key: variantId,
+          first_landing_url: window.location.href,
+          last_page_url: window.location.href,
+        }
       });
+
+      if (error) throw error;
 
       reachGoal('popup_submit', {
         source: 'popup',
         intent: tracking.intent,
+        variant: variantId
+      });
+
+      logTrafficEvent('popup_submit', {
+        variant_id: variantId,
+        intent: tracking.intent
       });
 
       toast({
@@ -165,6 +191,18 @@ export default function PopupForm() {
               required
             />
           </div>
+
+          {/* Honeypot field - hidden from users */}
+          <input
+            type="text"
+            name="website"
+            value={website}
+            onChange={(e) => setWebsite(e.target.value)}
+            className="hidden"
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+          />
 
           <div className="flex items-start space-x-2">
             <Checkbox

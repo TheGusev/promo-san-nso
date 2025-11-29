@@ -13,12 +13,16 @@ import Footer from "@/components/Footer";
 import FloatingButtons from "@/components/FloatingButtons";
 import PopupForm from "@/components/PopupForm";
 import { useScrollTracking } from "@/hooks/useScrollTracking";
+import { useTrafficLogging } from "@/hooks/useTrafficLogging";
 import { userParams } from "@/lib/yandexMetrika";
 import { getTrackingContext } from "@/lib/tracking";
 
 const Index = () => {
   // Track scroll milestones
   useScrollTracking();
+  
+  // Log page view and traffic events
+  useTrafficLogging();
 
   // Send user parameters on page load
   useEffect(() => {

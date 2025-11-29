@@ -1,9 +1,11 @@
 import { Button } from "./ui/button";
 import { reachGoal } from "@/lib/yandexMetrika";
+import { logTrafficEvent } from "@/hooks/useTrafficLogging";
 
 export default function FloatingButtons() {
   const handleWhatsAppClick = () => {
     reachGoal('whatsapp_click');
+    logTrafficEvent('whatsapp_click');
     const phone = "79139999999"; // Replace with actual number
     const message = "Здравствуйте! Интересует дезинфекция/дезинсекция.";
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
@@ -11,6 +13,7 @@ export default function FloatingButtons() {
 
   const handleTelegramClick = () => {
     reachGoal('telegram_click');
+    logTrafficEvent('telegram_click');
     const username = "sanitarnye_resheniya_nsk"; // Replace with actual username
     window.open(`https://t.me/${username}`, '_blank');
   };
