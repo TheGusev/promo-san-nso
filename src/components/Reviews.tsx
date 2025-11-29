@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { AnimatedSection } from "@/components/ui/animated-section";
 
 export default function Reviews() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -68,39 +69,48 @@ export default function Reviews() {
   return (
     <section className="py-16 px-4 bg-background">
       <div className="container mx-auto max-w-6xl">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Отзывы <span className="text-primary">наших клиентов</span>
-          </h2>
-          <p className="text-muted-foreground text-lg">
-            Более 500 довольных клиентов за последний год
-          </p>
-        </div>
+        <AnimatedSection animation="fade-up">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Отзывы <span className="text-primary">наших клиентов</span>
+            </h2>
+            <p className="text-muted-foreground text-lg">
+              Более 500 довольных клиентов за последний год
+            </p>
+          </div>
+        </AnimatedSection>
 
         <div className="relative">
           <div className="grid md:grid-cols-3 gap-6">
-            {visibleReviews.map((review, idx) => (
-              <Card
-                key={`${currentIndex}-${idx}`}
-                className="p-6 hover:shadow-elevated transition-all"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-lg">{review.name}</h3>
-                  <div className="flex gap-0.5">
-                    {[...Array(review.rating)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-accent text-accent" />
-                    ))}
-                  </div>
-                </div>
+            {visibleReviews.map((review, idx) => {
+              const delays = [0, 150, 300];
+              const animations: Array<'fade-left' | 'fade-up' | 'fade-right'> = ['fade-left', 'fade-up', 'fade-right'];
+              return (
+                <AnimatedSection
+                  key={`${currentIndex}-${idx}`}
+                  animation={animations[idx]}
+                  delay={delays[idx]}
+                >
+                  <Card className="p-6 hover:shadow-elevated transition-all h-full">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="font-semibold text-lg">{review.name}</h3>
+                      <div className="flex gap-0.5">
+                        {[...Array(review.rating)].map((_, i) => (
+                          <Star key={i} className="h-4 w-4 fill-accent text-accent" />
+                        ))}
+                      </div>
+                    </div>
 
-                <p className="text-muted-foreground text-sm mb-4 line-clamp-4">{review.text}</p>
+                    <p className="text-muted-foreground text-sm mb-4 line-clamp-4">{review.text}</p>
 
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span>{review.date}</span>
-                  <span className="bg-muted px-2 py-1 rounded">{review.objectType}</span>
-                </div>
-              </Card>
-            ))}
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span>{review.date}</span>
+                      <span className="bg-muted px-2 py-1 rounded">{review.objectType}</span>
+                    </div>
+                  </Card>
+                </AnimatedSection>
+              );
+            })}
           </div>
 
           <div className="flex justify-center gap-4 mt-8">

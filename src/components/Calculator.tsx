@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Card } from "./ui/card";
+import { AnimatedSection } from "@/components/ui/animated-section";
 import {
   Select,
   SelectContent,
@@ -225,17 +226,20 @@ export default function Calculator() {
   return (
     <section id="calculator" ref={calcRef} className="py-20 bg-background">
       <div className="container px-4">
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <CalcIcon className="h-8 w-8 text-primary" />
-            <h2 className="text-3xl lg:text-4xl font-bold">Рассчитайте стоимость</h2>
+        <AnimatedSection animation="fade-up">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 mb-4">
+              <CalcIcon className="h-8 w-8 text-primary" />
+              <h2 className="text-3xl lg:text-4xl font-bold">Рассчитайте стоимость</h2>
+            </div>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Заполните форму и получите точный расчёт со скидкой до 30%
+            </p>
           </div>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Заполните форму и получите точный расчёт со скидкой до 30%
-          </p>
-        </div>
+        </AnimatedSection>
 
-        <Card className="max-w-2xl mx-auto p-8 shadow-elevated">
+        <AnimatedSection animation="blur-in" delay={200}>
+          <Card className="max-w-2xl mx-auto p-8 shadow-elevated">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
@@ -463,6 +467,7 @@ export default function Calculator() {
             )}
           </form>
         </Card>
+        </AnimatedSection>
       </div>
     </section>
   );

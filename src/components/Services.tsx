@@ -1,6 +1,7 @@
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { Shield, Bug, Rat, Wind, Droplets, FileCheck } from "lucide-react";
+import { AnimatedSection } from "@/components/ui/animated-section";
 
 const services = [
   {
@@ -51,44 +52,48 @@ export default function Services() {
   return (
     <section id="services" className="py-20 bg-background">
       <div className="container px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4">Наши услуги</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Комплексные санитарные решения для дома и бизнеса в Новосибирске
-          </p>
-        </div>
+        <AnimatedSection animation="fade-up">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4">Наши услуги</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Комплексные санитарные решения для дома и бизнеса в Новосибирске
+            </p>
+          </div>
+        </AnimatedSection>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
           {services.map((service, index) => (
-            <Card key={index} className="p-6 hover:shadow-elevated transition-all duration-300">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-4">
-                <service.icon className="h-6 w-6 text-primary" />
-              </div>
-              
-              <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
-              <p className="text-sm text-muted-foreground mb-4">{service.description}</p>
-              
-              <div className="flex items-center justify-between mb-4 pb-4 border-b">
-                <span className="text-2xl font-bold text-primary">{service.price}</span>
-              </div>
-              
-              <ul className="space-y-2 mb-4">
-                {service.features.map((feature, i) => (
-                  <li key={i} className="flex items-center gap-2 text-sm">
-                    <div className="h-1.5 w-1.5 rounded-full bg-secondary" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              
-              <Button 
-                className="w-full" 
-                variant="outline"
-                onClick={() => document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                Рассчитать стоимость
-              </Button>
-            </Card>
+            <AnimatedSection key={index} animation="scale-up" delay={index * 100}>
+              <Card className="p-6 hover:shadow-elevated transition-all duration-300 h-full">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-4">
+                  <service.icon className="h-6 w-6 text-primary" />
+                </div>
+                
+                <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
+                <p className="text-sm text-muted-foreground mb-4">{service.description}</p>
+                
+                <div className="flex items-center justify-between mb-4 pb-4 border-b">
+                  <span className="text-2xl font-bold text-primary">{service.price}</span>
+                </div>
+                
+                <ul className="space-y-2 mb-4">
+                  {service.features.map((feature, i) => (
+                    <li key={i} className="flex items-center gap-2 text-sm">
+                      <div className="h-1.5 w-1.5 rounded-full bg-secondary" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                
+                <Button 
+                  className="w-full" 
+                  variant="outline"
+                  onClick={() => document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' })}
+                >
+                  Рассчитать стоимость
+                </Button>
+              </Card>
+            </AnimatedSection>
           ))}
         </div>
       </div>
