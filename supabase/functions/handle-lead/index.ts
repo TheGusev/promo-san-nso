@@ -76,6 +76,15 @@ serve(async (req) => {
       const telegramToken = Deno.env.get('TELEGRAM_BOT_TOKEN');
       const telegramChatId = Deno.env.get('TELEGRAM_CHAT_ID');
 
+      // Debug logging (masked for security)
+      console.log('Telegram config check:', {
+        hasToken: !!telegramToken,
+        tokenLength: telegramToken?.length || 0,
+        tokenPrefix: telegramToken?.substring(0, 10) + '...',
+        chatId: telegramChatId,
+        chatIdType: typeof telegramChatId
+      });
+
       if (telegramToken && telegramChatId) {
         const message = `
 🆕 Новая заявка #${lead.id.substring(0, 8)}
@@ -110,9 +119,17 @@ ${leadData.utm_source ? `📊 UTM Source: ${leadData.utm_source}` : ''}
         });
 
         if (!telegramResponse.ok) {
-          console.error('Telegram error:', await telegramResponse.text());
+          const errorText = await telegramResponse.text();
+          console.error('Telegram API error:', {
+            status: telegramResponse.status,
+            statusText: telegramResponse.statusText,
+            error: errorText,
+            chatId: telegramChatId,
+            requestUrl: telegramUrl
+          });
         } else {
-          console.log('Telegram notification sent successfully');
+          const successData = await telegramResponse.json();
+          console.log('Telegram notification sent successfully:', successData);
         }
       }
     } catch (telegramError) {
