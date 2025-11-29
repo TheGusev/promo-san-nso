@@ -6,7 +6,7 @@ declare global {
   }
 }
 
-const COUNTER_ID = 'XXXXXXXXX' as any; // Replace with actual counter ID
+const COUNTER_ID = 104205609; // Yandex.Metrika counter ID
 
 /**
  * Send a goal to Yandex.Metrika
