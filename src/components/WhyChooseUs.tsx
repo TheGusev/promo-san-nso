@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Shield, Award, FileCheck, Percent, Zap } from "lucide-react";
+import { Shield, Award, FileCheck, Percent, Zap, EyeOff } from "lucide-react";
 import WarrantyModal from "./WarrantyModal";
 import { AnimatedSection } from "@/components/ui/animated-section";
 
@@ -31,6 +31,11 @@ export default function WhyChooseUs() {
       icon: Shield,
       title: "Экстренный выезд",
       description: "Готовы выехать в течение 30-60 минут в пределах города",
+    },
+    {
+      icon: EyeOff,
+      title: "Конфиденциальность",
+      description: "Работаем дискретно — без логотипов на машинах и форме. Ваши соседи ничего не узнают",
     },
   ];
 
