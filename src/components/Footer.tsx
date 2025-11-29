@@ -1,9 +1,16 @@
 import { Phone, Mail, MapPin } from "lucide-react";
+import Map2GIS from "./Map2GIS";
 
 export default function Footer() {
   return (
     <footer className="bg-muted/50 border-t">
       <div className="container px-4 py-12">
+        {/* 2GIS Map Section */}
+        <div className="mb-12">
+          <Map2GIS />
+        </div>
+
+        <div className="border-t pt-12"></div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
