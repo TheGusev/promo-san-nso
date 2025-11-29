@@ -115,7 +115,7 @@ export default function StatsCounter() {
               <AnimatedSection key={stat.label} animation="scale-up" delay={stat.delay}>
                 <div className="space-y-2">
                   <stat.Icon className="h-12 w-12 mx-auto mb-4 opacity-90" />
-                  <div className="text-5xl font-bold">{stat.value}</div>
+                  <div className="text-5xl font-bold min-h-[3.5rem] flex items-center justify-center" style={{ fontVariantNumeric: 'tabular-nums', contain: 'layout' }}>{stat.value}</div>
                   <div className="text-lg opacity-90">{stat.label}</div>
                 </div>
               </AnimatedSection>
