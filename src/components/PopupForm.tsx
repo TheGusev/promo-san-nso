@@ -4,13 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { X } from "lucide-react";
+import { X, Loader2, WifiOff } from "lucide-react";
 import { reachGoal } from "@/lib/yandexMetrika";
 import { supabase } from "@/integrations/supabase/client";
 import { getTrackingContext } from "@/lib/tracking";
 import { useToast } from "@/hooks/use-toast";
 import { useABTest } from "@/contexts/ABTestContext";
 import { logTrafficEvent } from "@/hooks/useTrafficLogging";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import { queueLead, processQueue } from "@/lib/offlineQueue";
 
 export default function PopupForm() {
   const [open, setOpen] = useState(false);
@@ -18,6 +20,8 @@ export default function PopupForm() {
   const [phone, setPhone] = useState("");
   const [website, setWebsite] = useState(""); // Honeypot field
   const [agreed, setAgreed] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   const [hasBeenShown, setHasBeenShown] = useState(() => {
     return localStorage.getItem('popup_shown') === 'true' ||
            localStorage.getItem('popup_dismissed') === 'true' ||
@@ -25,6 +29,21 @@ export default function PopupForm() {
   });
   const { toast } = useToast();
   const { variantId, impressionId, isLoading } = useABTest();
+  const { isOnline, isSlowConnection } = useNetworkStatus();
+
+  // Process offline queue when coming back online
+  useEffect(() => {
+    if (isOnline) {
+      processQueue().then(({ success }) => {
+        if (success > 0) {
+          toast({
+            title: "Заявки отправлены",
+            description: `${success} заявок из очереди успешно отправлено`,
+          });
+        }
+      });
+    }
+  }, [isOnline, toast]);
 
   useEffect(() => {
     if (hasBeenShown || isLoading) return;
@@ -65,6 +84,35 @@ export default function PopupForm() {
     localStorage.setItem('popup_dismissed', 'true');
   };
 
+  const submitWithRetry = async (leadData: any, maxRetries = 3, timeout = 8000) => {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      setRetryCount(attempt);
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+      try {
+        const { error, data: response } = await supabase.functions.invoke('handle-lead', {
+          body: leadData,
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (error) throw error;
+        return { success: true, data: response };
+      } catch (err: any) {
+        clearTimeout(timeoutId);
+        console.log(`[PopupForm] Attempt ${attempt}/${maxRetries} failed:`, err);
+        
+        if (attempt === maxRetries) {
+          throw err;
+        }
+        
+        await new Promise(r => setTimeout(r, attempt * 1000));
+      }
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -97,25 +145,40 @@ export default function PopupForm() {
       return;
     }
 
-    try {
-      const tracking = getTrackingContext();
+    const tracking = getTrackingContext();
+    const leadData = {
+      name: name.trim(),
+      phone: phone.trim(),
+      source: 'popup',
+      honeypot: website,
+      ...tracking,
+      variant_id: variantId,
+      mvt_impression_id: impressionId,
+      mvt_arm_key: variantId,
+      first_landing_url: window.location.href,
+      last_page_url: window.location.href,
+    };
 
-      const { error } = await supabase.functions.invoke('handle-lead', {
-        body: {
-          name: name.trim(),
-          phone: phone.trim(),
-          source: 'popup',
-          honeypot: website,
-          ...tracking,
-          variant_id: variantId,
-          mvt_impression_id: impressionId,
-          mvt_arm_key: variantId,
-          first_landing_url: window.location.href,
-          last_page_url: window.location.href,
-        }
+    // If offline, queue the lead
+    if (!isOnline) {
+      queueLead(leadData);
+      
+      toast({
+        title: "Заявка сохранена",
+        description: "Нет интернета. Заявка отправится автоматически при восстановлении связи",
       });
 
-      if (error) throw error;
+      setHasBeenShown(true);
+      localStorage.setItem('popup_submitted', 'true');
+      setOpen(false);
+      return;
+    }
+
+    setIsSubmitting(true);
+    setRetryCount(0);
+
+    try {
+      await submitWithRetry(leadData);
 
       reachGoal('popup_submit', {
         source: 'popup',
@@ -136,13 +199,25 @@ export default function PopupForm() {
       setHasBeenShown(true);
       localStorage.setItem('popup_submitted', 'true');
       setOpen(false);
-    } catch (error) {
-      console.error('Error submitting popup form:', error);
+    } catch (error: any) {
+      console.error('[PopupForm] Error submitting:', error);
+      
+      let errorMessage = "Попробуйте позже или позвоните нам: +7 962 826 50 20";
+      
+      if (error.name === 'AbortError') {
+        errorMessage = isSlowConnection 
+          ? "Медленное соединение. Попробуйте позже"
+          : "Превышено время ожидания. Проверьте интернет";
+      }
+      
       toast({
         title: "Ошибка",
-        description: "Не удалось отправить заявку. Попробуйте позже.",
+        description: errorMessage,
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
+      setRetryCount(0);
     }
   };
 
@@ -223,9 +298,31 @@ export default function PopupForm() {
             </label>
           </div>
 
-          <Button type="submit" className="w-full" size="lg">
-            Продолжить
-          </Button>
+          <div className="space-y-3">
+            {!isOnline && (
+              <div className="flex items-center gap-2 text-sm text-orange-500 bg-orange-500/10 p-3 rounded-lg">
+                <WifiOff className="h-4 w-4 flex-shrink-0" />
+                <span>Нет интернета. Заявка будет сохранена</span>
+              </div>
+            )}
+            
+            {isSubmitting && retryCount > 1 && (
+              <div className="text-sm text-orange-500 animate-pulse text-center">
+                Повторная попытка ({retryCount}/3)...
+              </div>
+            )}
+            
+            <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  {retryCount > 0 ? `Попытка ${retryCount}/3...` : "Отправка..."}
+                </>
+              ) : (
+                "Продолжить"
+              )}
+            </Button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>
