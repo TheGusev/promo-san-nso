@@ -27,7 +27,21 @@ export function ABTestProvider({ children }: { children: ReactNode }) {
         const detectedIntent = detectIntent() as Intent;
         const trackingContext = getTrackingContext();
 
-        // Check if variant is already assigned in session
+        // Check localStorage first (persists across sessions)
+        const localVariant = localStorage.getItem(`variant_${detectedIntent}`);
+        const localImpressionId = localStorage.getItem(`impression_${detectedIntent}`);
+        
+        if (localVariant) {
+          setState({
+            variantId: localVariant as VariantId,
+            intent: detectedIntent,
+            impressionId: localImpressionId,
+            isLoading: false
+          });
+          return;
+        }
+
+        // Check sessionStorage (current session only)
         const cachedVariant = sessionStorage.getItem(`variant_${detectedIntent}`);
         const cachedImpressionId = sessionStorage.getItem(`impression_${detectedIntent}`);
         
@@ -41,8 +55,13 @@ export function ABTestProvider({ children }: { children: ReactNode }) {
           return;
         }
 
-        // Call mvt-optimize edge function once
-        const { data, error } = await supabase.functions.invoke('mvt-optimize', {
+        // Create timeout promise (3 seconds)
+        const timeoutPromise = new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('Timeout')), 3000)
+        );
+
+        // Race between API call and timeout
+        const apiPromise = supabase.functions.invoke('mvt-optimize', {
           body: {
             test_name: 'main_variant',
             intent: detectedIntent,
@@ -52,49 +71,54 @@ export function ABTestProvider({ children }: { children: ReactNode }) {
           }
         });
 
+        const { data, error } = await Promise.race([apiPromise, timeoutPromise]) as any;
+
         if (error) {
-          console.error('Error calling mvt-optimize:', error);
-          // Fallback to random
-          const fallbackVariants: VariantId[] = ['A', 'B', 'C', 'D', 'E', 'F'];
-          const randomVariant = fallbackVariants[Math.floor(Math.random() * fallbackVariants.length)];
-          setState({
-            variantId: randomVariant,
-            intent: detectedIntent,
-            impressionId: null,
-            isLoading: false
-          });
-          sessionStorage.setItem(`variant_${detectedIntent}`, randomVariant);
-        } else {
-          const selectedVariant = data.variant as VariantId;
-          const selectedImpressionId = data.impression_id;
-          
-          setState({
-            variantId: selectedVariant,
-            intent: detectedIntent,
-            impressionId: selectedImpressionId,
-            isLoading: false
-          });
-          
-          sessionStorage.setItem(`variant_${detectedIntent}`, selectedVariant);
-          if (selectedImpressionId) {
-            sessionStorage.setItem(`impression_${detectedIntent}`, selectedImpressionId);
-          }
-          
-          console.log('MVT variant selected:', {
-            variant: selectedVariant,
-            method: data.method,
-            intent: detectedIntent
-          });
+          throw error;
+        }
+
+        const selectedVariant = data.variant as VariantId;
+        const selectedImpressionId = data.impression_id;
+        
+        setState({
+          variantId: selectedVariant,
+          intent: detectedIntent,
+          impressionId: selectedImpressionId,
+          isLoading: false
+        });
+        
+        // Cache in both storages
+        sessionStorage.setItem(`variant_${detectedIntent}`, selectedVariant);
+        localStorage.setItem(`variant_${detectedIntent}`, selectedVariant);
+        
+        if (selectedImpressionId) {
+          sessionStorage.setItem(`impression_${detectedIntent}`, selectedImpressionId);
+          localStorage.setItem(`impression_${detectedIntent}`, selectedImpressionId);
         }
         
+        console.log('MVT variant selected:', {
+          variant: selectedVariant,
+          method: data.method,
+          intent: detectedIntent
+        });
+        
       } catch (error) {
-        console.error('Error loading variant:', error);
+        console.error('Error loading variant (using fallback):', error);
+        
+        // Fallback to random variant
+        const fallbackVariants: VariantId[] = ['A', 'B', 'C', 'D', 'E', 'F'];
+        const randomVariant = fallbackVariants[Math.floor(Math.random() * fallbackVariants.length)];
+        const detectedIntent = detectIntent() as Intent;
+        
         setState({
-          variantId: 'A',
-          intent: 'default',
+          variantId: randomVariant,
+          intent: detectedIntent,
           impressionId: null,
           isLoading: false
         });
+        
+        sessionStorage.setItem(`variant_${detectedIntent}`, randomVariant);
+        localStorage.setItem(`variant_${detectedIntent}`, randomVariant);
       }
     };
 

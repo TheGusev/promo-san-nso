@@ -1,7 +1,28 @@
+import { useState, useEffect, useRef } from "react";
 import { MapPin, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function Map2GIS() {
+  const [shouldLoadMap, setShouldLoadMap] = useState(false);
+  const mapSectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldLoadMap(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '200px' } // Load map 200px before it comes into view
+    );
+
+    if (mapSectionRef.current) {
+      observer.observe(mapSectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
   const organizationUrl = "https://go.2gis.com/oSzHM";
   
   // Упрощенный embed URL - карта по координатам без конкретной организации (более надежный)
@@ -33,13 +54,22 @@ export default function Map2GIS() {
       </div>
 
       <div className="relative w-full h-[300px] md:h-[400px] rounded-lg overflow-hidden border border-border bg-muted">
-        <iframe
-          src={embedUrl}
-          loading="lazy"
-          className="absolute inset-0 w-full h-full"
-          title="Карта 2GIS - ООО Санитарные Решения"
-          allow="geolocation"
-        />
+        {shouldLoadMap ? (
+          <iframe
+            src={embedUrl}
+            loading="lazy"
+            className="absolute inset-0 w-full h-full"
+            title="Карта 2GIS - ООО Санитарные Решения"
+            allow="geolocation"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center bg-muted">
+            <div className="text-center">
+              <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">Загрузка карты...</p>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">

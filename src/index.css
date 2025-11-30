@@ -119,6 +119,24 @@ All colors MUST be HSL.
     will-change: transform, opacity;
   }
 
+  /* Disable will-change on mobile devices to save GPU memory */
+  @media (max-width: 768px) {
+    .animate-fade-up,
+    .animate-fade-down,
+    .animate-fade-left,
+    .animate-fade-right,
+    .animate-scale-up,
+    .animate-blur-in {
+      will-change: auto !important;
+    }
+  }
+
+  /* Content visibility for below-fold sections (deferred rendering) */
+  .below-fold {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 500px;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .animate-fade-up,
     .animate-fade-down,

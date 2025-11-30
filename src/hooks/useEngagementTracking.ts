@@ -22,8 +22,15 @@ export function useEngagementTracking() {
   const engagementSent = useRef(false);
 
   useEffect(() => {
-    // Track scroll depth and milestones
+    let lastScrollTime = 0;
+
+    // Track scroll depth and milestones with throttling
     const handleScroll = () => {
+      // Throttle: only run once every 200ms for performance
+      const now = Date.now();
+      if (now - lastScrollTime < 200) return;
+      lastScrollTime = now;
+
       const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
       if (scrollHeight <= 0) return;
       

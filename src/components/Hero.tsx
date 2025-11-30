@@ -5,7 +5,8 @@ import { useABTest } from "@/contexts/ABTestContext";
 import { reachGoal } from "@/lib/yandexMetrika";
 
 export default function Hero() {
-  const { variantId, intent, isLoading } = useABTest();
+  const { variantId, intent } = useABTest();
+  const copy = getCopy(intent, variantId);
   
   const handleCTAClick = (type: 'primary' | 'secondary') => {
     reachGoal('hero_cta_click', { variant: variantId, button: type });
@@ -16,21 +17,6 @@ export default function Hero() {
       document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' });
     }
   };
-  
-  if (isLoading) {
-    return (
-      <section className="relative overflow-hidden bg-gradient-hero py-12 md:py-20 lg:py-32 text-primary-foreground min-h-[400px] md:min-h-[500px]">
-        <div className="container px-4">
-          <div className="animate-pulse mx-auto max-w-4xl text-center">
-            <div className="h-12 bg-white/20 rounded-lg w-3/4 mb-6 mx-auto"></div>
-            <div className="h-6 bg-white/20 rounded-lg w-1/2 mx-auto"></div>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  const copy = getCopy(intent, variantId);
 
   return (
     <section className="relative overflow-hidden bg-gradient-hero py-12 md:py-20 lg:py-32 text-primary-foreground min-h-[400px] md:min-h-[500px]">
