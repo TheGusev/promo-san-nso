@@ -21,9 +21,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { getTrackingContext } from "@/lib/tracking";
 import { useABTest } from "@/contexts/ABTestContext";
-import { Calculator as CalcIcon, Sparkles, ChevronDown, Snowflake, Flame, Target, Layers } from "lucide-react";
+import { Calculator as CalcIcon, Sparkles, ChevronDown, Snowflake, Flame, Target, Layers, Loader2, WifiOff } from "lucide-react";
 import { reachGoal } from "@/lib/yandexMetrika";
 import { logTrafficEvent } from "@/hooks/useTrafficLogging";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import { queueLead, processQueue } from "@/lib/offlineQueue";
 
 const objectTypes = [
   { value: "apartment", label: "Квартира", basePrice: 2500 },
@@ -45,6 +47,7 @@ const services = [
 export default function Calculator() {
   const { toast } = useToast();
   const { variantId, intent, impressionId } = useABTest();
+  const { isOnline, isSlowConnection } = useNetworkStatus();
   const calcRef = useRef<HTMLElement>(null);
   const hasTrackedOpen = useRef(false);
   const [advancedOpen, setAdvancedOpen] = useState(false);
@@ -63,6 +66,21 @@ export default function Calculator() {
 
   const [calculatedPrice, setCalculatedPrice] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+
+  // Process offline queue when coming back online
+  useEffect(() => {
+    if (isOnline) {
+      processQueue().then(({ success, failed }) => {
+        if (success > 0) {
+          toast({
+            title: "Заявки отправлены",
+            description: `${success} заявок из очереди успешно отправлено`,
+          });
+        }
+      });
+    }
+  }, [isOnline, toast]);
 
   // Track calculator visibility with Intersection Observer
   useEffect(() => {
@@ -130,6 +148,36 @@ export default function Calculator() {
     });
   };
 
+  const submitWithRetry = async (leadData: any, maxRetries = 3, timeout = 8000) => {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      setRetryCount(attempt);
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+      try {
+        const { error, data: response } = await supabase.functions.invoke('handle-lead', {
+          body: leadData,
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (error) throw error;
+        return { success: true, data: response };
+      } catch (err: any) {
+        clearTimeout(timeoutId);
+        console.log(`[Calculator] Attempt ${attempt}/${maxRetries} failed:`, err);
+        
+        if (attempt === maxRetries) {
+          throw err;
+        }
+        
+        // Exponential backoff: wait longer between retries
+        await new Promise(r => setTimeout(r, attempt * 1000));
+      }
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -147,7 +195,65 @@ export default function Calculator() {
       return;
     }
 
+    // Check if offline - queue the lead
+    if (!isOnline) {
+      const tracking = getTrackingContext();
+      const objectType = objectTypes.find(t => t.value === formData.objectType);
+      const service = services.find(s => s.value === formData.service);
+      
+      const basePrice = objectType && service 
+        ? Math.round((objectType.basePrice + (parseInt(formData.area) * 50)) * service.multiplier)
+        : 0;
+      
+      const discountPercent = variantId === 'F' || variantId === 'E' ? 25 : 15;
+      const discountAmount = Math.round(basePrice * (discountPercent / 100));
+
+      const leadData = {
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        object_type: formData.objectType,
+        area_m2: parseInt(formData.area),
+        service: formData.service,
+        client_type: formData.clientType,
+        base_price: basePrice,
+        discount_percent: discountPercent,
+        discount_amount: discountAmount,
+        final_price: calculatedPrice,
+        source: 'website_calculator',
+        ...tracking,
+        variant_id: variantId,
+        mvt_impression_id: impressionId,
+        mvt_arm_key: variantId,
+        first_landing_url: window.location.href,
+        last_page_url: window.location.href
+      };
+
+      queueLead(leadData);
+      
+      toast({
+        title: "Заявка сохранена",
+        description: "Нет интернета. Заявка отправится автоматически при восстановлении связи",
+      });
+
+      // Reset form
+      setFormData({
+        name: "",
+        phone: "",
+        email: "",
+        objectType: "",
+        area: "",
+        service: "",
+        clientType: "individual",
+        method: "cold_fog",
+        frequency: "one_time"
+      });
+      setCalculatedPrice(null);
+      return;
+    }
+
     setIsSubmitting(true);
+    setRetryCount(0);
 
     try {
       const tracking = getTrackingContext();
@@ -161,30 +267,29 @@ export default function Calculator() {
       const discountPercent = variantId === 'F' || variantId === 'E' ? 25 : 15;
       const discountAmount = Math.round(basePrice * (discountPercent / 100));
 
-      const { error } = await supabase.functions.invoke('handle-lead', {
-        body: {
-          name: formData.name,
-          phone: formData.phone,
-          email: formData.email,
-          object_type: formData.objectType,
-          area_m2: parseInt(formData.area),
-          service: formData.service,
-          client_type: formData.clientType,
-          base_price: basePrice,
-          discount_percent: discountPercent,
-          discount_amount: discountAmount,
-          final_price: calculatedPrice,
-          source: 'website_calculator',
-          ...tracking,
-          variant_id: variantId,
-          mvt_impression_id: impressionId,
-          mvt_arm_key: variantId,
-          first_landing_url: window.location.href,
-          last_page_url: window.location.href
-        }
-      });
+      const leadData = {
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        object_type: formData.objectType,
+        area_m2: parseInt(formData.area),
+        service: formData.service,
+        client_type: formData.clientType,
+        base_price: basePrice,
+        discount_percent: discountPercent,
+        discount_amount: discountAmount,
+        final_price: calculatedPrice,
+        source: 'website_calculator',
+        ...tracking,
+        variant_id: variantId,
+        mvt_impression_id: impressionId,
+        mvt_arm_key: variantId,
+        first_landing_url: window.location.href,
+        last_page_url: window.location.href
+      };
 
-      if (error) throw error;
+      // Try to submit with retry logic
+      await submitWithRetry(leadData);
 
       toast({
         title: "Заявка отправлена!",
@@ -220,15 +325,25 @@ export default function Calculator() {
       });
       setCalculatedPrice(null);
 
-    } catch (error) {
-      console.error('Error submitting lead:', error);
+    } catch (error: any) {
+      console.error('[Calculator] Error submitting lead:', error);
+      
+      let errorMessage = "Попробуйте ещё раз или позвоните нам: +7 962 826 50 20";
+      
+      if (error.name === 'AbortError') {
+        errorMessage = isSlowConnection 
+          ? "Медленное соединение. Попробуйте позже или позвоните нам"
+          : "Превышено время ожидания. Проверьте интернет-соединение";
+      }
+      
       toast({
         title: "Ошибка отправки",
-        description: "Попробуйте ещё раз или позвоните нам",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
       setIsSubmitting(false);
+      setRetryCount(0);
     }
   };
 
@@ -462,9 +577,43 @@ export default function Calculator() {
                   />
                 </div>
 
-                <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
-                  {isSubmitting ? "Отправка..." : "Оставить заявку"}
-                </Button>
+                <div className="space-y-3">
+                  {!isOnline && (
+                    <div className="flex items-center gap-2 text-sm text-orange-500 bg-orange-500/10 p-3 rounded-lg">
+                      <WifiOff className="h-4 w-4 flex-shrink-0" />
+                      <span>Нет интернета. Заявка будет отправлена автоматически</span>
+                    </div>
+                  )}
+                  
+                  {isSlowConnection && isOnline && (
+                    <div className="flex items-center gap-2 text-sm text-orange-500 bg-orange-500/10 p-3 rounded-lg">
+                      <WifiOff className="h-4 w-4 flex-shrink-0" />
+                      <span>Медленное соединение. Отправка может занять время</span>
+                    </div>
+                  )}
+                  
+                  {isSubmitting && retryCount > 1 && (
+                    <div className="text-sm text-orange-500 animate-pulse text-center">
+                      Повторная попытка ({retryCount}/3)...
+                    </div>
+                  )}
+                  
+                  <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        {retryCount > 0 ? `Попытка ${retryCount}/3...` : "Отправка..."}
+                      </>
+                    ) : !isOnline ? (
+                      <>
+                        <WifiOff className="h-4 w-4 mr-2" />
+                        Сохранить заявку
+                      </>
+                    ) : (
+                      "Оставить заявку"
+                    )}
+                  </Button>
+                </div>
 
                 <p className="text-xs text-center text-muted-foreground">
                   Нажимая кнопку, вы соглашаетесь с{" "}
