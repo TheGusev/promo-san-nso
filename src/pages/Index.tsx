@@ -49,25 +49,33 @@ const Index = () => {
           <Services />
         </section>
         <Calculator />
-        <Suspense fallback={<div className="h-96" />}>
-          <section id="reviews">
-            <Reviews />
-          </section>
-        </Suspense>
-        <Suspense fallback={<div className="h-96" />}>
-          <section id="articles">
-            <Articles />
-          </section>
-        </Suspense>
-        <Suspense fallback={<div className="h-64" />}>
-          <FAQ />
-        </Suspense>
+        <div className="below-fold">
+          <Suspense fallback={<div className="h-96" />}>
+            <section id="reviews">
+              <Reviews />
+            </section>
+          </Suspense>
+        </div>
+        <div className="below-fold">
+          <Suspense fallback={<div className="h-96" />}>
+            <section id="articles">
+              <Articles />
+            </section>
+          </Suspense>
+        </div>
+        <div className="below-fold">
+          <Suspense fallback={<div className="h-64" />}>
+            <FAQ />
+          </Suspense>
+        </div>
       </main>
-      <Suspense fallback={<div className="h-32" />}>
-        <section id="footer">
-          <Footer />
-        </section>
-      </Suspense>
+      <div className="below-fold">
+        <Suspense fallback={<div className="h-32" />}>
+          <section id="footer">
+            <Footer />
+          </section>
+        </Suspense>
+      </div>
       <FloatingButtons />
       <PopupForm />
     </div>

@@ -29,6 +29,16 @@ export function AnimatedSection({
   threshold = 0.1
 }: AnimatedSectionProps) {
   const { ref, isInView } = useInView({ threshold });
+  
+  // Detect reduced motion preference
+  const prefersReducedMotion = typeof window !== 'undefined' 
+    ? window.matchMedia('(prefers-reduced-motion: reduce)').matches 
+    : false;
+
+  // Skip animations if reduced motion is preferred
+  if (prefersReducedMotion) {
+    return <div className={className}>{children}</div>;
+  }
 
   return (
     <div
@@ -40,7 +50,6 @@ export function AnimatedSection({
       )}
       style={{ 
         animationDelay: isInView ? `${delay}ms` : undefined,
-        willChange: !isInView ? 'transform, opacity' : 'auto',
         contain: 'layout style paint'
       }}
     >
