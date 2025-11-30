@@ -112,6 +112,27 @@ serve(async (req) => {
       last_page_url: leadData.last_page_url?.substring(0, 500) || null,
     };
 
+    // Backend validation for area_m2 (prevent overflow from Android autofill)
+    if (sanitizedLead.area_m2 && (sanitizedLead.area_m2 < 0 || sanitizedLead.area_m2 > 100000)) {
+      console.log('Invalid area_m2 value detected:', sanitizedLead.area_m2);
+      sanitizedLead.area_m2 = null;
+    }
+
+    // Cap prices at safe maximum (10 million)
+    const MAX_PRICE = 10000000;
+    if (sanitizedLead.base_price && sanitizedLead.base_price > MAX_PRICE) {
+      console.log('base_price exceeds maximum:', sanitizedLead.base_price);
+      sanitizedLead.base_price = null;
+    }
+    if (sanitizedLead.final_price && sanitizedLead.final_price > MAX_PRICE) {
+      console.log('final_price exceeds maximum:', sanitizedLead.final_price);
+      sanitizedLead.final_price = null;
+    }
+    if (sanitizedLead.discount_amount && sanitizedLead.discount_amount > MAX_PRICE) {
+      console.log('discount_amount exceeds maximum:', sanitizedLead.discount_amount);
+      sanitizedLead.discount_amount = null;
+    }
+
     // Insert lead into database
     const { data: lead, error: insertError } = await supabase
       .from('leads')

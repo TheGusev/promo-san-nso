@@ -118,7 +118,12 @@ export default function Calculator() {
     const service = services.find(s => s.value === formData.service);
     const area = parseInt(formData.area);
 
-    if (!objectType || !service || isNaN(area) || area <= 0) {
+    if (!objectType || !service || isNaN(area) || area <= 0 || area > 100000) {
+      toast({
+        title: "Некорректная площадь",
+        description: "Укажите площадь от 1 до 100 000 м²",
+        variant: "destructive"
+      });
       return;
     }
 
@@ -386,11 +391,15 @@ export default function Calculator() {
                 <Label htmlFor="area">Площадь (м²) *</Label>
                 <Input
                   id="area"
+                  name="area"
                   type="number"
                   placeholder="50"
                   value={formData.area}
                   onChange={(e) => setFormData({ ...formData, area: e.target.value })}
                   min="1"
+                  max="100000"
+                  autoComplete="off"
+                  inputMode="numeric"
                 />
               </div>
 
@@ -548,6 +557,8 @@ export default function Calculator() {
                     <Label htmlFor="name">Ваше имя *</Label>
                     <Input
                       id="name"
+                      name="name"
+                      autoComplete="name"
                       placeholder="Иван"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -558,7 +569,9 @@ export default function Calculator() {
                     <Label htmlFor="phone">Телефон *</Label>
                     <Input
                       id="phone"
+                      name="phone"
                       type="tel"
+                      autoComplete="tel"
                       placeholder="+7 (___) ___-__-__"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
