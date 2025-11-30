@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { PhoneInput } from "@/components/ui/phone-input";
+import { extractPhoneDigits, isValidRussianPhone } from "@/hooks/usePhoneMask";
 import { X, Loader2, WifiOff } from "lucide-react";
 import { reachGoal } from "@/lib/yandexMetrika";
 import { supabase } from "@/integrations/supabase/client";
@@ -125,6 +127,15 @@ export default function PopupForm() {
       return;
     }
 
+    if (!isValidRussianPhone(phone)) {
+      toast({
+        title: "Некорректный номер",
+        description: "Введите номер в формате +7 (XXX) XXX-XX-XX",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!agreed) {
       toast({
         title: "Ошибка",
@@ -148,7 +159,7 @@ export default function PopupForm() {
     const tracking = getTrackingContext();
     const leadData = {
       name: name.trim(),
-      phone: phone.trim(),
+      phone: extractPhoneDigits(phone),
       source: 'popup',
       honeypot: website,
       ...tracking,
@@ -259,12 +270,10 @@ export default function PopupForm() {
 
           <div className="space-y-2">
             <Label htmlFor="popup-phone">Телефон</Label>
-            <Input
+            <PhoneInput
               id="popup-phone"
-              type="tel"
-              placeholder="+7 (999) 123-45-67"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={setPhone}
               required
             />
           </div>
