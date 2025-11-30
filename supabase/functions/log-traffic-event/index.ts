@@ -17,6 +17,8 @@ const ALLOWED_EVENT_TYPES = [
   'hero_view',
   'calc_open',
   'calc_submit',
+  'calc_whatsapp_click',
+  'calc_telegram_click',
   'popup_open',
   'popup_submit',
   'whatsapp_click',
