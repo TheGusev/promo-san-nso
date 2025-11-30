@@ -4,6 +4,8 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Card } from "./ui/card";
 import { AnimatedSection } from "@/components/ui/animated-section";
+import { PhoneInput } from "@/components/ui/phone-input";
+import { extractPhoneDigits, isValidRussianPhone } from "@/hooks/usePhoneMask";
 import {
   Select,
   SelectContent,
@@ -195,6 +197,15 @@ export default function Calculator() {
       return;
     }
 
+    if (!isValidRussianPhone(formData.phone)) {
+      toast({
+        title: "Некорректный номер телефона",
+        description: "Введите номер в формате +7 (XXX) XXX-XX-XX",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (!calculatedPrice) {
       calculatePrice();
       return;
@@ -215,7 +226,7 @@ export default function Calculator() {
 
       const leadData = {
         name: formData.name,
-        phone: formData.phone,
+        phone: extractPhoneDigits(formData.phone),
         email: formData.email,
         object_type: formData.objectType,
         area_m2: parseInt(formData.area),
@@ -274,7 +285,7 @@ export default function Calculator() {
 
       const leadData = {
         name: formData.name,
-        phone: formData.phone,
+        phone: extractPhoneDigits(formData.phone),
         email: formData.email,
         object_type: formData.objectType,
         area_m2: parseInt(formData.area),
@@ -567,14 +578,10 @@ export default function Calculator() {
 
                   <div className="space-y-2">
                     <Label htmlFor="phone">Телефон *</Label>
-                    <Input
+                    <PhoneInput
                       id="phone"
-                      name="phone"
-                      type="tel"
-                      autoComplete="tel"
-                      placeholder="+7 (___) ___-__-__"
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      onChange={(value) => setFormData({ ...formData, phone: value })}
                     />
                   </div>
                 </div>
