@@ -72,23 +72,29 @@ serve(async (req) => {
     recentTimestamps.push(now);
     rateLimitMap.set(rateLimitKey, recentTimestamps);
 
-    // Sanitize UTM parameters (whitelist)
+// Helper to safely truncate strings
+    const truncateString = (str: unknown, maxLength: number): string | null => {
+      if (str === null || str === undefined) return null;
+      return String(str).substring(0, maxLength);
+    };
+
+    // Sanitize UTM parameters (whitelist) with length limits
     const sanitizedEvent = {
-      session_id: eventData.session_id,
+      session_id: truncateString(eventData.session_id, 100),
       event_type: eventData.event_type,
-      page_url: eventData.page_url,
-      referrer: eventData.referrer,
-      intent: eventData.intent,
-      variant_id: eventData.variant_id,
-      device_type: eventData.device_type,
-      utm_source: eventData.utm_source,
-      utm_medium: eventData.utm_medium,
-      utm_campaign: eventData.utm_campaign,
-      utm_content: eventData.utm_content,
-      utm_term: eventData.utm_term,
-      keyword_raw: eventData.keyword_raw,
-      yclid: eventData.yclid,
-      gclid: eventData.gclid,
+      page_url: truncateString(eventData.page_url, 500),
+      referrer: truncateString(eventData.referrer, 500),
+      intent: truncateString(eventData.intent, 50),
+      variant_id: truncateString(eventData.variant_id, 10),
+      device_type: truncateString(eventData.device_type, 20),
+      utm_source: truncateString(eventData.utm_source, 100),
+      utm_medium: truncateString(eventData.utm_medium, 100),
+      utm_campaign: truncateString(eventData.utm_campaign, 200),
+      utm_content: truncateString(eventData.utm_content, 200),
+      utm_term: truncateString(eventData.utm_term, 200),
+      keyword_raw: truncateString(eventData.keyword_raw, 200),
+      yclid: truncateString(eventData.yclid, 100),
+      gclid: truncateString(eventData.gclid, 100),
       event_data: eventData.event_data || {}
     };
 
