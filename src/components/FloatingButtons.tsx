@@ -14,8 +14,7 @@ export default function FloatingButtons() {
   const handleTelegramClick = () => {
     reachGoal('telegram_click');
     logTrafficEvent('telegram_click');
-    const phone = "79628265020";
-    window.open(`https://t.me/+${phone}`, '_blank');
+    window.open('https://t.me/sanitarnye_resheniya_nsk', '_blank');
   };
 
   return (
