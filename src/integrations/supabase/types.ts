@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      data_cleanup_logs: {
+        Row: {
+          deleted_leads: number
+          deleted_traffic_events: number
+          executed_at: string | null
+          id: string
+        }
+        Insert: {
+          deleted_leads?: number
+          deleted_traffic_events?: number
+          executed_at?: string | null
+          id?: string
+        }
+        Update: {
+          deleted_leads?: number
+          deleted_traffic_events?: number
+          executed_at?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           area_m2: number | null
@@ -328,6 +349,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_old_data: { Args: never; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
