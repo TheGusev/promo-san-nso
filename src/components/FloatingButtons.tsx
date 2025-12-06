@@ -1,8 +1,15 @@
 import { Button } from "./ui/button";
+import { Phone } from "lucide-react";
 import { reachGoal } from "@/lib/yandexMetrika";
 import { logTrafficEvent } from "@/hooks/useTrafficLogging";
 
 export default function FloatingButtons() {
+  const handlePhoneClick = () => {
+    reachGoal('phone_click');
+    logTrafficEvent('phone_click');
+    window.location.href = 'tel:+73833121660';
+  };
+
   const handleWhatsAppClick = () => {
     reachGoal('whatsapp_click');
     logTrafficEvent('whatsapp_click');
@@ -19,6 +26,16 @@ export default function FloatingButtons() {
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+      {/* Кнопка звонка - только на мобильных */}
+      <Button
+        size="lg"
+        className="h-14 w-14 rounded-full shadow-elevated p-0 bg-primary hover:bg-primary/90 border-0 sm:hidden"
+        onClick={handlePhoneClick}
+        aria-label="Позвонить"
+      >
+        <Phone className="h-7 w-7 text-primary-foreground" />
+      </Button>
+
       <Button
         size="lg"
         className="h-14 w-14 rounded-full shadow-elevated p-0 bg-[#25D366] hover:bg-[#20BA5A] border-0"
