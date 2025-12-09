@@ -46,11 +46,11 @@ export default function Hero() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               size="lg" 
-              className="bg-white text-primary hover:bg-white/90 font-semibold shadow-elevated"
+              className="bg-white text-primary hover:bg-white/90 font-semibold shadow-elevated group"
               onClick={() => handleCTAClick('primary')}
             >
-              {copy.cta_primary}
-              <ArrowRight className="ml-2 h-5 w-5" />
+              Рассчитать стоимость
+              <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Button>
             <Button 
               size="lg" 
@@ -58,7 +58,7 @@ export default function Hero() {
               className="border-white/30 bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm"
               onClick={() => handleCTAClick('secondary')}
             >
-              {copy.cta_secondary}
+              Все услуги
             </Button>
           </div>
 

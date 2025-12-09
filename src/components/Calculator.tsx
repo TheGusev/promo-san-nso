@@ -29,13 +29,14 @@ import { logTrafficEvent } from "@/hooks/useTrafficLogging";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { queueLead, processQueue } from "@/lib/offlineQueue";
 
+// Коэффициенты по типу объекта (влияют на цену за м²)
 const objectTypes = [
-  { value: "apartment", label: "Квартира", basePrice: 2500 },
-  { value: "house", label: "Частный дом", basePrice: 3500 },
-  { value: "office", label: "Офис", basePrice: 4000 },
-  { value: "warehouse", label: "Склад", basePrice: 5000 },
-  { value: "shop", label: "Магазин", basePrice: 3500 },
-  { value: "restaurant", label: "Ресторан/Кафе", basePrice: 4500 },
+  { value: "apartment", label: "Квартира", basePrice: 2500, sqmMultiplier: 1.0 },
+  { value: "house", label: "Частный дом", basePrice: 3500, sqmMultiplier: 1.3 },
+  { value: "office", label: "Офис", basePrice: 4000, sqmMultiplier: 1.2 },
+  { value: "warehouse", label: "Склад", basePrice: 5000, sqmMultiplier: 1.5 },
+  { value: "shop", label: "Магазин", basePrice: 3500, sqmMultiplier: 1.2 },
+  { value: "restaurant", label: "Ресторан/Кафе", basePrice: 4500, sqmMultiplier: 1.4 },
 ];
 
 const services = [
@@ -45,6 +46,26 @@ const services = [
   { value: "ozonation", label: "Озонирование", multiplier: 0.8 },
   { value: "complex", label: "Комплекс услуг", multiplier: 1.5 },
 ];
+
+// DEV: Тестовые расчёты для проверки формулы
+if (import.meta.env.DEV) {
+  const testPrice = (objType: string, svc: string, area: number) => {
+    const obj = objectTypes.find(t => t.value === objType);
+    const service = services.find(s => s.value === svc);
+    if (!obj || !service) return 0;
+    let pricePerSqm = 50;
+    if (area > 100) pricePerSqm = 40;
+    if (area > 200) pricePerSqm = 30;
+    const adjustedPricePerSqm = pricePerSqm * obj.sqmMultiplier;
+    return Math.round((obj.basePrice + (area * adjustedPricePerSqm)) * service.multiplier);
+  };
+  console.log('=== Тест цен калькулятора ===');
+  console.log('Квартира 50м² дезинсекция:', testPrice('apartment', 'disinsection', 50), '₽');
+  console.log('Дом 50м² дезинсекция:', testPrice('house', 'disinsection', 50), '₽');
+  console.log('Склад 50м² дезинсекция:', testPrice('warehouse', 'disinsection', 50), '₽');
+  console.log('Квартира 150м² дезинсекция:', testPrice('apartment', 'disinsection', 150), '₽');
+  console.log('Дом 150м² дератизация:', testPrice('house', 'deratization', 150), '₽');
+}
 
 export default function Calculator() {
   const { toast } = useToast();
@@ -58,9 +79,9 @@ export default function Calculator() {
     name: "",
     phone: "",
     email: "",
-    objectType: "",
-    area: "",
-    service: "",
+    objectType: "apartment",      // Дефолт: Квартира
+    area: "50",                   // Дефолт: 50 м²
+    service: "disinsection",      // Дефолт: Дезинсекция (самый частый)
     clientType: "individual",
     method: "cold_fog",
     frequency: "one_time"
@@ -109,8 +130,8 @@ export default function Calculator() {
   const calculatePrice = () => {
     if (!formData.objectType || !formData.area || !formData.service) {
       toast({
-        title: "Заполните все поля",
-        description: "Укажите тип объекта, площадь и услугу для расчёта",
+        title: "Заполните обязательные поля",
+        description: "Укажите тип объекта, услугу и площадь для расчёта стоимости",
         variant: "destructive"
       });
       return;
@@ -129,15 +150,18 @@ export default function Calculator() {
       return;
     }
 
-    // Price calculation formula
+    // Price calculation formula with object type coefficient
     let basePrice = objectType.basePrice;
     let pricePerSqm = 50; // базовая цена за м²
 
     if (area > 100) pricePerSqm = 40;
     if (area > 200) pricePerSqm = 30;
 
+    // Применяем коэффициент типа объекта к цене за м²
+    const adjustedPricePerSqm = pricePerSqm * objectType.sqmMultiplier;
+
     const totalPrice = Math.round(
-      (basePrice + (area * pricePerSqm)) * service.multiplier
+      (basePrice + (area * adjustedPricePerSqm)) * service.multiplier
     );
 
     // Apply discount for online orders (variant F focus)
@@ -218,8 +242,14 @@ export default function Calculator() {
       const objectType = objectTypes.find(t => t.value === formData.objectType);
       const service = services.find(s => s.value === formData.service);
       
+      const area = parseInt(formData.area);
+      let pricePerSqm = 50;
+      if (area > 100) pricePerSqm = 40;
+      if (area > 200) pricePerSqm = 30;
+      const adjustedPricePerSqm = objectType ? pricePerSqm * objectType.sqmMultiplier : pricePerSqm;
+      
       const basePrice = objectType && service 
-        ? Math.round((objectType.basePrice + (parseInt(formData.area) * 50)) * service.multiplier)
+        ? Math.round((objectType.basePrice + (area * adjustedPricePerSqm)) * service.multiplier)
         : 0;
       
       const discountPercent = variantId === 'F' || variantId === 'E' ? 25 : 15;
@@ -253,14 +283,14 @@ export default function Calculator() {
         description: "Нет интернета. Заявка отправится автоматически при восстановлении связи",
       });
 
-      // Reset form
+      // Reset form with defaults
       setFormData({
         name: "",
         phone: "",
         email: "",
-        objectType: "",
-        area: "",
-        service: "",
+        objectType: "apartment",
+        area: "50",
+        service: "disinsection",
         clientType: "individual",
         method: "cold_fog",
         frequency: "one_time"
@@ -277,8 +307,14 @@ export default function Calculator() {
       const objectType = objectTypes.find(t => t.value === formData.objectType);
       const service = services.find(s => s.value === formData.service);
       
+      const area = parseInt(formData.area);
+      let pricePerSqm = 50;
+      if (area > 100) pricePerSqm = 40;
+      if (area > 200) pricePerSqm = 30;
+      const adjustedPricePerSqm = objectType ? pricePerSqm * objectType.sqmMultiplier : pricePerSqm;
+      
       const basePrice = objectType && service 
-        ? Math.round((objectType.basePrice + (parseInt(formData.area) * 50)) * service.multiplier)
+        ? Math.round((objectType.basePrice + (area * adjustedPricePerSqm)) * service.multiplier)
         : 0;
       
       const discountPercent = variantId === 'F' || variantId === 'E' ? 25 : 15;
@@ -328,14 +364,14 @@ export default function Calculator() {
         final_price: calculatedPrice
       });
 
-      // Reset form
+      // Reset form with defaults
       setFormData({
         name: "",
         phone: "",
         email: "",
-        objectType: "",
-        area: "",
-        service: "",
+        objectType: "apartment",
+        area: "50",
+        service: "disinsection",
         clientType: "individual",
         method: "cold_fog",
         frequency: "one_time"
