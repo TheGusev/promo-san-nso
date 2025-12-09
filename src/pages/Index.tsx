@@ -42,13 +42,10 @@ const Index = () => {
       <Header />
       <main>
         <Hero />
+        <Calculator />
         <StatsCounter />
         <WhyChooseUs />
         <HowWeWork />
-        <section id="services">
-          <Services />
-        </section>
-        <Calculator />
         <div className="below-fold">
           <Suspense fallback={<div className="h-96" />}>
             <section id="reviews">
@@ -56,6 +53,9 @@ const Index = () => {
             </section>
           </Suspense>
         </div>
+        <section id="services">
+          <Services />
+        </section>
         <div className="below-fold">
           <Suspense fallback={<div className="h-96" />}>
             <section id="articles">
