@@ -28,6 +28,7 @@ import { reachGoal } from "@/lib/yandexMetrika";
 import { logTrafficEvent } from "@/hooks/useTrafficLogging";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { queueLead, processQueue } from "@/lib/offlineQueue";
+import { useAnimatedNumber } from "@/hooks/useAnimatedNumber";
 
 // ============================================================================
 // ТАРИФЫ И КОЭФФИЦИЕНТЫ
@@ -341,6 +342,11 @@ export default function Calculator() {
     
     return result;
   }, [formData]);
+
+  // Анимированные значения цен
+  const animatedFinalPrice = useAnimatedNumber(priceResult.finalPrice);
+  const animatedBasePrice = useAnimatedNumber(priceResult.basePrice);
+  const animatedDiscountPercent = useAnimatedNumber(priceResult.discountPercent, { duration: 300 });
 
   // Process offline queue when coming back online
   useEffect(() => {
@@ -681,13 +687,15 @@ export default function Calculator() {
               <div className="p-6 rounded-lg bg-gradient-hero text-primary-foreground">
                 <div className="space-y-2">
                   <p className="text-sm opacity-90">Стоимость со скидкой</p>
-                  <p className="text-4xl font-bold">{priceResult.finalPrice.toLocaleString('ru-RU')} ₽</p>
+                  <p className="text-4xl font-bold tabular-nums">
+                    {animatedFinalPrice.toLocaleString('ru-RU')} ₽
+                  </p>
                   <p className="text-sm opacity-90 flex items-center gap-1">
                     <Sparkles className="h-4 w-4" />
-                    Скидка {priceResult.discountPercent}% за онлайн-заказ
+                    Скидка <span className="tabular-nums">{animatedDiscountPercent}%</span> за онлайн-заказ
                   </p>
-                  <p className="text-xs opacity-70 line-through">
-                    Без скидки: {priceResult.basePrice.toLocaleString('ru-RU')} ₽
+                  <p className="text-xs opacity-70 line-through tabular-nums">
+                    Без скидки: {animatedBasePrice.toLocaleString('ru-RU')} ₽
                   </p>
                 </div>
               </div>
