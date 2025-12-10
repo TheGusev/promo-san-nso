@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -29,72 +29,323 @@ import { logTrafficEvent } from "@/hooks/useTrafficLogging";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { queueLead, processQueue } from "@/lib/offlineQueue";
 
-// Коэффициенты по типу объекта (влияют на цену за м²)
-const objectTypes = [
-  { value: "apartment", label: "Квартира", basePrice: 2500, sqmMultiplier: 1.0 },
-  { value: "house", label: "Частный дом", basePrice: 3500, sqmMultiplier: 1.3 },
-  { value: "office", label: "Офис", basePrice: 4000, sqmMultiplier: 1.2 },
-  { value: "warehouse", label: "Склад", basePrice: 5000, sqmMultiplier: 1.5 },
-  { value: "shop", label: "Магазин", basePrice: 3500, sqmMultiplier: 1.2 },
-  { value: "restaurant", label: "Ресторан/Кафе", basePrice: 4500, sqmMultiplier: 1.4 },
-];
+// ============================================================================
+// ТАРИФЫ И КОЭФФИЦИЕНТЫ
+// ============================================================================
 
-const services = [
-  { value: "disinfection", label: "Дезинфекция", multiplier: 1.0 },
-  { value: "disinsection", label: "Дезинсекция", multiplier: 1.0 },
-  { value: "deratization", label: "Дератизация", multiplier: 1.2 },
-  { value: "ozonation", label: "Озонирование", multiplier: 0.8 },
-  { value: "complex", label: "Комплекс услуг", multiplier: 1.5 },
-];
+type ObjectType = 'apartment' | 'house' | 'office' | 'warehouse' | 'shop' | 'restaurant';
+type ServiceType = 'disinfection' | 'disinsection' | 'deratization' | 'ozonation' | 'complex';
+type MethodType = 'cold_fog' | 'hot_fog' | 'spot' | 'complex_method';
+type FrequencyType = 'one_time' | 'monthly' | 'quarterly';
+type ClientType = 'individual' | 'ip' | 'company';
 
-// DEV: Тестовые расчёты для проверки формулы
-if (import.meta.env.DEV) {
-  const testPrice = (objType: string, svc: string, area: number) => {
-    const obj = objectTypes.find(t => t.value === objType);
-    const service = services.find(s => s.value === svc);
-    if (!obj || !service) return 0;
-    let pricePerSqm = 50;
-    if (area > 100) pricePerSqm = 40;
-    if (area > 200) pricePerSqm = 30;
-    const adjustedPricePerSqm = pricePerSqm * obj.sqmMultiplier;
-    return Math.round((obj.basePrice + (area * adjustedPricePerSqm)) * service.multiplier);
-  };
-  console.log('=== Тест цен калькулятора ===');
-  console.log('Квартира 50м² дезинсекция:', testPrice('apartment', 'disinsection', 50), '₽');
-  console.log('Дом 50м² дезинсекция:', testPrice('house', 'disinsection', 50), '₽');
-  console.log('Склад 50м² дезинсекция:', testPrice('warehouse', 'disinsection', 50), '₽');
-  console.log('Квартира 150м² дезинсекция:', testPrice('apartment', 'disinsection', 150), '₽');
-  console.log('Дом 150м² дератизация:', testPrice('house', 'deratization', 150), '₽');
+interface TariffEntry {
+  perM2: number;
+  min: number;
 }
+
+interface FormData {
+  name: string;
+  phone: string;
+  email: string;
+  objectType: ObjectType;
+  area: string;
+  service: ServiceType;
+  clientType: ClientType;
+  method: MethodType;
+  frequency: FrequencyType;
+}
+
+interface PriceResult {
+  basePrice: number;
+  discountPercent: number;
+  discountAmount: number;
+  finalPrice: number;
+}
+
+// Тарифы: clientType → service → objectType → { perM2, min }
+const TARIFFS: Record<'fiz' | 'ur', Record<ServiceType, Record<ObjectType, TariffEntry>>> = {
+  fiz: {
+    disinsection: {
+      apartment:    { perM2: 50, min: 2500 },
+      house:        { perM2: 60, min: 3500 },
+      office:       { perM2: 55, min: 4000 },
+      warehouse:    { perM2: 40, min: 5000 },
+      shop:         { perM2: 55, min: 3500 },
+      restaurant:   { perM2: 65, min: 4500 },
+    },
+    disinfection: {
+      apartment:    { perM2: 45, min: 2500 },
+      house:        { perM2: 55, min: 3000 },
+      office:       { perM2: 50, min: 3500 },
+      warehouse:    { perM2: 35, min: 4500 },
+      shop:         { perM2: 50, min: 3000 },
+      restaurant:   { perM2: 60, min: 4000 },
+    },
+    deratization: {
+      apartment:    { perM2: 55, min: 3000 },
+      house:        { perM2: 65, min: 4000 },
+      office:       { perM2: 60, min: 4500 },
+      warehouse:    { perM2: 45, min: 5500 },
+      shop:         { perM2: 60, min: 4000 },
+      restaurant:   { perM2: 70, min: 5000 },
+    },
+    ozonation: {
+      apartment:    { perM2: 40, min: 2000 },
+      house:        { perM2: 50, min: 2800 },
+      office:       { perM2: 45, min: 3000 },
+      warehouse:    { perM2: 30, min: 4000 },
+      shop:         { perM2: 45, min: 2800 },
+      restaurant:   { perM2: 55, min: 3500 },
+    },
+    complex: {
+      apartment:    { perM2: 80, min: 4500 },
+      house:        { perM2: 95, min: 5500 },
+      office:       { perM2: 85, min: 6000 },
+      warehouse:    { perM2: 70, min: 8000 },
+      shop:         { perM2: 85, min: 5500 },
+      restaurant:   { perM2: 100, min: 7000 },
+    },
+  },
+  ur: {
+    disinsection: {
+      apartment:    { perM2: 55, min: 3000 },
+      house:        { perM2: 65, min: 4000 },
+      office:       { perM2: 60, min: 4500 },
+      warehouse:    { perM2: 45, min: 5500 },
+      shop:         { perM2: 60, min: 4000 },
+      restaurant:   { perM2: 70, min: 5000 },
+    },
+    disinfection: {
+      apartment:    { perM2: 50, min: 3000 },
+      house:        { perM2: 60, min: 3500 },
+      office:       { perM2: 55, min: 4000 },
+      warehouse:    { perM2: 40, min: 5000 },
+      shop:         { perM2: 55, min: 3500 },
+      restaurant:   { perM2: 65, min: 4500 },
+    },
+    deratization: {
+      apartment:    { perM2: 60, min: 3500 },
+      house:        { perM2: 70, min: 4500 },
+      office:       { perM2: 65, min: 5000 },
+      warehouse:    { perM2: 50, min: 6000 },
+      shop:         { perM2: 65, min: 4500 },
+      restaurant:   { perM2: 75, min: 5500 },
+    },
+    ozonation: {
+      apartment:    { perM2: 45, min: 2500 },
+      house:        { perM2: 55, min: 3200 },
+      office:       { perM2: 50, min: 3500 },
+      warehouse:    { perM2: 35, min: 4500 },
+      shop:         { perM2: 50, min: 3200 },
+      restaurant:   { perM2: 60, min: 4000 },
+    },
+    complex: {
+      apartment:    { perM2: 90, min: 5000 },
+      house:        { perM2: 105, min: 6000 },
+      office:       { perM2: 95, min: 6500 },
+      warehouse:    { perM2: 80, min: 9000 },
+      shop:         { perM2: 95, min: 6000 },
+      restaurant:   { perM2: 110, min: 7500 },
+    },
+  },
+};
+
+// Коэффициенты метода обработки
+const METHOD_COEFF: Record<MethodType, number> = {
+  cold_fog: 1.0,        // Холодный туман — базовый
+  hot_fog: 1.2,         // Горячий туман +20%
+  spot: 0.8,            // Точечная -20%
+  complex_method: 1.3,  // Комплексная +30%
+};
+
+// Коэффициенты периодичности
+const FREQ_COEFF: Record<FrequencyType, number> = {
+  one_time: 1.0,    // Разово — базовый
+  monthly: 0.7,     // Абонемент -30%
+  quarterly: 0.85,  // Ежеквартально -15%
+};
+
+// Лейблы для UI
+const OBJECT_LABELS: Record<ObjectType, string> = {
+  apartment: 'Квартира',
+  house: 'Частный дом',
+  office: 'Офис',
+  warehouse: 'Склад',
+  shop: 'Магазин',
+  restaurant: 'Ресторан/Кафе',
+};
+
+const SERVICE_LABELS: Record<ServiceType, string> = {
+  disinfection: 'Дезинфекция',
+  disinsection: 'Дезинсекция',
+  deratization: 'Дератизация',
+  ozonation: 'Озонирование',
+  complex: 'Комплекс услуг',
+};
+
+// ============================================================================
+// ФУНКЦИИ РАСЧЁТА ЦЕНЫ
+// ============================================================================
+
+function getBaseTariff(form: FormData): TariffEntry {
+  const clientBranch = form.clientType === 'company' || form.clientType === 'ip' ? 'ur' : 'fiz';
+  const serviceTariffs = TARIFFS[clientBranch][form.service];
+  const tariff = serviceTariffs?.[form.objectType] || { perM2: 50, min: 2500 };
+  
+  // Применяем коэффициенты метода и периодичности к цене за м²
+  const perM2Effective = tariff.perM2 * METHOD_COEFF[form.method] * FREQ_COEFF[form.frequency];
+  
+  return { perM2: perM2Effective, min: tariff.min };
+}
+
+function calcBasePrice(form: FormData): number {
+  const { perM2, min } = getBaseTariff(form);
+  const area = parseInt(form.area) || 0;
+  const raw = Math.round(perM2 * area);
+  return Math.max(raw, min);
+}
+
+function calcDiscountPercent(form: FormData): number {
+  let p = 0;
+
+  // Базовая онлайн-скидка: 5%
+  p += 0.05;
+
+  // Комплекс услуг: +10%
+  if (form.service === 'complex') {
+    p += 0.10;
+  }
+
+  // Объёмная скидка по площади
+  const area = parseInt(form.area) || 0;
+  if (area > 50 && area <= 100)       p += 0.05;
+  else if (area > 100 && area <= 300) p += 0.10;
+  else if (area > 300 && area <= 700) p += 0.15;
+  else if (area > 700 && area <= 1500) p += 0.20;
+  else if (area > 1500)               p += 0.25;
+
+  // Периодичность
+  if (form.frequency === 'monthly')        p += 0.05;
+  else if (form.frequency === 'quarterly') p += 0.03;
+
+  // Ограничение до 30%
+  return Math.min(p, 0.30);
+}
+
+function calcPrice(form: FormData): PriceResult {
+  const base = calcBasePrice(form);
+  const discountPercent = calcDiscountPercent(form);
+  const discountAmount = Math.round(base * discountPercent);
+  const final = Math.round(base - discountAmount);
+
+  return {
+    basePrice: base,
+    discountPercent: Math.round(discountPercent * 100),
+    discountAmount,
+    finalPrice: final,
+  };
+}
+
+// ============================================================================
+// КОНСОЛЬНЫЕ ТЕСТЫ (только в DEV)
+// ============================================================================
+
+if (import.meta.env.DEV) {
+  console.log('=== Тесты калькулятора (новая логика) ===');
+  
+  // Тест 1: Квартира 30м², дезинсекция, разово
+  const test1: FormData = { 
+    objectType: 'apartment', service: 'disinsection', area: '30', 
+    method: 'cold_fog', frequency: 'one_time', clientType: 'individual',
+    name: '', phone: '', email: ''
+  };
+  const result1 = calcPrice(test1);
+  console.log('Квартира 30м² дезинсекция разово:', result1);
+  // Ожидаем: basePrice=2500 (min), скидка=5%, final=2375₽
+  
+  // Тест 2: Квартира 120м², комплекс, ежемесячно
+  const test2: FormData = { 
+    objectType: 'apartment', service: 'complex', area: '120', 
+    method: 'cold_fog', frequency: 'monthly', clientType: 'individual',
+    name: '', phone: '', email: ''
+  };
+  const result2 = calcPrice(test2);
+  console.log('Квартира 120м² комплекс ежемесячно:', result2);
+  // Ожидаем: скидка=30% (5+10+10+5=30%)
+  
+  // Тест 3: Склад 10м², разово, точечная
+  const test3: FormData = { 
+    objectType: 'warehouse', service: 'disinsection', area: '10', 
+    method: 'spot', frequency: 'one_time', clientType: 'individual',
+    name: '', phone: '', email: ''
+  };
+  const result3 = calcPrice(test3);
+  console.log('Склад 10м² точечная разово:', result3);
+  // Ожидаем: min=5000₽, скидка=5%
+  
+  // Тест 4: 2000м², комплекс, ежемесячно (макс скидка)
+  const test4: FormData = { 
+    objectType: 'warehouse', service: 'complex', area: '2000', 
+    method: 'cold_fog', frequency: 'monthly', clientType: 'individual',
+    name: '', phone: '', email: ''
+  };
+  const result4 = calcPrice(test4);
+  console.log('Склад 2000м² комплекс ежемесячно:', result4);
+  // Ожидаем: скидка=30% (max)
+}
+
+// ============================================================================
+// КОМПОНЕНТ
+// ============================================================================
 
 export default function Calculator() {
   const { toast } = useToast();
-  const { variantId, intent, impressionId } = useABTest();
+  const { variantId, impressionId } = useABTest();
   const { isOnline, isSlowConnection } = useNetworkStatus();
   const calcRef = useRef<HTMLElement>(null);
   const hasTrackedOpen = useRef(false);
+  const hasTrackedCalculate = useRef(false);
   const [advancedOpen, setAdvancedOpen] = useState(false);
   
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     phone: "",
     email: "",
-    objectType: "apartment",      // Дефолт: Квартира
-    area: "50",                   // Дефолт: 50 м²
-    service: "disinsection",      // Дефолт: Дезинсекция (самый частый)
+    objectType: "apartment",
+    area: "50",
+    service: "disinsection",
     clientType: "individual",
     method: "cold_fog",
     frequency: "one_time"
   });
 
-  const [calculatedPrice, setCalculatedPrice] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  // Автоматический расчёт цены при любом изменении формы
+  const priceResult = useMemo(() => {
+    const result = calcPrice(formData);
+    
+    // Трекинг calc_calculate при первом изменении (после начальных значений)
+    if (!hasTrackedCalculate.current && parseInt(formData.area) > 0) {
+      hasTrackedCalculate.current = true;
+      reachGoal('calc_calculate', {
+        service: formData.service,
+        objectType: formData.objectType,
+        area: parseInt(formData.area),
+        price: result.finalPrice
+      });
+    }
+    
+    return result;
+  }, [formData]);
 
   // Process offline queue when coming back online
   useEffect(() => {
     if (isOnline) {
-      processQueue().then(({ success, failed }) => {
+      processQueue().then(({ success }) => {
         if (success > 0) {
           toast({
             title: "Заявки отправлены",
@@ -125,61 +376,20 @@ export default function Calculator() {
     observer.observe(calcRef.current);
 
     return () => observer.disconnect();
-  }, []);
+  }, [variantId]);
 
-  const calculatePrice = () => {
-    if (!formData.objectType || !formData.area || !formData.service) {
-      toast({
-        title: "Заполните обязательные поля",
-        description: "Укажите тип объекта, услугу и площадь для расчёта стоимости",
-        variant: "destructive"
-      });
-      return;
+  // Сброс состояния "отправлено" при изменении параметров расчёта
+  useEffect(() => {
+    if (isSubmitted) {
+      setIsSubmitted(false);
     }
+  }, [formData.objectType, formData.area, formData.service, formData.method, formData.frequency, formData.clientType]);
 
-    const objectType = objectTypes.find(t => t.value === formData.objectType);
-    const service = services.find(s => s.value === formData.service);
-    const area = parseInt(formData.area);
-
-    if (!objectType || !service || isNaN(area) || area <= 0 || area > 100000) {
-      toast({
-        title: "Некорректная площадь",
-        description: "Укажите площадь от 1 до 100 000 м²",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    // Price calculation formula with object type coefficient
-    let basePrice = objectType.basePrice;
-    let pricePerSqm = 50; // базовая цена за м²
-
-    if (area > 100) pricePerSqm = 40;
-    if (area > 200) pricePerSqm = 30;
-
-    // Применяем коэффициент типа объекта к цене за м²
-    const adjustedPricePerSqm = pricePerSqm * objectType.sqmMultiplier;
-
-    const totalPrice = Math.round(
-      (basePrice + (area * adjustedPricePerSqm)) * service.multiplier
-    );
-
-    // Apply discount for online orders (variant F focus)
-    const discount = variantId === 'F' || variantId === 'E' ? 0.25 : 0.15;
-    const discountedPrice = Math.round(totalPrice * (1 - discount));
-
-    setCalculatedPrice(discountedPrice);
-    
-    // Track calculation
-    reachGoal('calc_calculate', {
-      service: formData.service,
-      objectType: formData.objectType,
-      area: area,
-      price: discountedPrice
-    });
+  const handleFieldChange = <K extends keyof FormData>(field: K, value: FormData[K]) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const submitWithRetry = async (leadData: any, maxRetries = 3, timeout = 8000) => {
+  const submitWithRetry = async (leadData: Record<string, unknown>, maxRetries = 3, timeout = 8000) => {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       setRetryCount(attempt);
       
@@ -195,7 +405,7 @@ export default function Calculator() {
         
         if (error) throw error;
         return { success: true, data: response };
-      } catch (err: any) {
+      } catch (err) {
         clearTimeout(timeoutId);
         console.log(`[Calculator] Attempt ${attempt}/${maxRetries} failed:`, err);
         
@@ -203,12 +413,11 @@ export default function Calculator() {
           throw err;
         }
         
-        // Exponential backoff: wait longer between retries
+        // Exponential backoff
         await new Promise(r => setTimeout(r, attempt * 1000));
       }
     }
   };
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -231,51 +440,33 @@ export default function Calculator() {
       return;
     }
 
-    if (!calculatedPrice) {
-      calculatePrice();
-      return;
-    }
+    const tracking = getTrackingContext();
+    
+    const leadData = {
+      name: formData.name,
+      phone: extractPhoneDigits(formData.phone),
+      email: formData.email,
+      object_type: formData.objectType,
+      area_m2: parseInt(formData.area),
+      service: formData.service,
+      client_type: formData.clientType,
+      method: formData.method,
+      frequency: formData.frequency,
+      base_price: priceResult.basePrice,
+      discount_percent: priceResult.discountPercent,
+      discount_amount: priceResult.discountAmount,
+      final_price: priceResult.finalPrice,
+      source: 'website_calculator',
+      ...tracking,
+      variant_id: variantId,
+      mvt_impression_id: impressionId,
+      mvt_arm_key: variantId,
+      first_landing_url: window.location.href,
+      last_page_url: window.location.href
+    };
 
     // Check if offline - queue the lead
     if (!isOnline) {
-      const tracking = getTrackingContext();
-      const objectType = objectTypes.find(t => t.value === formData.objectType);
-      const service = services.find(s => s.value === formData.service);
-      
-      const area = parseInt(formData.area);
-      let pricePerSqm = 50;
-      if (area > 100) pricePerSqm = 40;
-      if (area > 200) pricePerSqm = 30;
-      const adjustedPricePerSqm = objectType ? pricePerSqm * objectType.sqmMultiplier : pricePerSqm;
-      
-      const basePrice = objectType && service 
-        ? Math.round((objectType.basePrice + (area * adjustedPricePerSqm)) * service.multiplier)
-        : 0;
-      
-      const discountPercent = variantId === 'F' || variantId === 'E' ? 25 : 15;
-      const discountAmount = Math.round(basePrice * (discountPercent / 100));
-
-      const leadData = {
-        name: formData.name,
-        phone: extractPhoneDigits(formData.phone),
-        email: formData.email,
-        object_type: formData.objectType,
-        area_m2: parseInt(formData.area),
-        service: formData.service,
-        client_type: formData.clientType,
-        base_price: basePrice,
-        discount_percent: discountPercent,
-        discount_amount: discountAmount,
-        final_price: calculatedPrice,
-        source: 'website_calculator',
-        ...tracking,
-        variant_id: variantId,
-        mvt_impression_id: impressionId,
-        mvt_arm_key: variantId,
-        first_landing_url: window.location.href,
-        last_page_url: window.location.href
-      };
-
       queueLead(leadData);
       
       toast({
@@ -283,19 +474,8 @@ export default function Calculator() {
         description: "Нет интернета. Заявка отправится автоматически при восстановлении связи",
       });
 
-      // Reset form with defaults
-      setFormData({
-        name: "",
-        phone: "",
-        email: "",
-        objectType: "apartment",
-        area: "50",
-        service: "disinsection",
-        clientType: "individual",
-        method: "cold_fog",
-        frequency: "one_time"
-      });
-      setCalculatedPrice(null);
+      setIsSubmitted(true);
+      setFormData(prev => ({ ...prev, name: "", phone: "", email: "" }));
       return;
     }
 
@@ -303,45 +483,6 @@ export default function Calculator() {
     setRetryCount(0);
 
     try {
-      const tracking = getTrackingContext();
-      const objectType = objectTypes.find(t => t.value === formData.objectType);
-      const service = services.find(s => s.value === formData.service);
-      
-      const area = parseInt(formData.area);
-      let pricePerSqm = 50;
-      if (area > 100) pricePerSqm = 40;
-      if (area > 200) pricePerSqm = 30;
-      const adjustedPricePerSqm = objectType ? pricePerSqm * objectType.sqmMultiplier : pricePerSqm;
-      
-      const basePrice = objectType && service 
-        ? Math.round((objectType.basePrice + (area * adjustedPricePerSqm)) * service.multiplier)
-        : 0;
-      
-      const discountPercent = variantId === 'F' || variantId === 'E' ? 25 : 15;
-      const discountAmount = Math.round(basePrice * (discountPercent / 100));
-
-      const leadData = {
-        name: formData.name,
-        phone: extractPhoneDigits(formData.phone),
-        email: formData.email,
-        object_type: formData.objectType,
-        area_m2: parseInt(formData.area),
-        service: formData.service,
-        client_type: formData.clientType,
-        base_price: basePrice,
-        discount_percent: discountPercent,
-        discount_amount: discountAmount,
-        final_price: calculatedPrice,
-        source: 'website_calculator',
-        ...tracking,
-        variant_id: variantId,
-        mvt_impression_id: impressionId,
-        mvt_arm_key: variantId,
-        first_landing_url: window.location.href,
-        last_page_url: window.location.href
-      };
-
-      // Try to submit with retry logic
       await submitWithRetry(leadData);
 
       toast({
@@ -351,7 +492,7 @@ export default function Calculator() {
 
       // Track lead submission
       reachGoal('lead_submit', {
-        price: calculatedPrice,
+        price: priceResult.finalPrice,
         service: formData.service,
         objectType: formData.objectType,
         variant: variantId
@@ -361,33 +502,18 @@ export default function Calculator() {
         variant_id: variantId,
         service: formData.service,
         object_type: formData.objectType,
-        final_price: calculatedPrice
+        final_price: priceResult.finalPrice
       });
 
-      // Reset form with defaults
-      setFormData({
-        name: "",
-        phone: "",
-        email: "",
-        objectType: "apartment",
-        area: "50",
-        service: "disinsection",
-        clientType: "individual",
-        method: "cold_fog",
-        frequency: "one_time"
-      });
-      setCalculatedPrice(null);
+      setIsSubmitted(true);
+      setFormData(prev => ({ ...prev, name: "", phone: "", email: "" }));
 
-    } catch (error: any) {
+    } catch (error) {
       console.error('[Calculator] Error submitting lead:', error);
       
-      let errorMessage = "Попробуйте ещё раз или позвоните нам: +7 962 826 50 20";
-      
-      if (error.name === 'AbortError') {
-        errorMessage = isSlowConnection 
-          ? "Медленное соединение. Попробуйте позже или позвоните нам"
-          : "Превышено время ожидания. Проверьте интернет-соединение";
-      }
+      const errorMessage = isSlowConnection 
+        ? "Медленное соединение. Попробуйте позже или позвоните нам"
+        : "Попробуйте ещё раз или позвоните нам: +7 962 826 50 20";
       
       toast({
         title: "Ошибка отправки",
@@ -417,273 +543,242 @@ export default function Calculator() {
 
         <AnimatedSection animation="blur-in" delay={200}>
           <Card className="max-w-2xl mx-auto p-8 shadow-elevated">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="objectType">Тип объекта *</Label>
-                <Select value={formData.objectType} onValueChange={(value) => setFormData({ ...formData, objectType: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Выберите тип" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {objectTypes.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>
-                        {type.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="area">Площадь (м²) *</Label>
-                <Input
-                  id="area"
-                  name="area"
-                  type="number"
-                  placeholder="50"
-                  value={formData.area}
-                  onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-                  min="1"
-                  max="100000"
-                  autoComplete="off"
-                  inputMode="numeric"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="service">Услуга *</Label>
-                <Select value={formData.service} onValueChange={(value) => setFormData({ ...formData, service: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Выберите услугу" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {services.map((service) => (
-                      <SelectItem key={service.value} value={service.value}>
-                        {service.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="clientType">Тип клиента</Label>
-                <Select value={formData.clientType} onValueChange={(value) => setFormData({ ...formData, clientType: value })}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="individual">Физическое лицо</SelectItem>
-                    <SelectItem value="ip">ИП</SelectItem>
-                    <SelectItem value="company">Юридическое лицо</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* Advanced Settings */}
-            <Collapsible open={advancedOpen} onOpenChange={setAdvancedOpen}>
-              <CollapsibleTrigger asChild>
-                <Button variant="ghost" className="w-full justify-between" type="button">
-                  <span className="font-semibold">Расширенные настройки</span>
-                  <ChevronDown className={`h-4 w-4 transition-transform ${advancedOpen ? 'rotate-180' : ''}`} />
-                </Button>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="space-y-6 pt-4">
-                {/* Treatment Method */}
-                <div className="space-y-3">
-                  <Label>Метод обработки</Label>
-                  <ToggleGroup 
-                    type="single" 
-                    value={formData.method}
-                    onValueChange={(value) => value && setFormData({ ...formData, method: value })}
-                    className="grid grid-cols-2 gap-2"
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="objectType">Тип объекта *</Label>
+                  <Select 
+                    value={formData.objectType} 
+                    onValueChange={(value) => handleFieldChange('objectType', value as ObjectType)}
                   >
-                    <ToggleGroupItem value="cold_fog" className="flex flex-col items-center gap-1 h-auto py-3">
-                      <Snowflake className="h-5 w-5" />
-                      <span className="text-xs">Холодный туман</span>
-                    </ToggleGroupItem>
-                    <ToggleGroupItem value="hot_fog" className="flex flex-col items-center gap-1 h-auto py-3">
-                      <Flame className="h-5 w-5" />
-                      <span className="text-xs">Горячий туман</span>
-                    </ToggleGroupItem>
-                    <ToggleGroupItem value="spot" className="flex flex-col items-center gap-1 h-auto py-3">
-                      <Target className="h-5 w-5" />
-                      <span className="text-xs">Точечная</span>
-                    </ToggleGroupItem>
-                    <ToggleGroupItem value="complex" className="flex flex-col items-center gap-1 h-auto py-3">
-                      <Layers className="h-5 w-5" />
-                      <span className="text-xs">Комплексная</span>
-                    </ToggleGroupItem>
-                  </ToggleGroup>
-                </div>
-
-                {/* Frequency */}
-                <div className="space-y-3">
-                  <Label>Периодичность</Label>
-                  <ToggleGroup 
-                    type="single" 
-                    value={formData.frequency}
-                    onValueChange={(value) => value && setFormData({ ...formData, frequency: value })}
-                    className="grid grid-cols-3 gap-2"
-                  >
-                    <ToggleGroupItem value="one_time" className="text-xs">
-                      Разово
-                    </ToggleGroupItem>
-                    <ToggleGroupItem value="monthly" className="text-xs">
-                      Ежемесячно
-                    </ToggleGroupItem>
-                    <ToggleGroupItem value="quarterly" className="text-xs">
-                      Ежеквартально
-                    </ToggleGroupItem>
-                  </ToggleGroup>
-                </div>
-
-                {/* Price Comparison Table */}
-                {formData.area && parseInt(formData.area) === 50 && (
-                  <div className="bg-muted/50 rounded-lg p-4">
-                    <h4 className="font-semibold text-sm mb-3">Сравнение методов при 50 м²</h4>
-                    <div className="space-y-2 text-xs">
-                      <div className="flex justify-between items-center">
-                        <span className="text-muted-foreground">Холодный туман:</span>
-                        <div className="flex gap-2 items-center">
-                          <span className="line-through text-muted-foreground">3500₽</span>
-                          <span className="font-semibold text-secondary">2800₽</span>
-                        </div>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-muted-foreground">Горячий туман:</span>
-                        <div className="flex gap-2 items-center">
-                          <span className="line-through text-muted-foreground">4000₽</span>
-                          <span className="font-semibold text-secondary">3200₽</span>
-                        </div>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-muted-foreground">Точечная:</span>
-                        <div className="flex gap-2 items-center">
-                          <span className="line-through text-muted-foreground">3000₽</span>
-                          <span className="font-semibold text-secondary">2400₽</span>
-                        </div>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-muted-foreground">Комплексная:</span>
-                        <div className="flex gap-2 items-center">
-                          <span className="line-through text-muted-foreground">5000₽</span>
-                          <span className="font-semibold text-secondary">4000₽</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </CollapsibleContent>
-            </Collapsible>
-
-            {calculatedPrice && (
-              <>
-                <div className="p-6 rounded-lg bg-gradient-hero text-primary-foreground">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm opacity-90">Стоимость со скидкой</p>
-                      <p className="text-4xl font-bold">{calculatedPrice.toLocaleString('ru-RU')} ₽</p>
-                      <p className="text-sm opacity-90 mt-1 flex items-center gap-1">
-                        <Sparkles className="h-4 w-4" />
-                        Скидка {variantId === 'F' || variantId === 'E' ? '25%' : '15%'} за онлайн-заказ
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-
-            {!calculatedPrice ? (
-              <Button type="button" onClick={calculatePrice} size="lg" className="w-full">
-                Рассчитать стоимость
-              </Button>
-            ) : (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Ваше имя *</Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      autoComplete="name"
-                      placeholder="Иван"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Телефон *</Label>
-                    <PhoneInput
-                      id="phone"
-                      value={formData.phone}
-                      onChange={(value) => setFormData({ ...formData, phone: value })}
-                    />
-                  </div>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Выберите тип" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(Object.keys(OBJECT_LABELS) as ObjectType[]).map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {OBJECT_LABELS[type]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email (необязательно)</Label>
+                  <Label htmlFor="area">Площадь (м²) *</Label>
                   <Input
-                    id="email"
-                    type="email"
-                    placeholder="ivan@example.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    id="area"
+                    name="area"
+                    type="number"
+                    placeholder="50"
+                    value={formData.area}
+                    onChange={(e) => handleFieldChange('area', e.target.value)}
+                    min="1"
+                    max="100000"
+                    autoComplete="off"
+                    inputMode="numeric"
                   />
                 </div>
 
-                <div className="space-y-3">
-                  {!isOnline && (
-                    <div className="flex items-center gap-2 text-sm text-orange-500 bg-orange-500/10 p-3 rounded-lg">
-                      <WifiOff className="h-4 w-4 flex-shrink-0" />
-                      <span>Нет интернета. Заявка будет отправлена автоматически</span>
-                    </div>
-                  )}
-                  
-                  {isSlowConnection && isOnline && (
-                    <div className="flex items-center gap-2 text-sm text-orange-500 bg-orange-500/10 p-3 rounded-lg">
-                      <WifiOff className="h-4 w-4 flex-shrink-0" />
-                      <span>Медленное соединение. Отправка может занять время</span>
-                    </div>
-                  )}
-                  
-                  {isSubmitting && retryCount > 1 && (
-                    <div className="text-sm text-orange-500 animate-pulse text-center">
-                      Повторная попытка ({retryCount}/3)...
-                    </div>
-                  )}
-                  
-                  <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        {retryCount > 0 ? `Попытка ${retryCount}/3...` : "Отправка..."}
-                      </>
-                    ) : !isOnline ? (
-                      <>
-                        <WifiOff className="h-4 w-4 mr-2" />
-                        Сохранить заявку
-                      </>
-                    ) : (
-                      "Оставить заявку"
-                    )}
-                  </Button>
+                <div className="space-y-2">
+                  <Label htmlFor="service">Услуга *</Label>
+                  <Select 
+                    value={formData.service} 
+                    onValueChange={(value) => handleFieldChange('service', value as ServiceType)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Выберите услугу" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(Object.keys(SERVICE_LABELS) as ServiceType[]).map((service) => (
+                        <SelectItem key={service} value={service}>
+                          {SERVICE_LABELS[service]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
-                <p className="text-xs text-center text-muted-foreground">
-                  Нажимая кнопку, вы соглашаетесь с{" "}
-                  <a href="/privacy" className="underline hover:text-primary">
-                    политикой конфиденциальности
-                  </a>
-                </p>
-              </>
-            )}
-          </form>
-        </Card>
+                <div className="space-y-2">
+                  <Label htmlFor="clientType">Тип клиента</Label>
+                  <Select 
+                    value={formData.clientType} 
+                    onValueChange={(value) => handleFieldChange('clientType', value as ClientType)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="individual">Физическое лицо</SelectItem>
+                      <SelectItem value="ip">ИП</SelectItem>
+                      <SelectItem value="company">Юридическое лицо</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Advanced Settings */}
+              <Collapsible open={advancedOpen} onOpenChange={setAdvancedOpen}>
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" className="w-full justify-between" type="button">
+                    <span className="font-semibold">Расширенные настройки</span>
+                    <ChevronDown className={`h-4 w-4 transition-transform ${advancedOpen ? 'rotate-180' : ''}`} />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-6 pt-4">
+                  {/* Treatment Method */}
+                  <div className="space-y-3">
+                    <Label>Метод обработки</Label>
+                    <ToggleGroup 
+                      type="single" 
+                      value={formData.method}
+                      onValueChange={(value) => value && handleFieldChange('method', value as MethodType)}
+                      className="grid grid-cols-2 gap-2"
+                    >
+                      <ToggleGroupItem value="cold_fog" className="flex flex-col items-center gap-1 h-auto py-3">
+                        <Snowflake className="h-5 w-5" />
+                        <span className="text-xs">Холодный туман</span>
+                      </ToggleGroupItem>
+                      <ToggleGroupItem value="hot_fog" className="flex flex-col items-center gap-1 h-auto py-3">
+                        <Flame className="h-5 w-5" />
+                        <span className="text-xs">Горячий туман</span>
+                      </ToggleGroupItem>
+                      <ToggleGroupItem value="spot" className="flex flex-col items-center gap-1 h-auto py-3">
+                        <Target className="h-5 w-5" />
+                        <span className="text-xs">Точечная</span>
+                      </ToggleGroupItem>
+                      <ToggleGroupItem value="complex_method" className="flex flex-col items-center gap-1 h-auto py-3">
+                        <Layers className="h-5 w-5" />
+                        <span className="text-xs">Комплексная</span>
+                      </ToggleGroupItem>
+                    </ToggleGroup>
+                  </div>
+
+                  {/* Frequency */}
+                  <div className="space-y-3">
+                    <Label>Периодичность</Label>
+                    <ToggleGroup 
+                      type="single" 
+                      value={formData.frequency}
+                      onValueChange={(value) => value && handleFieldChange('frequency', value as FrequencyType)}
+                      className="grid grid-cols-3 gap-2"
+                    >
+                      <ToggleGroupItem value="one_time" className="text-xs">
+                        Разово
+                      </ToggleGroupItem>
+                      <ToggleGroupItem value="monthly" className="text-xs">
+                        Ежемесячно
+                      </ToggleGroupItem>
+                      <ToggleGroupItem value="quarterly" className="text-xs">
+                        Ежеквартально
+                      </ToggleGroupItem>
+                    </ToggleGroup>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+
+              {/* Блок цены - всегда виден */}
+              <div className="p-6 rounded-lg bg-gradient-hero text-primary-foreground">
+                <div className="space-y-2">
+                  <p className="text-sm opacity-90">Стоимость со скидкой</p>
+                  <p className="text-4xl font-bold">{priceResult.finalPrice.toLocaleString('ru-RU')} ₽</p>
+                  <p className="text-sm opacity-90 flex items-center gap-1">
+                    <Sparkles className="h-4 w-4" />
+                    Скидка {priceResult.discountPercent}% за онлайн-заказ
+                  </p>
+                  <p className="text-xs opacity-70 line-through">
+                    Без скидки: {priceResult.basePrice.toLocaleString('ru-RU')} ₽
+                  </p>
+                </div>
+              </div>
+
+              {/* Контактные данные - всегда видны */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Ваше имя *</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    autoComplete="name"
+                    placeholder="Иван"
+                    value={formData.name}
+                    onChange={(e) => handleFieldChange('name', e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Телефон *</Label>
+                  <PhoneInput
+                    id="phone"
+                    value={formData.phone}
+                    onChange={(value) => handleFieldChange('phone', value)}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email (необязательно)</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="ivan@example.com"
+                  value={formData.email}
+                  onChange={(e) => handleFieldChange('email', e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-3">
+                {!isOnline && (
+                  <div className="flex items-center gap-2 text-sm text-orange-500 bg-orange-500/10 p-3 rounded-lg">
+                    <WifiOff className="h-4 w-4 flex-shrink-0" />
+                    <span>Нет интернета. Заявка будет отправлена автоматически</span>
+                  </div>
+                )}
+                
+                {isSlowConnection && isOnline && (
+                  <div className="flex items-center gap-2 text-sm text-orange-500 bg-orange-500/10 p-3 rounded-lg">
+                    <WifiOff className="h-4 w-4 flex-shrink-0" />
+                    <span>Медленное соединение. Отправка может занять время</span>
+                  </div>
+                )}
+                
+                {isSubmitting && retryCount > 1 && (
+                  <div className="text-sm text-orange-500 animate-pulse text-center">
+                    Повторная попытка ({retryCount}/3)...
+                  </div>
+                )}
+
+                {isSubmitted && (
+                  <div className="text-sm text-secondary bg-secondary/10 p-3 rounded-lg text-center">
+                    ✓ Заявка отправлена! Можете отправить ещё одну
+                  </div>
+                )}
+                
+                <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      {retryCount > 0 ? `Попытка ${retryCount}/3...` : "Отправка..."}
+                    </>
+                  ) : !isOnline ? (
+                    <>
+                      <WifiOff className="h-4 w-4 mr-2" />
+                      Сохранить заявку
+                    </>
+                  ) : (
+                    "Оставить заявку"
+                  )}
+                </Button>
+              </div>
+
+              <p className="text-xs text-center text-muted-foreground">
+                Нажимая кнопку, вы соглашаетесь с{" "}
+                <a href="/privacy" className="underline hover:text-primary">
+                  политикой конфиденциальности
+                </a>
+              </p>
+            </form>
+          </Card>
         </AnimatedSection>
       </div>
     </section>
