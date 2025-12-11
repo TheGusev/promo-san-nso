@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.mvt-optimize]
 verify_jwt = false
+
+[functions.test-telegram]
+verify_jwt = false
