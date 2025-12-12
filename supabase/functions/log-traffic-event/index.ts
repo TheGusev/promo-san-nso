@@ -21,6 +21,7 @@ const ALLOWED_EVENT_TYPES = [
   'calc_telegram_click',
   'popup_open',
   'popup_submit',
+  'max_click',
   'whatsapp_click',
   'telegram_click',
   'phone_click',
