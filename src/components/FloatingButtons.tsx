@@ -16,8 +16,7 @@ export default function FloatingButtons() {
   const handleMaxClick = () => {
     reachGoal('max_click');
     logTrafficEvent('max_click');
-    // Пока deeplink недоступен — открываем сайт MAX
-    window.open('https://max.ru/', '_blank');
+    window.open(`https://max.ru/chat/+${WHATSAPP_PHONE}`, '_blank');
   };
 
   const handlePhoneClick = () => {
