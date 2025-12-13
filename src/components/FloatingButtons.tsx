@@ -13,12 +13,6 @@ export default function FloatingButtons() {
   const buttonClasses = "h-12 w-12 sm:h-14 sm:w-14 rounded-full shadow-elevated p-0 border-0";
   const iconClasses = "h-6 w-6 sm:h-7 sm:w-7";
 
-  const handleMaxClick = () => {
-    reachGoal('max_click');
-    logTrafficEvent('max_click');
-    window.open(`https://max.ru/chat/+${WHATSAPP_PHONE}`, '_blank');
-  };
-
   const handlePhoneClick = () => {
     reachGoal('phone_click');
     logTrafficEvent('phone_click');
@@ -39,18 +33,6 @@ export default function FloatingButtons() {
 
   return (
     <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col gap-2 sm:gap-3">
-      {/* MAX - СВЕРХУ */}
-      <Button
-        size="lg"
-        className={`${buttonClasses} bg-[#168ACD] hover:bg-[#1276B0]`}
-        onClick={handleMaxClick}
-        aria-label="MAX"
-      >
-        <svg viewBox="0 0 24 24" className={`${iconClasses} fill-white`}>
-          <path d="M4 4h4l4 10 4-10h4v16h-3.5V8.5L9.5 18h-3L3.5 8.5V20H0V4h4z"/>
-        </svg>
-      </Button>
-
       {/* Телефон - только мобильные */}
       <Button
         size="lg"
