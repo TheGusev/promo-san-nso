@@ -428,7 +428,18 @@ export default function Calculator() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Debug logging
+    console.log('[Calculator] Form submit attempt:', {
+      name: formData.name,
+      phone: formData.phone,
+      hasName: !!formData.name,
+      hasPhone: !!formData.phone,
+      isValidPhone: isValidRussianPhone(formData.phone),
+      timestamp: new Date().toISOString()
+    });
+
     if (!formData.name || !formData.phone) {
+      console.log('[Calculator] Validation failed: missing name or phone');
       toast({
         title: "Заполните контактные данные",
         description: "Имя и телефон обязательны для отправки заявки",
@@ -438,6 +449,7 @@ export default function Calculator() {
     }
 
     if (!isValidRussianPhone(formData.phone)) {
+      console.log('[Calculator] Validation failed: invalid phone', formData.phone);
       toast({
         title: "Некорректный номер телефона",
         description: "Введите номер в формате +7 (XXX) XXX-XX-XX",
@@ -445,6 +457,8 @@ export default function Calculator() {
       });
       return;
     }
+    
+    console.log('[Calculator] Validation passed, submitting...');
 
     const tracking = getTrackingContext();
     
@@ -533,273 +547,332 @@ export default function Calculator() {
   };
 
   return (
-    <section id="calculator" ref={calcRef} className="py-4 sm:py-8 md:py-16 bg-background">
-      <div className="container px-2 sm:px-4">
-        {/* Компактный заголовок */}
-        <div className="text-center mb-3 sm:mb-6 md:mb-10">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold flex items-center justify-center gap-2">
-            <CalcIcon className="h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8 text-primary" />
-            Рассчитайте стоимость
-          </h2>
-          <p className="hidden sm:block text-sm md:text-base text-muted-foreground mt-2">
-            Получите расчёт со скидкой до 30%
-          </p>
+    <>
+      <section id="calculator" ref={calcRef} className="py-4 sm:py-8 md:py-16 bg-background pb-32 sm:pb-8">
+        <div className="container px-2 sm:px-4">
+          {/* Компактный заголовок */}
+          <div className="text-center mb-3 sm:mb-6 md:mb-10">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold flex items-center justify-center gap-2">
+              <CalcIcon className="h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8 text-primary" />
+              Рассчитайте стоимость
+            </h2>
+            <p className="hidden sm:block text-sm md:text-base text-muted-foreground mt-2">
+              Получите расчёт со скидкой до 30%
+            </p>
+          </div>
+
+          <Card className="max-w-2xl mx-auto p-3 sm:p-5 md:p-8 shadow-elevated">
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4 md:space-y-6">
+              
+              {/* ЦЕНА СРАЗУ ВИДНА - перемещена вверх */}
+              <div className="p-3 sm:p-4 md:p-5 rounded-lg bg-gradient-hero text-primary-foreground">
+                <div className="flex items-center justify-between gap-2">
+                  <div>
+                    <p className="text-2xl sm:text-3xl md:text-4xl font-bold tabular-nums">
+                      {animatedFinalPrice.toLocaleString('ru-RU')} ₽
+                    </p>
+                    <p className="text-[10px] sm:text-xs opacity-70 line-through tabular-nums">
+                      {animatedBasePrice.toLocaleString('ru-RU')} ₽
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs sm:text-sm flex items-center gap-1 justify-end">
+                      <Sparkles className="h-3 w-3 sm:h-4 sm:w-4" />
+                      <span className="tabular-nums">−{animatedDiscountPercent}%</span>
+                    </p>
+                    <p className="text-[10px] sm:text-xs opacity-80">Гарантия 1 год</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Основные поля - 2 колонки */}
+              <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4">
+                <div className="space-y-1">
+                  <Label htmlFor="objectType" className="text-xs sm:text-sm">Тип объекта</Label>
+                  <Select 
+                    value={formData.objectType} 
+                    onValueChange={(value) => handleFieldChange('objectType', value as ObjectType)}
+                  >
+                    <SelectTrigger className="h-9 sm:h-10 text-xs sm:text-sm">
+                      <SelectValue placeholder="Выберите" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(Object.keys(OBJECT_LABELS) as ObjectType[]).map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {OBJECT_LABELS[type]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1">
+                  <Label htmlFor="area" className="text-xs sm:text-sm">Площадь (м²)</Label>
+                  <Input
+                    id="area"
+                    name="area"
+                    type="number"
+                    placeholder="50"
+                    value={formData.area}
+                    onChange={(e) => handleFieldChange('area', e.target.value)}
+                    min="1"
+                    max="100000"
+                    autoComplete="off"
+                    inputMode="numeric"
+                    className="h-9 sm:h-10 text-xs sm:text-sm"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <Label htmlFor="service" className="text-xs sm:text-sm">Услуга</Label>
+                  <Select 
+                    value={formData.service} 
+                    onValueChange={(value) => handleFieldChange('service', value as ServiceType)}
+                  >
+                    <SelectTrigger className="h-9 sm:h-10 text-xs sm:text-sm">
+                      <SelectValue placeholder="Выберите" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(Object.keys(SERVICE_LABELS) as ServiceType[]).map((service) => (
+                        <SelectItem key={service} value={service}>
+                          {SERVICE_LABELS[service]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1">
+                  <Label htmlFor="clientType" className="text-xs sm:text-sm">Тип клиента</Label>
+                  <Select 
+                    value={formData.clientType} 
+                    onValueChange={(value) => handleFieldChange('clientType', value as ClientType)}
+                  >
+                    <SelectTrigger className="h-9 sm:h-10 text-xs sm:text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="individual">Физ. лицо</SelectItem>
+                      <SelectItem value="ip">ИП</SelectItem>
+                      <SelectItem value="company">Юр. лицо</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Расширенные настройки - скрыты по умолчанию на мобилке */}
+              <Collapsible open={advancedOpen} onOpenChange={setAdvancedOpen}>
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" size="sm" className="w-full justify-between h-8 text-xs sm:text-sm" type="button">
+                    <span>Метод и периодичность</span>
+                    <ChevronDown className={`h-3 w-3 sm:h-4 sm:w-4 transition-transform ${advancedOpen ? 'rotate-180' : ''}`} />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-3 pt-2">
+                  <div className="space-y-1">
+                    <Label className="text-xs">Метод</Label>
+                    <ToggleGroup 
+                      type="single" 
+                      value={formData.method}
+                      onValueChange={(value) => value && handleFieldChange('method', value as MethodType)}
+                      className="grid grid-cols-4 gap-1"
+                    >
+                      <ToggleGroupItem value="cold_fog" className="flex flex-col items-center gap-0.5 h-auto py-1.5 px-1 text-[10px] sm:text-xs">
+                        <Snowflake className="h-3 w-3 sm:h-4 sm:w-4" />
+                        <span>Холодный</span>
+                      </ToggleGroupItem>
+                      <ToggleGroupItem value="hot_fog" className="flex flex-col items-center gap-0.5 h-auto py-1.5 px-1 text-[10px] sm:text-xs">
+                        <Flame className="h-3 w-3 sm:h-4 sm:w-4" />
+                        <span>Горячий</span>
+                      </ToggleGroupItem>
+                      <ToggleGroupItem value="spot" className="flex flex-col items-center gap-0.5 h-auto py-1.5 px-1 text-[10px] sm:text-xs">
+                        <Target className="h-3 w-3 sm:h-4 sm:w-4" />
+                        <span>Точечная</span>
+                      </ToggleGroupItem>
+                      <ToggleGroupItem value="complex_method" className="flex flex-col items-center gap-0.5 h-auto py-1.5 px-1 text-[10px] sm:text-xs">
+                        <Layers className="h-3 w-3 sm:h-4 sm:w-4" />
+                        <span>Комплекс</span>
+                      </ToggleGroupItem>
+                    </ToggleGroup>
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label className="text-xs">Периодичность</Label>
+                    <ToggleGroup 
+                      type="single" 
+                      value={formData.frequency}
+                      onValueChange={(value) => value && handleFieldChange('frequency', value as FrequencyType)}
+                      className="grid grid-cols-3 gap-1"
+                    >
+                      <ToggleGroupItem value="one_time" className="text-[10px] sm:text-xs h-7 sm:h-8">
+                        Разово
+                      </ToggleGroupItem>
+                      <ToggleGroupItem value="monthly" className="text-[10px] sm:text-xs h-7 sm:h-8">
+                        Ежемесячно
+                      </ToggleGroupItem>
+                      <ToggleGroupItem value="quarterly" className="text-[10px] sm:text-xs h-7 sm:h-8">
+                        Ежеквартально
+                      </ToggleGroupItem>
+                    </ToggleGroup>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+
+              {/* Контактные данные - видны только на десктопе, на мобилке в sticky */}
+              <div className="hidden sm:block">
+                <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                  <div className="space-y-1">
+                    <Label htmlFor="name" className="text-xs sm:text-sm">Имя *</Label>
+                    <Input
+                      id="name"
+                      name="name"
+                      autoComplete="name"
+                      placeholder="Иван"
+                      value={formData.name}
+                      onChange={(e) => handleFieldChange('name', e.target.value)}
+                      className="h-9 sm:h-10 text-xs sm:text-sm"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="phone" className="text-xs sm:text-sm">Телефон *</Label>
+                    <PhoneInput
+                      id="phone"
+                      value={formData.phone}
+                      onChange={(value) => handleFieldChange('phone', value)}
+                      className="h-9 sm:h-10 text-xs sm:text-sm"
+                    />
+                  </div>
+                </div>
+
+                {/* Email в отдельном collapsible */}
+                <Collapsible>
+                  <CollapsibleTrigger asChild>
+                    <button type="button" className="text-xs text-muted-foreground hover:text-foreground mt-2">
+                      + Добавить email
+                    </button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="pt-2">
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="ivan@example.com"
+                      value={formData.email}
+                      onChange={(e) => handleFieldChange('email', e.target.value)}
+                      className="h-9 sm:h-10 text-xs sm:text-sm"
+                    />
+                  </CollapsibleContent>
+                </Collapsible>
+
+                {/* Статусы и кнопка - десктоп */}
+                <div className="space-y-2 mt-4">
+                  {!isOnline && (
+                    <div className="flex items-center gap-2 text-xs text-orange-500 bg-orange-500/10 p-2 rounded">
+                      <WifiOff className="h-3 w-3 flex-shrink-0" />
+                      <span>Нет сети — заявка отправится позже</span>
+                    </div>
+                  )}
+                  
+                  {isSlowConnection && isOnline && (
+                    <div className="flex items-center gap-2 text-xs text-orange-500 bg-orange-500/10 p-2 rounded">
+                      <WifiOff className="h-3 w-3 flex-shrink-0" />
+                      <span>Медленное соединение</span>
+                    </div>
+                  )}
+                  
+                  {isSubmitting && retryCount > 1 && (
+                    <div className="text-xs text-orange-500 text-center">
+                      Попытка {retryCount}/3...
+                    </div>
+                  )}
+
+                  {isSubmitted && (
+                    <div className="text-xs text-secondary bg-secondary/10 p-2 rounded text-center">
+                      ✓ Заявка отправлена
+                    </div>
+                  )}
+                  
+                  <Button type="submit" size="default" className="w-full h-10 sm:h-11 text-sm sm:text-base" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        {retryCount > 0 ? `${retryCount}/3...` : "Отправка..."}
+                      </>
+                    ) : !isOnline ? (
+                      <>
+                        <WifiOff className="h-4 w-4 mr-2" />
+                        Сохранить заявку
+                      </>
+                    ) : (
+                      "Оставить заявку"
+                    )}
+                  </Button>
+                </div>
+
+                <p className="text-[10px] sm:text-xs text-center text-muted-foreground mt-2">
+                  Нажимая кнопку, вы соглашаетесь с{" "}
+                  <a href="/privacy" className="underline hover:text-primary">
+                    политикой конфиденциальности
+                  </a>
+                </p>
+              </div>
+            </form>
+          </Card>
         </div>
+      </section>
 
-        <Card className="max-w-2xl mx-auto p-3 sm:p-5 md:p-8 shadow-elevated">
-          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4 md:space-y-6">
-            {/* Основные поля - 2 колонки */}
-            <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4">
-              <div className="space-y-1">
-                <Label htmlFor="objectType" className="text-xs sm:text-sm">Тип объекта</Label>
-                <Select 
-                  value={formData.objectType} 
-                  onValueChange={(value) => handleFieldChange('objectType', value as ObjectType)}
-                >
-                  <SelectTrigger className="h-9 sm:h-10 text-xs sm:text-sm">
-                    <SelectValue placeholder="Выберите" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(Object.keys(OBJECT_LABELS) as ObjectType[]).map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {OBJECT_LABELS[type]}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="area" className="text-xs sm:text-sm">Площадь (м²)</Label>
-                <Input
-                  id="area"
-                  name="area"
-                  type="number"
-                  placeholder="50"
-                  value={formData.area}
-                  onChange={(e) => handleFieldChange('area', e.target.value)}
-                  min="1"
-                  max="100000"
-                  autoComplete="off"
-                  inputMode="numeric"
-                  className="h-9 sm:h-10 text-xs sm:text-sm"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="service" className="text-xs sm:text-sm">Услуга</Label>
-                <Select 
-                  value={formData.service} 
-                  onValueChange={(value) => handleFieldChange('service', value as ServiceType)}
-                >
-                  <SelectTrigger className="h-9 sm:h-10 text-xs sm:text-sm">
-                    <SelectValue placeholder="Выберите" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(Object.keys(SERVICE_LABELS) as ServiceType[]).map((service) => (
-                      <SelectItem key={service} value={service}>
-                        {SERVICE_LABELS[service]}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="clientType" className="text-xs sm:text-sm">Тип клиента</Label>
-                <Select 
-                  value={formData.clientType} 
-                  onValueChange={(value) => handleFieldChange('clientType', value as ClientType)}
-                >
-                  <SelectTrigger className="h-9 sm:h-10 text-xs sm:text-sm">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="individual">Физ. лицо</SelectItem>
-                    <SelectItem value="ip">ИП</SelectItem>
-                    <SelectItem value="company">Юр. лицо</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+      {/* STICKY ФОРМА ДЛЯ МОБИЛКИ - всегда видна внизу экрана */}
+      <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border p-3 z-50 sm:hidden shadow-elevated">
+        <form onSubmit={handleSubmit} className="container">
+          {isSubmitted ? (
+            <div className="text-sm text-secondary bg-secondary/10 p-3 rounded text-center font-medium">
+              ✓ Заявка отправлена! Перезвоним за 5 минут
             </div>
-
-            {/* Расширенные настройки - компактнее */}
-            <Collapsible open={advancedOpen} onOpenChange={setAdvancedOpen}>
-              <CollapsibleTrigger asChild>
-                <Button variant="ghost" size="sm" className="w-full justify-between h-8 text-xs sm:text-sm" type="button">
-                  <span>Метод и периодичность</span>
-                  <ChevronDown className={`h-3 w-3 sm:h-4 sm:w-4 transition-transform ${advancedOpen ? 'rotate-180' : ''}`} />
-                </Button>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="space-y-3 pt-2">
-                <div className="space-y-1">
-                  <Label className="text-xs">Метод</Label>
-                  <ToggleGroup 
-                    type="single" 
-                    value={formData.method}
-                    onValueChange={(value) => value && handleFieldChange('method', value as MethodType)}
-                    className="grid grid-cols-4 gap-1"
-                  >
-                    <ToggleGroupItem value="cold_fog" className="flex flex-col items-center gap-0.5 h-auto py-1.5 px-1 text-[10px] sm:text-xs">
-                      <Snowflake className="h-3 w-3 sm:h-4 sm:w-4" />
-                      <span>Холодный</span>
-                    </ToggleGroupItem>
-                    <ToggleGroupItem value="hot_fog" className="flex flex-col items-center gap-0.5 h-auto py-1.5 px-1 text-[10px] sm:text-xs">
-                      <Flame className="h-3 w-3 sm:h-4 sm:w-4" />
-                      <span>Горячий</span>
-                    </ToggleGroupItem>
-                    <ToggleGroupItem value="spot" className="flex flex-col items-center gap-0.5 h-auto py-1.5 px-1 text-[10px] sm:text-xs">
-                      <Target className="h-3 w-3 sm:h-4 sm:w-4" />
-                      <span>Точечная</span>
-                    </ToggleGroupItem>
-                    <ToggleGroupItem value="complex_method" className="flex flex-col items-center gap-0.5 h-auto py-1.5 px-1 text-[10px] sm:text-xs">
-                      <Layers className="h-3 w-3 sm:h-4 sm:w-4" />
-                      <span>Комплекс</span>
-                    </ToggleGroupItem>
-                  </ToggleGroup>
-                </div>
-
-                <div className="space-y-1">
-                  <Label className="text-xs">Периодичность</Label>
-                  <ToggleGroup 
-                    type="single" 
-                    value={formData.frequency}
-                    onValueChange={(value) => value && handleFieldChange('frequency', value as FrequencyType)}
-                    className="grid grid-cols-3 gap-1"
-                  >
-                    <ToggleGroupItem value="one_time" className="text-[10px] sm:text-xs h-7 sm:h-8">
-                      Разово
-                    </ToggleGroupItem>
-                    <ToggleGroupItem value="monthly" className="text-[10px] sm:text-xs h-7 sm:h-8">
-                      Ежемесячно
-                    </ToggleGroupItem>
-                    <ToggleGroupItem value="quarterly" className="text-[10px] sm:text-xs h-7 sm:h-8">
-                      Ежеквартально
-                    </ToggleGroupItem>
-                  </ToggleGroup>
-                </div>
-              </CollapsibleContent>
-            </Collapsible>
-
-            {/* Компактный блок цены */}
-            <div className="p-3 sm:p-4 md:p-5 rounded-lg bg-gradient-hero text-primary-foreground">
-              <div className="flex items-center justify-between gap-2">
-                <div>
-                  <p className="text-2xl sm:text-3xl md:text-4xl font-bold tabular-nums">
-                    {animatedFinalPrice.toLocaleString('ru-RU')} ₽
-                  </p>
-                  <p className="text-[10px] sm:text-xs opacity-70 line-through tabular-nums">
-                    {animatedBasePrice.toLocaleString('ru-RU')} ₽
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-xs sm:text-sm flex items-center gap-1 justify-end">
-                    <Sparkles className="h-3 w-3 sm:h-4 sm:w-4" />
-                    <span className="tabular-nums">−{animatedDiscountPercent}%</span>
-                  </p>
-                  <p className="text-[10px] sm:text-xs opacity-80">Гарантия 1 год</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Контактные данные - всегда 2 колонки */}
-            <div className="grid grid-cols-2 gap-2 sm:gap-3">
-              <div className="space-y-1">
-                <Label htmlFor="name" className="text-xs sm:text-sm">Имя *</Label>
+          ) : (
+            <>
+              <div className="grid grid-cols-[1fr,1fr] gap-2 mb-2">
                 <Input
-                  id="name"
-                  name="name"
+                  name="name-mobile"
                   autoComplete="name"
-                  placeholder="Иван"
+                  placeholder="Имя *"
                   value={formData.name}
                   onChange={(e) => handleFieldChange('name', e.target.value)}
-                  className="h-9 sm:h-10 text-xs sm:text-sm"
+                  className="h-9 text-sm"
                 />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="phone" className="text-xs sm:text-sm">Телефон *</Label>
                 <PhoneInput
-                  id="phone"
                   value={formData.phone}
                   onChange={(value) => handleFieldChange('phone', value)}
-                  className="h-9 sm:h-10 text-xs sm:text-sm"
+                  className="h-9 text-sm"
                 />
               </div>
-            </div>
-
-            {/* Email в отдельном collapsible */}
-            <Collapsible>
-              <CollapsibleTrigger asChild>
-                <button type="button" className="text-xs text-muted-foreground hover:text-foreground">
-                  + Добавить email
-                </button>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="pt-2">
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="ivan@example.com"
-                  value={formData.email}
-                  onChange={(e) => handleFieldChange('email', e.target.value)}
-                  className="h-9 sm:h-10 text-xs sm:text-sm"
-                />
-              </CollapsibleContent>
-            </Collapsible>
-
-            {/* Статусы и кнопка */}
-            <div className="space-y-2">
-              {!isOnline && (
-                <div className="flex items-center gap-2 text-xs text-orange-500 bg-orange-500/10 p-2 rounded">
-                  <WifiOff className="h-3 w-3 flex-shrink-0" />
-                  <span>Нет сети — заявка отправится позже</span>
-                </div>
-              )}
-              
-              {isSlowConnection && isOnline && (
-                <div className="flex items-center gap-2 text-xs text-orange-500 bg-orange-500/10 p-2 rounded">
-                  <WifiOff className="h-3 w-3 flex-shrink-0" />
-                  <span>Медленное соединение</span>
-                </div>
-              )}
-              
-              {isSubmitting && retryCount > 1 && (
-                <div className="text-xs text-orange-500 text-center">
-                  Попытка {retryCount}/3...
-                </div>
-              )}
-
-              {isSubmitted && (
-                <div className="text-xs text-secondary bg-secondary/10 p-2 rounded text-center">
-                  ✓ Заявка отправлена
-                </div>
-              )}
-              
-              <Button type="submit" size="default" className="w-full h-10 sm:h-11 text-sm sm:text-base" disabled={isSubmitting}>
+              <Button 
+                type="submit" 
+                size="default" 
+                className="w-full h-10 text-sm font-medium animate-pulse hover:animate-none" 
+                disabled={isSubmitting}
+              >
                 {isSubmitting ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    {retryCount > 0 ? `${retryCount}/3...` : "Отправка..."}
+                    Отправка...
                   </>
                 ) : !isOnline ? (
                   <>
                     <WifiOff className="h-4 w-4 mr-2" />
-                    Сохранить заявку
+                    Сохранить
                   </>
                 ) : (
-                  "Оставить заявку"
+                  <>
+                    Заявка → {animatedFinalPrice.toLocaleString('ru-RU')} ₽
+                  </>
                 )}
               </Button>
-            </div>
-
-            <p className="text-[10px] sm:text-xs text-center text-muted-foreground">
-              Нажимая кнопку, вы соглашаетесь с{" "}
-              <a href="/privacy" className="underline hover:text-primary">
-                политикой конфиденциальности
-              </a>
-            </p>
-          </form>
-        </Card>
+              <p className="text-[9px] text-center text-muted-foreground mt-1">
+                Перезвоним за 5 минут · Гарантия 1 год
+              </p>
+            </>
+          )}
+        </form>
       </div>
-    </section>
+    </>
   );
 }
