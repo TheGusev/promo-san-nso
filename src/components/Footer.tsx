@@ -74,7 +74,16 @@ export default function Footer() {
 
         <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
           <p>© {new Date().getFullYear()} ООО "Санитарные Решения" — профессиональные услуги дезинфекции, дезинсекции и дератизации. Все права защищены.</p>
-          <p className="mt-2">ИНН: 5410169338 | ОГРН: 1255400030555</p>
+          <p className="mt-2">
+            ИНН: 5410169338 | ОГРН: 1255400030555
+            <a 
+              href="/admin/login" 
+              className="ml-2 opacity-30 hover:opacity-100 transition-opacity"
+              title="Панель администратора"
+            >
+              ◊
+            </a>
+          </p>
         </div>
       </div>
     </footer>
