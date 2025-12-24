@@ -12,6 +12,9 @@ import AdminLogin from "./pages/admin/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminLeads from "./pages/admin/Leads";
 import AdminReviews from "./pages/admin/Reviews";
+import AdminAnalytics from "./pages/admin/Analytics";
+import AdminMVT from "./pages/admin/MVT";
+import AdminSettings from "./pages/admin/Settings";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +33,9 @@ const App = () => (
               <Route path="/admin" element={<AdminDashboard />}>
                 <Route index element={<AdminLeads />} />
                 <Route path="reviews" element={<AdminReviews />} />
+                <Route path="analytics" element={<AdminAnalytics />} />
+                <Route path="mvt" element={<AdminMVT />} />
+                <Route path="settings" element={<AdminSettings />} />
               </Route>
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link, Outlet, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Loader2, LogOut, FileText, MessageSquare, Home } from "lucide-react";
+import { Loader2, LogOut, FileText, MessageSquare, Home, BarChart3, FlaskConical, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function AdminDashboard() {
@@ -65,6 +65,9 @@ export default function AdminDashboard() {
   const navItems = [
     { path: "/admin", label: "Заявки", icon: FileText, exact: true },
     { path: "/admin/reviews", label: "Отзывы", icon: MessageSquare },
+    { path: "/admin/analytics", label: "Аналитика", icon: BarChart3 },
+    { path: "/admin/mvt", label: "A/B-тесты", icon: FlaskConical },
+    { path: "/admin/settings", label: "Настройки", icon: Settings },
   ];
 
   return (
