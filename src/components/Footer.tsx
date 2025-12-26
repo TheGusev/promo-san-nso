@@ -1,10 +1,11 @@
 import { Phone, Mail, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
 import Map2GIS from "./Map2GIS";
 import { AnimatedSection } from "@/components/ui/animated-section";
 
 export default function Footer() {
   return (
-    <footer className="bg-muted/50 border-t">
+    <footer className="bg-muted/50 border-t" id="footer">
       <div className="container px-4 py-12">
         {/* 2GIS Map Section */}
         <AnimatedSection animation="fade-up" threshold={0.1}>
@@ -33,19 +34,21 @@ export default function Footer() {
           <div>
             <h3 className="font-semibold mb-4">Услуги</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#services" className="hover:text-primary transition-colors">Дезинфекция</a></li>
-              <li><a href="#services" className="hover:text-primary transition-colors">Дезинсекция</a></li>
-              <li><a href="#services" className="hover:text-primary transition-colors">Дератизация</a></li>
-              <li><a href="#services" className="hover:text-primary transition-colors">Озонирование</a></li>
+              <li><Link to="/dezinfeksiya" className="hover:text-primary transition-colors">Дезинфекция</Link></li>
+              <li><Link to="/dezinseksiya" className="hover:text-primary transition-colors">Дезинсекция</Link></li>
+              <li><Link to="/deratizatsiya" className="hover:text-primary transition-colors">Дератизация</Link></li>
+              <li><Link to="/ozonirovanie" className="hover:text-primary transition-colors">Озонирование</Link></li>
+              <li><Link to="/dezodoratsiya" className="hover:text-primary transition-colors">Дезодорация</Link></li>
+              <li><Link to="/sertifikatsiya" className="hover:text-primary transition-colors">Подготовка к СЭС</Link></li>
             </ul>
           </div>
 
           <div>
             <h3 className="font-semibold mb-4">Информация</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#faq" className="hover:text-primary transition-colors">Вопросы и ответы</a></li>
-              <li><a href="#reviews" className="hover:text-primary transition-colors">Отзывы</a></li>
-              <li><a href="/privacy" className="hover:text-primary transition-colors">Политика конфиденциальности</a></li>
+              <li><a href="/#faq" className="hover:text-primary transition-colors">Вопросы и ответы</a></li>
+              <li><a href="/#reviews" className="hover:text-primary transition-colors">Отзывы</a></li>
+              <li><Link to="/privacy" className="hover:text-primary transition-colors">Политика конфиденциальности</Link></li>
             </ul>
           </div>
 
