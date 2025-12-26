@@ -434,6 +434,10 @@ export type Database = {
         Args: { p_intent: string; p_test_name: string; p_variant_key: string }
         Returns: undefined
       }
+      reset_mvt_arm_params: {
+        Args: { p_intent?: string; p_test_name: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "user"
