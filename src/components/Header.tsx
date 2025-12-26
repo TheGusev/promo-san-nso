@@ -14,10 +14,10 @@ export default function Header() {
       <div className="container flex h-16 items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-gradient-hero">
-            <span className="text-base sm:text-xl font-bold text-primary-foreground">СР</span>
+            <span className="text-base sm:text-xl font-bold text-primary-foreground">ГД</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-xs sm:text-sm font-semibold leading-none">Санитарные Решения</span>
+            <span className="text-xs sm:text-sm font-semibold leading-none">ГорДЭЗ</span>
             <span className="text-[10px] sm:text-xs text-muted-foreground">Дезинфекция • Новосибирск</span>
           </div>
         </div>
