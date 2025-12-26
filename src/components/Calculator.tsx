@@ -29,6 +29,8 @@ import { logTrafficEvent } from "@/hooks/useTrafficLogging";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { queueLead, processQueue } from "@/lib/offlineQueue";
 import { useAnimatedNumber } from "@/hooks/useAnimatedNumber";
+import { useFormStartTime } from "@/hooks/useFormStartTime";
+import { calculatorLeadSchema, sanitizeName } from "@/lib/formValidation";
 
 // ============================================================================
 // ТАРИФЫ И КОЭФФИЦИЕНТЫ
@@ -308,6 +310,7 @@ export default function Calculator() {
   const hasTrackedOpen = useRef(false);
   const hasTrackedCalculate = useRef(false);
   const [advancedOpen, setAdvancedOpen] = useState(false);
+  const formStartTime = useFormStartTime();
   
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -324,6 +327,7 @@ export default function Calculator() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   // Автоматический расчёт цены при любом изменении формы
   const priceResult = useMemo(() => {
@@ -427,43 +431,44 @@ export default function Calculator() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setValidationErrors([]);
 
-    // Debug logging
-    console.log('[Calculator] Form submit attempt:', {
-      name: formData.name,
-      phone: formData.phone,
-      hasName: !!formData.name,
-      hasPhone: !!formData.phone,
-      isValidPhone: isValidRussianPhone(formData.phone),
-      timestamp: new Date().toISOString()
+    // Sanitize name before validation
+    const sanitizedName = sanitizeName(formData.name);
+    const cleanPhone = extractPhoneDigits(formData.phone);
+
+    // Zod validation
+    const validation = calculatorLeadSchema.safeParse({
+      name: sanitizedName,
+      phone: cleanPhone,
+      email: formData.email || undefined,
     });
 
-    if (!formData.name || !formData.phone) {
-      console.log('[Calculator] Validation failed: missing name or phone');
+    if (!validation.success) {
+      const errors = validation.error.issues.map(issue => issue.message);
+      setValidationErrors(errors);
       toast({
-        title: "Заполните контактные данные",
-        description: "Имя и телефон обязательны для отправки заявки",
+        title: "Ошибка валидации",
+        description: errors[0],
         variant: "destructive"
       });
       return;
     }
 
-    if (!isValidRussianPhone(formData.phone)) {
-      console.log('[Calculator] Validation failed: invalid phone', formData.phone);
-      toast({
-        title: "Некорректный номер телефона",
-        description: "Введите номер в формате +7 (XXX) XXX-XX-XX",
-        variant: "destructive"
-      });
-      return;
-    }
+    // Debug logging (masked)
+    console.log('[Calculator] Form submit attempt:', {
+      nameLength: sanitizedName.length,
+      phoneValid: isValidRussianPhone(formData.phone),
+      timestamp: new Date().toISOString()
+    });
     
     console.log('[Calculator] Validation passed, submitting...');
 
     const tracking = getTrackingContext();
+    const sanitizedNameFinal = sanitizeName(formData.name);
     
     const leadData = {
-      name: formData.name,
+      name: sanitizedNameFinal,
       phone: extractPhoneDigits(formData.phone),
       email: formData.email,
       object_type: formData.objectType,
@@ -477,6 +482,7 @@ export default function Calculator() {
       discount_amount: priceResult.discountAmount,
       final_price: priceResult.finalPrice,
       source: 'website_calculator',
+      form_start_time: formStartTime, // Bot detection
       ...tracking,
       variant_id: variantId,
       mvt_impression_id: impressionId,

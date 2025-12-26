@@ -6,16 +6,49 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Rate limiting map: IP -> [timestamps]
+// Rate limiting map: composite key (IP:session_id) -> [timestamps]
 const rateLimitMap = new Map<string, number[]>();
 const RATE_LIMIT_WINDOW = 60000; // 1 minute
-const MAX_LEADS_PER_WINDOW = 5; // Max 5 leads per minute per IP
+const MAX_LEADS_PER_WINDOW = 5; // Max 5 leads per minute per IP+session
 
 // Validation patterns
 const PHONE_REGEX = /^\+7\d{10}$/; // +7 и 10 цифр
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email format
+const NAME_REGEX = /^[\p{L}\s\-']{2,100}$/u; // Unicode letters, spaces, hyphens, apostrophes
+
 const MAX_NAME_LENGTH = 100;
 const MAX_EMAIL_LENGTH = 255;
 const MAX_STRING_LENGTH = 500;
+
+// Minimum time (ms) between page load and form submit to detect bots
+const MIN_FORM_FILL_TIME = 2000;
+
+// Sanitize name: remove HTML tags and dangerous characters
+function sanitizeName(name: string): string {
+  return name
+    .replace(/<[^>]*>/g, '') // Remove HTML tags
+    .replace(/[<>"&;{}|\\^~\[\]`]/g, '') // Remove dangerous characters
+    .trim()
+    .substring(0, MAX_NAME_LENGTH);
+}
+
+// Mask PII for logging
+function maskPhone(phone: string): string {
+  if (!phone || phone.length < 5) return '***';
+  return phone.substring(0, 5) + '*****';
+}
+
+function maskName(name: string): string {
+  if (!name || name.length < 2) return '***';
+  return name.substring(0, 2) + '***';
+}
+
+function maskEmail(email: string | null | undefined): string {
+  if (!email) return '***';
+  const [local, domain] = email.split('@');
+  if (!domain) return '***@***';
+  return local.substring(0, 2) + '***@' + domain;
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -29,16 +62,29 @@ serve(async (req) => {
 
     const leadData = await req.json();
     
-    console.log('Received lead data:', JSON.stringify(leadData, null, 2));
+    // Log with masked PII
+    console.log('Received lead data:', {
+      name: maskName(leadData.name),
+      phone: maskPhone(leadData.phone),
+      email: maskEmail(leadData.email),
+      source: leadData.source,
+      service: leadData.service,
+      object_type: leadData.object_type,
+      area_m2: leadData.area_m2,
+      session_id: leadData.session_id?.substring(0, 20) + '...',
+      has_form_start_time: !!leadData.form_start_time
+    });
 
-    // Rate limiting check
+    // Rate limiting check with composite key (IP + session_id)
     const clientIp = req.headers.get('x-forwarded-for') || 'unknown';
+    const sessionId = leadData.session_id?.substring(0, 100) || 'unknown';
+    const rateLimitKey = `${clientIp}:${sessionId}`;
     const now = Date.now();
-    const timestamps = rateLimitMap.get(clientIp) || [];
+    const timestamps = rateLimitMap.get(rateLimitKey) || [];
     const recentTimestamps = timestamps.filter(ts => now - ts < RATE_LIMIT_WINDOW);
 
     if (recentTimestamps.length >= MAX_LEADS_PER_WINDOW) {
-      console.log('Rate limit exceeded for IP:', clientIp);
+      console.log('Rate limit exceeded for key:', rateLimitKey.substring(0, 30) + '...');
       return new Response(
         JSON.stringify({ error: 'Too many requests. Please try again later.' }),
         { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -46,28 +92,19 @@ serve(async (req) => {
     }
 
     recentTimestamps.push(now);
-    rateLimitMap.set(clientIp, recentTimestamps);
+    rateLimitMap.set(rateLimitKey, recentTimestamps);
 
-    // Input validation
-    if (!leadData.name || typeof leadData.name !== 'string' || leadData.name.trim().length === 0 || leadData.name.length > MAX_NAME_LENGTH) {
-      return new Response(
-        JSON.stringify({ error: 'Invalid name' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    if (!leadData.phone || !PHONE_REGEX.test(leadData.phone)) {
-      return new Response(
-        JSON.stringify({ error: 'Invalid phone format. Use +7XXXXXXXXXX' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    if (leadData.email && (typeof leadData.email !== 'string' || leadData.email.length > MAX_EMAIL_LENGTH)) {
-      return new Response(
-        JSON.stringify({ error: 'Invalid email' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    // Bot detection: check form fill time
+    if (leadData.form_start_time) {
+      const fillTime = now - leadData.form_start_time;
+      if (fillTime < MIN_FORM_FILL_TIME) {
+        console.log('Form submitted too quickly, likely bot. Fill time:', fillTime + 'ms');
+        // Silent success for bots
+        return new Response(
+          JSON.stringify({ success: true, message: 'Lead submitted' }),
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
     }
 
     // Honeypot check
@@ -79,9 +116,81 @@ serve(async (req) => {
       );
     }
 
-    // Sanitize and truncate string fields
+    // Validate and sanitize name
+    if (!leadData.name || typeof leadData.name !== 'string') {
+      return new Response(
+        JSON.stringify({ error: 'Name is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const sanitizedName = sanitizeName(leadData.name);
+    
+    if (sanitizedName.length < 2) {
+      return new Response(
+        JSON.stringify({ error: 'Name is too short' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!NAME_REGEX.test(sanitizedName)) {
+      console.log('Invalid name format detected:', maskName(sanitizedName));
+      return new Response(
+        JSON.stringify({ error: 'Invalid name format' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate phone
+    if (!leadData.phone || !PHONE_REGEX.test(leadData.phone)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid phone format. Use +7XXXXXXXXXX' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate email format if provided
+    if (leadData.email && typeof leadData.email === 'string' && leadData.email.trim()) {
+      const trimmedEmail = leadData.email.trim();
+      if (trimmedEmail.length > MAX_EMAIL_LENGTH) {
+        return new Response(
+          JSON.stringify({ error: 'Email is too long' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      if (!EMAIL_REGEX.test(trimmedEmail)) {
+        return new Response(
+          JSON.stringify({ error: 'Invalid email format' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    }
+
+    // Check for duplicate leads (same phone within 5 minutes)
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    const { data: existingLead, error: dupeCheckError } = await supabase
+      .from('leads')
+      .select('id')
+      .eq('phone', leadData.phone)
+      .gte('created_at', fiveMinutesAgo)
+      .maybeSingle();
+
+    if (dupeCheckError) {
+      console.error('Error checking for duplicate:', dupeCheckError);
+      // Continue anyway - better to have a duplicate than lose a lead
+    }
+
+    if (existingLead) {
+      console.log('Duplicate lead detected for phone:', maskPhone(leadData.phone));
+      return new Response(
+        JSON.stringify({ error: 'Lead already submitted recently. Please wait a few minutes.' }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Sanitize and truncate all string fields
     const sanitizedLead = {
-      name: leadData.name.trim().substring(0, MAX_NAME_LENGTH),
+      name: sanitizedName,
       phone: leadData.phone,
       email: leadData.email?.trim()?.substring(0, MAX_EMAIL_LENGTH) || null,
       service: leadData.service?.substring(0, MAX_STRING_LENGTH) || null,
@@ -114,22 +223,22 @@ serve(async (req) => {
 
     // Backend validation for area_m2 (prevent overflow from Android autofill)
     if (sanitizedLead.area_m2 && (sanitizedLead.area_m2 < 0 || sanitizedLead.area_m2 > 100000)) {
-      console.log('Invalid area_m2 value detected:', sanitizedLead.area_m2);
+      console.log('Invalid area_m2 value detected, setting to null');
       sanitizedLead.area_m2 = null;
     }
 
     // Cap prices at safe maximum (10 million)
     const MAX_PRICE = 10000000;
     if (sanitizedLead.base_price && sanitizedLead.base_price > MAX_PRICE) {
-      console.log('base_price exceeds maximum:', sanitizedLead.base_price);
+      console.log('base_price exceeds maximum, setting to null');
       sanitizedLead.base_price = null;
     }
     if (sanitizedLead.final_price && sanitizedLead.final_price > MAX_PRICE) {
-      console.log('final_price exceeds maximum:', sanitizedLead.final_price);
+      console.log('final_price exceeds maximum, setting to null');
       sanitizedLead.final_price = null;
     }
     if (sanitizedLead.discount_amount && sanitizedLead.discount_amount > MAX_PRICE) {
-      console.log('discount_amount exceeds maximum:', sanitizedLead.discount_amount);
+      console.log('discount_amount exceeds maximum, setting to null');
       sanitizedLead.discount_amount = null;
     }
 
@@ -176,31 +285,30 @@ serve(async (req) => {
       console.log('Telegram config check:', {
         hasToken: !!telegramToken,
         tokenLength: telegramToken?.length || 0,
-        tokenPrefix: telegramToken?.substring(0, 10) + '...',
-        chatId: telegramChatId,
-        chatIdType: typeof telegramChatId
+        chatId: telegramChatId ? 'configured' : 'missing'
       });
 
       if (telegramToken && telegramChatId) {
+        // Use sanitized name in notification
         const message = `
 🆕 Новая заявка #${lead.id.substring(0, 8)}
 
-👤 Клиент: ${leadData.name}
-📞 Телефон: ${leadData.phone}
-${leadData.email ? `📧 Email: ${leadData.email}` : ''}
+👤 Клиент: ${sanitizedLead.name}
+📞 Телефон: ${sanitizedLead.phone}
+${sanitizedLead.email ? `📧 Email: ${sanitizedLead.email}` : ''}
 
-📋 Услуга: ${leadData.service || 'не указана'}
-🏢 Тип объекта: ${leadData.object_type || 'не указан'}
-📏 Площадь: ${leadData.area_m2 || 'не указана'} м²
+📋 Услуга: ${sanitizedLead.service || 'не указана'}
+🏢 Тип объекта: ${sanitizedLead.object_type || 'не указан'}
+📏 Площадь: ${sanitizedLead.area_m2 || 'не указана'} м²
 
-💰 Цена: ${leadData.final_price ? leadData.final_price + '₽' : 'не рассчитана'}
-${leadData.discount_percent ? `🎁 Скидка: ${leadData.discount_percent}%` : ''}
+💰 Цена: ${sanitizedLead.final_price ? sanitizedLead.final_price + '₽' : 'не рассчитана'}
+${sanitizedLead.discount_percent ? `🎁 Скидка: ${sanitizedLead.discount_percent}%` : ''}
 
-🔗 Источник: ${leadData.source}
-📱 Устройство: ${leadData.device_type || 'неизвестно'}
-🎯 Интент: ${leadData.intent || 'default'}
-🔤 Вариант: ${leadData.variant_id || 'unknown'}
-${leadData.utm_source ? `📊 UTM Source: ${leadData.utm_source}` : ''}
+🔗 Источник: ${sanitizedLead.source}
+📱 Устройство: ${sanitizedLead.device_type || 'неизвестно'}
+🎯 Интент: ${sanitizedLead.intent || 'default'}
+🔤 Вариант: ${sanitizedLead.variant_id || 'unknown'}
+${sanitizedLead.utm_source ? `📊 UTM Source: ${sanitizedLead.utm_source}` : ''}
         `.trim();
 
         const telegramUrl = `https://api.telegram.org/bot${telegramToken}/sendMessage`;
@@ -218,14 +326,10 @@ ${leadData.utm_source ? `📊 UTM Source: ${leadData.utm_source}` : ''}
           const errorText = await telegramResponse.text();
           console.error('Telegram API error:', {
             status: telegramResponse.status,
-            statusText: telegramResponse.statusText,
-            error: errorText,
-            chatId: telegramChatId,
-            requestUrl: telegramUrl
+            error: errorText
           });
         } else {
-          const successData = await telegramResponse.json();
-          console.log('Telegram notification sent successfully:', successData);
+          console.log('Telegram notification sent successfully');
         }
       }
     } catch (telegramError) {
