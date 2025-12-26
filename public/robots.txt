@@ -1,5 +1,12 @@
+# Robots.txt для Санитарные Решения
+
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 1
+
+User-agent: Yandex
+Allow: /
+Crawl-delay: 1
 
 User-agent: Bingbot
 Allow: /
@@ -12,3 +19,7 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /admin/
+
+# Sitemap
+Sitemap: https://sanitarnye-resheniya.ru/sitemap.xml
