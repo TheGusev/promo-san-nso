@@ -1,18 +1,32 @@
-import { Phone } from "lucide-react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Phone, ChevronDown } from "lucide-react";
 import { Button } from "./ui/button";
 import { ThemeToggle } from "./ThemeToggle";
 import { reachGoal } from "@/lib/yandexMetrika";
 import { logTrafficEvent } from "@/hooks/useTrafficLogging";
 
+const services = [
+  { name: "Дезинфекция", href: "/dezinfeksiya" },
+  { name: "Дезинсекция", href: "/dezinseksiya" },
+  { name: "Дератизация", href: "/deratizatsiya" },
+  { name: "Озонирование", href: "/ozonirovanie" },
+  { name: "Дезодорация", href: "/dezodoratsiya" },
+  { name: "Подготовка к СЭС", href: "/sertifikatsiya" },
+];
+
 export default function Header() {
+  const [isServicesOpen, setIsServicesOpen] = useState(false);
+
   const handlePhoneClick = () => {
     reachGoal('phone_click');
     logTrafficEvent('phone_click');
   };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4">
-        <div className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2">
           <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-gradient-hero">
             <span className="text-base sm:text-xl font-bold text-primary-foreground">ГД</span>
           </div>
@@ -20,25 +34,48 @@ export default function Header() {
             <span className="text-xs sm:text-sm font-semibold leading-none">ГорДЭЗ</span>
             <span className="text-[10px] sm:text-xs text-muted-foreground">Дезинфекция • Новосибирск</span>
           </div>
-        </div>
+        </Link>
         
         <nav className="hidden md:flex items-center gap-6">
-          <a href="#services" className="text-sm font-medium hover:text-primary transition-colors">
-            Услуги
-          </a>
-          <a href="#calculator" className="text-sm font-medium hover:text-primary transition-colors">
+          {/* Services Dropdown */}
+          <div 
+            className="relative"
+            onMouseEnter={() => setIsServicesOpen(true)}
+            onMouseLeave={() => setIsServicesOpen(false)}
+          >
+            <button className="flex items-center gap-1 text-sm font-medium hover:text-primary transition-colors">
+              Услуги
+              <ChevronDown className={`h-4 w-4 transition-transform ${isServicesOpen ? 'rotate-180' : ''}`} />
+            </button>
+            {isServicesOpen && (
+              <div className="absolute top-full left-0 pt-2 w-48">
+                <div className="bg-background border rounded-lg shadow-lg py-2">
+                  {services.map((service) => (
+                    <Link
+                      key={service.href}
+                      to={service.href}
+                      className="block px-4 py-2 text-sm hover:bg-muted transition-colors"
+                    >
+                      {service.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+          <a href="/#calculator" className="text-sm font-medium hover:text-primary transition-colors">
             Калькулятор
           </a>
-          <a href="#reviews" className="text-sm font-medium hover:text-primary transition-colors">
+          <a href="/#reviews" className="text-sm font-medium hover:text-primary transition-colors">
             Отзывы
           </a>
-          <a href="#articles" className="text-sm font-medium hover:text-primary transition-colors">
+          <a href="/#articles" className="text-sm font-medium hover:text-primary transition-colors">
             Блог
           </a>
-          <a href="#faq" className="text-sm font-medium hover:text-primary transition-colors">
+          <a href="/#faq" className="text-sm font-medium hover:text-primary transition-colors">
             FAQ
           </a>
-          <a href="#footer" className="text-sm font-medium hover:text-primary transition-colors">
+          <a href="/#footer" className="text-sm font-medium hover:text-primary transition-colors">
             Контакты
           </a>
         </nav>
@@ -56,7 +93,14 @@ export default function Header() {
           <Button 
             size="sm" 
             className="bg-gradient-hero hover:opacity-90 text-xs sm:text-sm px-3 sm:px-4"
-            onClick={() => document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' })}
+            onClick={() => {
+              const calculator = document.getElementById('calculator');
+              if (calculator) {
+                calculator.scrollIntoView({ behavior: 'smooth' });
+              } else {
+                window.location.href = '/#calculator';
+              }
+            }}
           >
             Рассчитать
           </Button>

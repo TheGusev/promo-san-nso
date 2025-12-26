@@ -15,6 +15,12 @@ import AdminReviews from "./pages/admin/Reviews";
 import AdminAnalytics from "./pages/admin/Analytics";
 import AdminMVT from "./pages/admin/MVT";
 import AdminSettings from "./pages/admin/Settings";
+import Dezinfeksiya from "./pages/services/Dezinfeksiya";
+import Dezinseksiya from "./pages/services/Dezinseksiya";
+import Deratizatsiya from "./pages/services/Deratizatsiya";
+import Ozonirovanie from "./pages/services/Ozonirovanie";
+import Dezodoratsiya from "./pages/services/Dezodoratsiya";
+import Sertifikatsiya from "./pages/services/Sertifikatsiya";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +35,12 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/privacy" element={<Privacy />} />
+              <Route path="/dezinfeksiya" element={<Dezinfeksiya />} />
+              <Route path="/dezinseksiya" element={<Dezinseksiya />} />
+              <Route path="/deratizatsiya" element={<Deratizatsiya />} />
+              <Route path="/ozonirovanie" element={<Ozonirovanie />} />
+              <Route path="/dezodoratsiya" element={<Dezodoratsiya />} />
+              <Route path="/sertifikatsiya" element={<Sertifikatsiya />} />
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin" element={<AdminDashboard />}>
                 <Route index element={<AdminLeads />} />
