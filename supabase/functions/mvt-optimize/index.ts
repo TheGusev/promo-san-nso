@@ -6,6 +6,20 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Allowed test names whitelist
+const ALLOWED_TEST_NAMES = ['main_variant'];
+
+// Input validation helper
+function truncateString(str: unknown, maxLength: number): string | null {
+  if (str === null || str === undefined) return null;
+  return String(str).substring(0, maxLength);
+}
+
+function sanitizeString(str: unknown, maxLength: number, defaultValue: string): string {
+  if (str === null || str === undefined || str === '') return defaultValue;
+  return String(str).substring(0, maxLength).trim();
+}
+
 // Beta distribution sampling helper
 function betaSample(alpha: number, beta: number): number {
   // Using gamma distribution to sample from beta
@@ -62,9 +76,33 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { test_name = 'main_variant', intent = 'default', session_id, device_type, utm_source } = await req.json();
+    const body = await req.json();
+    
+    // Validate and sanitize inputs
+    const test_name = sanitizeString(body.test_name, 100, 'main_variant');
+    const intent = sanitizeString(body.intent, 50, 'default');
+    const session_id = truncateString(body.session_id, 100);
+    const device_type = truncateString(body.device_type, 50);
+    const utm_source = truncateString(body.utm_source, 100);
 
-    console.log('MVT optimize request:', { test_name, intent, session_id });
+    // Validate test_name against whitelist
+    if (!ALLOWED_TEST_NAMES.includes(test_name)) {
+      console.warn('Invalid test_name received:', test_name);
+      return new Response(
+        JSON.stringify({ error: 'Invalid test_name' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Require session_id
+    if (!session_id || session_id.length === 0) {
+      return new Response(
+        JSON.stringify({ error: 'session_id is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('MVT optimize request:', { test_name, intent, session_id: session_id.substring(0, 20) + '...' });
 
     // Get test configuration and arm parameters in parallel
     const [configResult, armResult] = await Promise.all([
