@@ -4,11 +4,25 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, FlaskConical, Eye, TrendingUp, DollarSign, RefreshCw } from "lucide-react";
+import { Loader2, FlaskConical, Eye, TrendingUp, DollarSign, RefreshCw, RotateCcw, Lock, Play, Pause } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { copyMap, type VariantId, type Intent } from "@/config/copyMap";
 import { Json } from "@/integrations/supabase/types";
+import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface ArmParams {
   id: string;
@@ -33,12 +47,19 @@ interface TestConfig {
   winner_variant: string | null;
 }
 
+type SamplingMode = 'thompson' | 'random' | 'winner_lock';
+
 export default function MVT() {
   const [loading, setLoading] = useState(true);
   const [armParams, setArmParams] = useState<ArmParams[]>([]);
   const [testConfig, setTestConfig] = useState<TestConfig | null>(null);
   const [selectedIntent, setSelectedIntent] = useState<Intent>('default');
   const [previewVariant, setPreviewVariant] = useState<VariantId>('A');
+  const [explorationThreshold, setExplorationThreshold] = useState(50);
+  const [samplingMode, setSamplingMode] = useState<SamplingMode>('thompson');
+  const [showResetDialog, setShowResetDialog] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchMVTData();
@@ -47,7 +68,6 @@ export default function MVT() {
   const fetchMVTData = async () => {
     setLoading(true);
     try {
-      // Fetch arm params
       const { data: armsData, error: armsError } = await supabase
         .from('mvt_arm_params')
         .select('*')
@@ -57,7 +77,6 @@ export default function MVT() {
       if (armsError) throw armsError;
       setArmParams(armsData || []);
 
-      // Fetch test config
       const { data: configData, error: configError } = await supabase
         .from('mvt_test_config')
         .select('*')
@@ -66,6 +85,15 @@ export default function MVT() {
 
       if (configError) throw configError;
       setTestConfig(configData);
+      
+      if (configData) {
+        setExplorationThreshold(configData.exploration_sessions_per_variant);
+        if (configData.winner_variant) {
+          setSamplingMode('winner_lock');
+        } else {
+          setSamplingMode('thompson');
+        }
+      }
     } catch (error) {
       console.error('Error fetching MVT data:', error);
     } finally {
@@ -73,20 +101,110 @@ export default function MVT() {
     }
   };
 
-  // Calculate Thompson Sampling theta for each arm
-  const calculateTheta = (alpha: number, beta: number) => {
-    return alpha / (alpha + beta);
+  const toggleTestActive = async () => {
+    if (!testConfig) return;
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from('mvt_test_config')
+        .update({ is_active: !testConfig.is_active })
+        .eq('id', testConfig.id);
+
+      if (error) throw error;
+      setTestConfig({ ...testConfig, is_active: !testConfig.is_active });
+      toast({ title: testConfig.is_active ? "Тест остановлен" : "Тест запущен" });
+    } catch (error: any) {
+      toast({ title: "Ошибка", description: error.message, variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
   };
 
-  // Get arms for selected intent
+  const updateExplorationThreshold = async () => {
+    if (!testConfig) return;
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from('mvt_test_config')
+        .update({ exploration_sessions_per_variant: explorationThreshold })
+        .eq('id', testConfig.id);
+
+      if (error) throw error;
+      setTestConfig({ ...testConfig, exploration_sessions_per_variant: explorationThreshold });
+      toast({ title: "Порог обновлён" });
+    } catch (error: any) {
+      toast({ title: "Ошибка", description: error.message, variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const lockWinner = async (variant: string) => {
+    if (!testConfig) return;
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from('mvt_test_config')
+        .update({ winner_variant: variant, is_active: false })
+        .eq('id', testConfig.id);
+
+      if (error) throw error;
+      setTestConfig({ ...testConfig, winner_variant: variant, is_active: false });
+      setSamplingMode('winner_lock');
+      toast({ title: `Вариант ${variant} закреплён как победитель` });
+    } catch (error: any) {
+      toast({ title: "Ошибка", description: error.message, variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const unlockWinner = async () => {
+    if (!testConfig) return;
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from('mvt_test_config')
+        .update({ winner_variant: null, is_active: true })
+        .eq('id', testConfig.id);
+
+      if (error) throw error;
+      setTestConfig({ ...testConfig, winner_variant: null, is_active: true });
+      setSamplingMode('thompson');
+      toast({ title: "Победитель разблокирован, тест возобновлён" });
+    } catch (error: any) {
+      toast({ title: "Ошибка", description: error.message, variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const resetParams = async () => {
+    setSaving(true);
+    try {
+      const { error } = await supabase.rpc('reset_mvt_arm_params', {
+        p_test_name: 'main_variant',
+        p_intent: selectedIntent === 'default' ? null : selectedIntent
+      });
+
+      if (error) throw error;
+      await fetchMVTData();
+      setShowResetDialog(false);
+      toast({ title: "Параметры сброшены", description: selectedIntent === 'default' ? "Все intent" : `Intent: ${selectedIntent}` });
+    } catch (error: any) {
+      toast({ title: "Ошибка", description: error.message, variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const calculateTheta = (alpha: number, beta: number) => alpha / (alpha + beta);
+
   const filteredArms = armParams.filter(arm => arm.intent === selectedIntent);
-  
-  // Calculate totals
   const totalImpressions = filteredArms.reduce((sum, arm) => sum + (arm.impressions_count || 0), 0);
   const totalConversions = filteredArms.reduce((sum, arm) => sum + (arm.conversions_count || 0), 0);
   const totalRevenue = filteredArms.reduce((sum, arm) => sum + Number(arm.revenue_sum || 0), 0);
 
-  // Find leader
   const leader = filteredArms.length > 0 
     ? filteredArms.reduce((max, arm) => {
         const theta = calculateTheta(arm.alpha, arm.beta);
@@ -95,10 +213,9 @@ export default function MVT() {
       })
     : null;
 
-  // Determine phase
   const variants = testConfig?.variants as string[] || ['A', 'B', 'C', 'D', 'E', 'F'];
-  const explorationThreshold = (testConfig?.exploration_sessions_per_variant || 50) * variants.length;
-  const isExplorationPhase = totalImpressions < explorationThreshold;
+  const explorationTotal = (testConfig?.exploration_sessions_per_variant || 50) * variants.length;
+  const isExplorationPhase = totalImpressions < explorationTotal;
 
   const intents: { value: Intent; label: string }[] = [
     { value: 'default', label: 'По умолчанию' },
@@ -119,32 +236,111 @@ export default function MVT() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
-          <h2 className="text-2xl font-bold">A/B-тестирование</h2>
-          <p className="text-muted-foreground">Thompson Sampling Multi-Armed Bandit</p>
+          <h2 className="text-xl sm:text-2xl font-bold">A/B-тестирование</h2>
+          <p className="text-sm text-muted-foreground">Thompson Sampling MAB</p>
         </div>
-        <Button variant="outline" onClick={fetchMVTData}>
+        <Button variant="outline" size="sm" onClick={fetchMVTData}>
           <RefreshCw className="h-4 w-4 mr-2" />
           Обновить
         </Button>
       </div>
 
-      {/* Test Status */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Control Panel */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">Управление тестом</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Active toggle */}
+            <div className="flex items-center justify-between p-3 rounded-lg border">
+              <div className="flex items-center gap-2">
+                {testConfig?.is_active ? <Play className="h-4 w-4 text-green-500" /> : <Pause className="h-4 w-4 text-muted-foreground" />}
+                <Label className="text-sm">Статус</Label>
+              </div>
+              <Switch
+                checked={testConfig?.is_active || false}
+                onCheckedChange={toggleTestActive}
+                disabled={saving || !!testConfig?.winner_variant}
+              />
+            </div>
+
+            {/* Exploration threshold */}
+            <div className="flex items-center gap-2 p-3 rounded-lg border">
+              <Label className="text-sm whitespace-nowrap">Порог:</Label>
+              <Input
+                type="number"
+                value={explorationThreshold}
+                onChange={(e) => setExplorationThreshold(parseInt(e.target.value) || 50)}
+                className="w-20 h-8"
+                min={10}
+                max={1000}
+              />
+              <Button size="sm" variant="ghost" onClick={updateExplorationThreshold} disabled={saving}>
+                ✓
+              </Button>
+            </div>
+
+            {/* Winner lock */}
+            <div className="p-3 rounded-lg border">
+              {testConfig?.winner_variant ? (
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Lock className="h-4 w-4 text-primary" />
+                    <span className="text-sm">Победитель: <strong>{testConfig.winner_variant}</strong></span>
+                  </div>
+                  <Button size="sm" variant="ghost" onClick={unlockWinner} disabled={saving}>
+                    Разблокировать
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Lock className="h-4 w-4 text-muted-foreground" />
+                  <Select onValueChange={lockWinner} disabled={saving}>
+                    <SelectTrigger className="h-8">
+                      <SelectValue placeholder="Закрепить победителя" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {variants.map(v => (
+                        <SelectItem key={v} value={v}>{v}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </div>
+
+            {/* Reset */}
+            <Button 
+              variant="outline" 
+              className="h-auto py-3"
+              onClick={() => setShowResetDialog(true)}
+              disabled={saving}
+            >
+              <RotateCcw className="h-4 w-4 mr-2" />
+              Сбросить α/β
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Status Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Статус</CardTitle>
+            <CardTitle className="text-xs font-medium text-muted-foreground">Статус</CardTitle>
             <FlaskConical className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="flex items-center gap-2">
-              <Badge variant={testConfig?.is_active ? "default" : "secondary"}>
-                {testConfig?.is_active ? 'Активен' : 'Остановлен'}
+            <div className="flex flex-wrap items-center gap-1">
+              <Badge variant={testConfig?.is_active ? "default" : "secondary"} className="text-xs">
+                {testConfig?.is_active ? 'Активен' : 'Стоп'}
               </Badge>
-              <Badge variant={isExplorationPhase ? "outline" : "default"}>
-                {isExplorationPhase ? 'Exploration' : 'Exploitation'}
+              <Badge variant="outline" className="text-xs">
+                {isExplorationPhase ? 'Explore' : 'Exploit'}
               </Badge>
             </div>
           </CardContent>
@@ -152,25 +348,23 @@ export default function MVT() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Показы</CardTitle>
+            <CardTitle className="text-xs font-medium text-muted-foreground">Показы</CardTitle>
             <Eye className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalImpressions.toLocaleString('ru-RU')}</div>
-            <p className="text-xs text-muted-foreground">
-              Порог: {explorationThreshold}
-            </p>
+            <div className="text-xl font-bold">{totalImpressions.toLocaleString('ru-RU')}</div>
+            <p className="text-[10px] text-muted-foreground">Порог: {explorationTotal}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Конверсии</CardTitle>
+            <CardTitle className="text-xs font-medium text-muted-foreground">Конверсии</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalConversions.toLocaleString('ru-RU')}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-xl font-bold">{totalConversions}</div>
+            <p className="text-[10px] text-muted-foreground">
               CR: {totalImpressions > 0 ? (totalConversions / totalImpressions * 100).toFixed(2) : 0}%
             </p>
           </CardContent>
@@ -178,20 +372,20 @@ export default function MVT() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Выручка</CardTitle>
+            <CardTitle className="text-xs font-medium text-muted-foreground">Выручка</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalRevenue.toLocaleString('ru-RU')} ₽</div>
+            <div className="text-xl font-bold">{totalRevenue.toLocaleString('ru-RU')} ₽</div>
           </CardContent>
         </Card>
       </div>
 
       {/* Intent Selector */}
-      <div className="flex items-center gap-4">
-        <span className="text-sm font-medium">Intent:</span>
+      <div className="flex items-center gap-2">
+        <Label className="text-sm">Intent:</Label>
         <Select value={selectedIntent} onValueChange={(v) => setSelectedIntent(v as Intent)}>
-          <SelectTrigger className="w-[250px]">
+          <SelectTrigger className="w-[200px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -206,24 +400,21 @@ export default function MVT() {
 
       {/* Variants Table */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Варианты теста</CardTitle>
-          <CardDescription>
-            Параметры Thompson Sampling для intent: {selectedIntent}
-          </CardDescription>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">Варианты теста</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Вариант</TableHead>
+                <TableHead className="w-20">Вар.</TableHead>
                 <TableHead className="text-right">Показы</TableHead>
-                <TableHead className="text-right">Конверсии</TableHead>
+                <TableHead className="text-right">Conv</TableHead>
                 <TableHead className="text-right">CR%</TableHead>
-                <TableHead className="text-right">Выручка</TableHead>
-                <TableHead className="text-right">α</TableHead>
-                <TableHead className="text-right">β</TableHead>
-                <TableHead className="text-right">θ (Theta)</TableHead>
+                <TableHead className="text-right hidden sm:table-cell">Выручка</TableHead>
+                <TableHead className="text-right hidden md:table-cell">α</TableHead>
+                <TableHead className="text-right hidden md:table-cell">β</TableHead>
+                <TableHead className="text-right">θ</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -239,33 +430,27 @@ export default function MVT() {
                 const isLeader = leader?.variant_key === variant;
 
                 return (
-                  <TableRow 
-                    key={variant}
-                    className={cn(isLeader && "bg-primary/5")}
-                  >
+                  <TableRow key={variant} className={cn(isLeader && "bg-primary/5")}>
                     <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5">
                         <span className={cn(
-                          "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold",
+                          "w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold",
                           isLeader ? "bg-primary text-primary-foreground" : "bg-muted"
                         )}>
                           {variant}
                         </span>
-                        {isLeader && <Badge variant="default" className="text-xs">Лидер</Badge>}
+                        {isLeader && <Badge className="text-[10px] px-1 py-0">★</Badge>}
                       </div>
                     </TableCell>
-                    <TableCell className="text-right">{impressions.toLocaleString('ru-RU')}</TableCell>
-                    <TableCell className="text-right">{conversions.toLocaleString('ru-RU')}</TableCell>
-                    <TableCell className="text-right">{cr.toFixed(2)}%</TableCell>
-                    <TableCell className="text-right">{revenue.toLocaleString('ru-RU')} ₽</TableCell>
-                    <TableCell className="text-right font-mono">{alpha.toFixed(1)}</TableCell>
-                    <TableCell className="text-right font-mono">{beta.toFixed(1)}</TableCell>
+                    <TableCell className="text-right text-sm">{impressions}</TableCell>
+                    <TableCell className="text-right text-sm">{conversions}</TableCell>
+                    <TableCell className="text-right text-sm">{cr.toFixed(1)}%</TableCell>
+                    <TableCell className="text-right text-sm hidden sm:table-cell">{revenue.toLocaleString('ru-RU')} ₽</TableCell>
+                    <TableCell className="text-right font-mono text-sm hidden md:table-cell">{alpha.toFixed(1)}</TableCell>
+                    <TableCell className="text-right font-mono text-sm hidden md:table-cell">{beta.toFixed(1)}</TableCell>
                     <TableCell className="text-right">
-                      <span className={cn(
-                        "font-mono font-bold",
-                        isLeader && "text-primary"
-                      )}>
-                        {theta.toFixed(4)}
+                      <span className={cn("font-mono text-sm font-bold", isLeader && "text-primary")}>
+                        {theta.toFixed(3)}
                       </span>
                     </TableCell>
                   </TableRow>
@@ -278,52 +463,66 @@ export default function MVT() {
 
       {/* Copy Preview */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Превью копирайта</CardTitle>
-          <CardDescription>
-            Как выглядит Hero-секция для каждого варианта
-          </CardDescription>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">Превью копирайта</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-4 mb-4">
-            <span className="text-sm font-medium">Вариант:</span>
+          <div className="flex items-center gap-2 mb-3">
+            <Label className="text-sm">Вариант:</Label>
             <Select value={previewVariant} onValueChange={(v) => setPreviewVariant(v as VariantId)}>
-              <SelectTrigger className="w-[100px]">
+              <SelectTrigger className="w-20">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 {variants.map(variant => (
-                  <SelectItem key={variant} value={variant}>
-                    {variant}
-                  </SelectItem>
+                  <SelectItem key={variant} value={variant}>{variant}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
 
-          <div className="p-6 rounded-lg bg-muted/50 space-y-4">
-            <h3 className="text-2xl font-bold">
+          <div className="p-4 rounded-lg bg-muted/50 space-y-3">
+            <h3 className="text-lg font-bold">
               {copyMap[selectedIntent]?.[previewVariant]?.title || copyMap.default[previewVariant].title}
-              {copyMap[selectedIntent]?.[previewVariant]?.highlight && (
+              {(copyMap[selectedIntent]?.[previewVariant]?.highlight || copyMap.default[previewVariant].highlight) && (
                 <span className="text-primary ml-2">
-                  {copyMap[selectedIntent]?.[previewVariant]?.highlight}
+                  {copyMap[selectedIntent]?.[previewVariant]?.highlight || copyMap.default[previewVariant].highlight}
                 </span>
               )}
             </h3>
-            <p className="text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               {copyMap[selectedIntent]?.[previewVariant]?.subtitle || copyMap.default[previewVariant].subtitle}
             </p>
-            <div className="flex gap-4">
-              <Button>
+            <div className="flex flex-wrap gap-2">
+              <Button size="sm">
                 {copyMap[selectedIntent]?.[previewVariant]?.cta_primary || copyMap.default[previewVariant].cta_primary}
               </Button>
-              <Button variant="outline">
+              <Button size="sm" variant="outline">
                 {copyMap[selectedIntent]?.[previewVariant]?.cta_secondary || copyMap.default[previewVariant].cta_secondary}
               </Button>
             </div>
           </div>
         </CardContent>
       </Card>
+
+      {/* Reset Dialog */}
+      <AlertDialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Сбросить параметры?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Все α и β будут сброшены до 1, счётчики обнулятся.
+              {selectedIntent !== 'default' && ` Только для intent: ${selectedIntent}`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={saving}>Отмена</AlertDialogCancel>
+            <AlertDialogAction onClick={resetParams} disabled={saving}>
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Сбросить"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
