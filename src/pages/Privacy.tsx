@@ -1,8 +1,42 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Shield, Phone, Mail, MapPin } from "lucide-react";
+import { useEffect } from "react";
 
 export default function Privacy() {
+  useEffect(() => {
+    // Add BreadcrumbList Schema.org markup
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Главная",
+          "item": "https://xn--d1aey.xn--p1ai/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Политика конфиденциальности",
+          "item": "https://xn--d1aey.xn--p1ai/privacy"
+        }
+      ]
+    });
+    script.id = 'privacy-breadcrumb-schema';
+    document.head.appendChild(script);
+
+    return () => {
+      const existingScript = document.getElementById('privacy-breadcrumb-schema');
+      if (existingScript) {
+        existingScript.remove();
+      }
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur">
