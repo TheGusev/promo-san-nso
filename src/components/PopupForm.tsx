@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PhoneInput } from "@/components/ui/phone-input";
-import { extractPhoneDigits, isValidRussianPhone } from "@/hooks/usePhoneMask";
+import { extractPhoneDigits } from "@/hooks/usePhoneMask";
 import { X, Loader2, WifiOff } from "lucide-react";
 import { reachGoal } from "@/lib/yandexMetrika";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,6 +15,8 @@ import { useABTest } from "@/contexts/ABTestContext";
 import { logTrafficEvent } from "@/hooks/useTrafficLogging";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { queueLead, processQueue } from "@/lib/offlineQueue";
+import { useFormStartTime } from "@/hooks/useFormStartTime";
+import { popupLeadSchema, sanitizeName } from "@/lib/formValidation";
 
 export default function PopupForm() {
   const [open, setOpen] = useState(false);
@@ -32,6 +34,7 @@ export default function PopupForm() {
   const { toast } = useToast();
   const { variantId, impressionId, isLoading } = useABTest();
   const { isOnline, isSlowConnection } = useNetworkStatus();
+  const formStartTime = useFormStartTime();
 
   // Process offline queue when coming back online
   useEffect(() => {
@@ -118,19 +121,21 @@ export default function PopupForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!name.trim() || !phone.trim()) {
+    // Sanitize name before validation
+    const sanitizedName = sanitizeName(name);
+    const cleanPhone = extractPhoneDigits(phone);
+
+    // Zod validation
+    const validation = popupLeadSchema.safeParse({
+      name: sanitizedName,
+      phone: cleanPhone,
+    });
+
+    if (!validation.success) {
+      const errors = validation.error.issues.map(issue => issue.message);
       toast({
         title: "Ошибка",
-        description: "Пожалуйста, заполните все поля",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!isValidRussianPhone(phone)) {
-      toast({
-        title: "Некорректный номер",
-        description: "Введите номер в формате +7 (XXX) XXX-XX-XX",
+        description: errors[0],
         variant: "destructive",
       });
       return;
@@ -158,10 +163,11 @@ export default function PopupForm() {
 
     const tracking = getTrackingContext();
     const leadData = {
-      name: name.trim(),
-      phone: extractPhoneDigits(phone),
+      name: sanitizedName,
+      phone: cleanPhone,
       source: 'popup',
       honeypot: website,
+      form_start_time: formStartTime, // Bot detection
       ...tracking,
       variant_id: variantId,
       mvt_impression_id: impressionId,
