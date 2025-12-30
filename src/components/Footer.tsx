@@ -19,11 +19,11 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-hero">
-                <span className="text-xl font-bold text-primary-foreground">ГД</span>
+                <span className="text-xl font-bold text-primary-foreground">СР</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-semibold leading-none">ГорДЭЗ</span>
-                <span className="text-xs text-muted-foreground">Новосибирск</span>
+                <span className="text-sm font-semibold leading-none">СанРешения</span>
+                <span className="text-xs text-muted-foreground">Дезинфекция • Новосибирск</span>
               </div>
             </div>
             <p className="text-sm text-muted-foreground">
