@@ -1,57 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <!-- Главная страница -->
   <url>
-    <loc>https://гордэз.рф/</loc>
-    <lastmod>2025-12-26</lastmod>
+    <loc>https://xn--d1aey.xn--p1ai/</loc>
+    <lastmod>2025-12-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://xn--d1aey.xn--p1ai/" />
   </url>
   
   <!-- Основные услуги -->
   <url>
-    <loc>https://гордэз.рф/dezinfeksiya</loc>
-    <lastmod>2025-12-26</lastmod>
+    <loc>https://xn--d1aey.xn--p1ai/dezinfeksiya</loc>
+    <lastmod>2025-12-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://гордэз.рф/dezinseksiya</loc>
-    <lastmod>2025-12-26</lastmod>
+    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya</loc>
+    <lastmod>2025-12-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://гордэз.рф/deratizatsiya</loc>
-    <lastmod>2025-12-26</lastmod>
+    <loc>https://xn--d1aey.xn--p1ai/deratizatsiya</loc>
+    <lastmod>2025-12-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   
   <!-- Дополнительные услуги -->
   <url>
-    <loc>https://гордэз.рф/ozonirovanie</loc>
-    <lastmod>2025-12-26</lastmod>
+    <loc>https://xn--d1aey.xn--p1ai/ozonirovanie</loc>
+    <lastmod>2025-12-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://гордэз.рф/dezodoratsiya</loc>
-    <lastmod>2025-12-26</lastmod>
+    <loc>https://xn--d1aey.xn--p1ai/dezodoratsiya</loc>
+    <lastmod>2025-12-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://гордэз.рф/sertifikatsiya</loc>
-    <lastmod>2025-12-26</lastmod>
+    <loc>https://xn--d1aey.xn--p1ai/sertifikatsiya</loc>
+    <lastmod>2025-12-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   
   <!-- Служебные страницы -->
   <url>
-    <loc>https://гордэз.рф/privacy</loc>
-    <lastmod>2025-12-26</lastmod>
+    <loc>https://xn--d1aey.xn--p1ai/privacy</loc>
+    <lastmod>2025-12-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
