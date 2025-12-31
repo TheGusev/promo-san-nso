@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,53 @@ import { AnimatedSection } from "@/components/ui/animated-section";
 import { cn } from "@/lib/utils";
 
 type Category = "all" | "disinfection" | "disinsection" | "deratization" | "tips";
+
+// Генерация slug из заголовка
+const generateSlug = (title: string): string => {
+  const translitMap: Record<string, string> = {
+    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo',
+    'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+    'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+    'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch', 'ъ': '',
+    'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya', ' ': '-', ':': ''
+  };
+  
+  return title
+    .toLowerCase()
+    .split('')
+    .map(char => translitMap[char] ?? char)
+    .join('')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+};
+
+// Парсинг русской даты в ISO формат
+const parseRussianDate = (dateStr: string): string => {
+  const months: Record<string, string> = {
+    'января': '01', 'февраля': '02', 'марта': '03', 'апреля': '04',
+    'мая': '05', 'июня': '06', 'июля': '07', 'августа': '08',
+    'сентября': '09', 'октября': '10', 'ноября': '11', 'декабря': '12'
+  };
+  
+  const parts = dateStr.split(' ');
+  const day = parts[0].padStart(2, '0');
+  const month = months[parts[1]] || '01';
+  const year = parts[2];
+  
+  return `${year}-${month}-${day}`;
+};
+
+// Подсчёт слов в тексте
+const countWords = (text: string): number => {
+  return text.split(/\s+/).filter(word => word.length > 0).length;
+};
+
+// Парсинг времени чтения в минуты
+const parseReadTime = (readTime: string): number => {
+  const match = readTime.match(/(\d+)/);
+  return match ? parseInt(match[1], 10) : 10;
+};
 
 export default function Articles() {
   const [activeCategory, setActiveCategory] = useState<Category>("all");
@@ -317,6 +364,77 @@ export default function Articles() {
   const toggleArticle = (index: number) => {
     setExpandedArticle(expandedArticle === index ? null : index);
   };
+
+  // Schema.org разметка для статей
+  useEffect(() => {
+    const baseUrl = "https://xn--d1aey.xn--p1ai";
+    
+    // Генерация схемы для отдельной статьи
+    const generateArticleSchema = (article: typeof articles[0], position: number) => ({
+      "@type": "BlogPosting",
+      "@id": `${baseUrl}/#article-${generateSlug(article.title)}`,
+      "headline": article.title,
+      "description": article.description,
+      "datePublished": parseRussianDate(article.date),
+      "dateModified": parseRussianDate(article.date),
+      "author": {
+        "@type": "Organization",
+        "name": "СанРешения",
+        "@id": `${baseUrl}/#organization`
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "СанРешения",
+        "logo": {
+          "@type": "ImageObject",
+          "url": `${baseUrl}/og-image.jpg`
+        },
+        "@id": `${baseUrl}/#organization`
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": `${baseUrl}/#articles`
+      },
+      "articleSection": article.categoryLabel,
+      "wordCount": countWords(article.content),
+      "timeRequired": `PT${parseReadTime(article.readTime)}M`,
+      "inLanguage": "ru-RU"
+    });
+
+    // ItemList схема для списка статей
+    const itemListSchema = {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Статьи о дезинфекции, дезинсекции и дератизации",
+      "description": "Экспертные материалы о борьбе с вредителями и санитарной обработке помещений в Новосибирске",
+      "numberOfItems": articles.length,
+      "itemListElement": articles.map((article, index) => ({
+        "@type": "ListItem",
+        "position": index + 1,
+        "item": generateArticleSchema(article, index + 1)
+      }))
+    };
+
+    // Создаём и вставляем JSON-LD скрипт
+    const existingScript = document.getElementById('articles-schema');
+    if (existingScript) {
+      existingScript.remove();
+    }
+
+    const script = document.createElement('script');
+    script.id = 'articles-schema';
+    script.type = 'application/ld+json';
+    script.textContent = JSON.stringify(itemListSchema);
+    document.head.appendChild(script);
+
+    // Очистка при размонтировании
+    return () => {
+      const scriptToRemove = document.getElementById('articles-schema');
+      if (scriptToRemove) {
+        scriptToRemove.remove();
+      }
+    };
+  }, []);
 
   return (
     <section className="py-16 px-2 sm:px-4 bg-muted/30">
