@@ -25,6 +25,15 @@ export default function ServicePageLayout({ service }: ServicePageLayoutProps) {
       metaDescription.setAttribute("content", service.metaDescription);
     }
 
+    // Update canonical URL
+    let canonicalLink = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
+    if (!canonicalLink) {
+      canonicalLink = document.createElement('link');
+      canonicalLink.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonicalLink);
+    }
+    canonicalLink.setAttribute('href', `https://xn--d1aey.xn--p1ai/${service.slug}`);
+
     // Log page view
     logTrafficEvent("page_view", { service: service.id });
     
