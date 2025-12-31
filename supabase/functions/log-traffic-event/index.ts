@@ -26,6 +26,7 @@ const ALLOWED_EVENT_TYPES = [
   'telegram_click',
   'phone_click',
   'service_click',
+  'service_cta_click',
   // Engagement metrics
   'scroll_25',
   'scroll_50',

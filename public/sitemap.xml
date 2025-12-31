@@ -4,7 +4,7 @@
   <!-- Главная страница -->
   <url>
     <loc>https://xn--d1aey.xn--p1ai/</loc>
-    <lastmod>2025-12-30</lastmod>
+    <lastmod>2025-12-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="ru" href="https://xn--d1aey.xn--p1ai/" />
@@ -13,48 +13,55 @@
   <!-- Основные услуги -->
   <url>
     <loc>https://xn--d1aey.xn--p1ai/dezinfeksiya</loc>
-    <lastmod>2025-12-30</lastmod>
+    <lastmod>2025-12-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://xn--d1aey.xn--p1ai/dezinfeksiya" />
   </url>
   <url>
     <loc>https://xn--d1aey.xn--p1ai/dezinseksiya</loc>
-    <lastmod>2025-12-30</lastmod>
+    <lastmod>2025-12-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://xn--d1aey.xn--p1ai/dezinseksiya" />
   </url>
   <url>
     <loc>https://xn--d1aey.xn--p1ai/deratizatsiya</loc>
-    <lastmod>2025-12-30</lastmod>
+    <lastmod>2025-12-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://xn--d1aey.xn--p1ai/deratizatsiya" />
   </url>
   
   <!-- Дополнительные услуги -->
   <url>
     <loc>https://xn--d1aey.xn--p1ai/ozonirovanie</loc>
-    <lastmod>2025-12-30</lastmod>
+    <lastmod>2025-12-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://xn--d1aey.xn--p1ai/ozonirovanie" />
   </url>
   <url>
     <loc>https://xn--d1aey.xn--p1ai/dezodoratsiya</loc>
-    <lastmod>2025-12-30</lastmod>
+    <lastmod>2025-12-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://xn--d1aey.xn--p1ai/dezodoratsiya" />
   </url>
   <url>
     <loc>https://xn--d1aey.xn--p1ai/sertifikatsiya</loc>
-    <lastmod>2025-12-30</lastmod>
+    <lastmod>2025-12-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://xn--d1aey.xn--p1ai/sertifikatsiya" />
   </url>
   
   <!-- Служебные страницы -->
   <url>
     <loc>https://xn--d1aey.xn--p1ai/privacy</loc>
-    <lastmod>2025-12-30</lastmod>
+    <lastmod>2025-12-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://xn--d1aey.xn--p1ai/privacy" />
   </url>
 </urlset>

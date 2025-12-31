@@ -21,6 +21,16 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     checkAdminAccess();
+    
+    // Add noindex meta tag for admin pages
+    const meta = document.createElement('meta');
+    meta.name = 'robots';
+    meta.content = 'noindex, nofollow';
+    document.head.appendChild(meta);
+    
+    return () => {
+      document.head.removeChild(meta);
+    };
   }, []);
 
   const checkAdminAccess = async () => {
