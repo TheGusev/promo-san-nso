@@ -18,7 +18,7 @@ export const novosibirskDistricts: ServiceArea[] = [
     name: "Центральный", 
     fullName: "Центральный район", 
     available: true, 
-    price: "от 2500₽",
+    price: "от 1500₽",
     responseTime: "30-60 минут",
     center: [55.0302, 82.9274],
     color: "#4CAF50"
@@ -28,7 +28,7 @@ export const novosibirskDistricts: ServiceArea[] = [
     name: "Железнодорожный", 
     fullName: "Железнодорожный район", 
     available: true, 
-    price: "от 2500₽",
+    price: "от 1500₽",
     responseTime: "30-60 минут",
     center: [55.0415, 82.9191],
     color: "#4CAF50"
@@ -38,7 +38,7 @@ export const novosibirskDistricts: ServiceArea[] = [
     name: "Заельцовский", 
     fullName: "Заельцовский район", 
     available: true, 
-    price: "от 2700₽",
+    price: "от 1500₽",
     responseTime: "40-90 минут",
     center: [55.0671, 82.9334],
     color: "#FFC107"
@@ -48,7 +48,7 @@ export const novosibirskDistricts: ServiceArea[] = [
     name: "Калининский", 
     fullName: "Калининский район", 
     available: true, 
-    price: "от 2700₽",
+    price: "от 1500₽",
     responseTime: "40-90 минут",
     center: [55.0525, 82.8856],
     color: "#FFC107"
@@ -58,7 +58,7 @@ export const novosibirskDistricts: ServiceArea[] = [
     name: "Кировский", 
     fullName: "Кировский район", 
     available: true, 
-    price: "от 2700₽",
+    price: "от 1500₽",
     responseTime: "40-90 минут",
     center: [54.9765, 82.9034],
     color: "#FFC107"
@@ -68,7 +68,7 @@ export const novosibirskDistricts: ServiceArea[] = [
     name: "Ленинский", 
     fullName: "Ленинский район", 
     available: true, 
-    price: "от 2700₽",
+    price: "от 1500₽",
     responseTime: "40-90 минут",
     center: [54.9898, 82.8834],
     color: "#FFC107"
@@ -78,7 +78,7 @@ export const novosibirskDistricts: ServiceArea[] = [
     name: "Октябрьский", 
     fullName: "Октябрьский район", 
     available: true, 
-    price: "от 2700₽",
+    price: "от 1500₽",
     responseTime: "40-90 минут",
     center: [54.9876, 82.9512],
     color: "#FFC107"
@@ -88,7 +88,7 @@ export const novosibirskDistricts: ServiceArea[] = [
     name: "Первомайский", 
     fullName: "Первомайский район", 
     available: true, 
-    price: "от 2700₽",
+    price: "от 1500₽",
     responseTime: "40-90 минут",
     center: [54.9634, 82.9812],
     color: "#FFC107"
@@ -98,7 +98,7 @@ export const novosibirskDistricts: ServiceArea[] = [
     name: "Советский", 
     fullName: "Советский район (Академгородок)", 
     available: true, 
-    price: "от 3000₽",
+    price: "от 1800₽",
     responseTime: "60-120 минут",
     center: [54.8485, 83.1042],
     color: "#2196F3"
@@ -108,7 +108,7 @@ export const novosibirskDistricts: ServiceArea[] = [
     name: "Дзержинский", 
     fullName: "Дзержинский район", 
     available: true, 
-    price: "от 2700₽",
+    price: "от 1500₽",
     responseTime: "40-90 минут",
     center: [54.9765, 83.0234],
     color: "#FFC107"
@@ -121,7 +121,7 @@ export const novosibirskRegion: ServiceArea[] = [
     name: "Ближнее пригородье", 
     fullName: "Пригород Новосибирска (до 30 км)", 
     available: true, 
-    price: "от 3500₽",
+    price: "от 2000₽",
     distance: "до 30 км от города",
     responseTime: "1-2 часа"
   },
@@ -130,7 +130,7 @@ export const novosibirskRegion: ServiceArea[] = [
     name: "Бердск", 
     fullName: "город Бердск", 
     available: true, 
-    price: "от 3000₽",
+    price: "от 1800₽",
     distance: "35 км",
     responseTime: "1-2 часа"
   },
@@ -139,7 +139,7 @@ export const novosibirskRegion: ServiceArea[] = [
     name: "Искитим", 
     fullName: "город Искитим", 
     available: true, 
-    price: "от 4000₽",
+    price: "от 2000₽",
     distance: "60 км",
     responseTime: "2-3 часа"
   },
