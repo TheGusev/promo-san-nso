@@ -66,92 +66,37 @@ interface PriceResult {
   finalPrice: number;
 }
 
-// Тарифы: clientType → service → objectType → { perM2, min }
-const TARIFFS: Record<'fiz' | 'ur', Record<ServiceType, Record<ObjectType, TariffEntry>>> = {
-  fiz: {
-    disinsection: {
-      apartment:    { perM2: 50, min: 2500 },
-      house:        { perM2: 60, min: 3500 },
-      office:       { perM2: 55, min: 4000 },
-      warehouse:    { perM2: 40, min: 5000 },
-      shop:         { perM2: 55, min: 3500 },
-      restaurant:   { perM2: 65, min: 4500 },
-    },
-    disinfection: {
-      apartment:    { perM2: 45, min: 2500 },
-      house:        { perM2: 55, min: 3000 },
-      office:       { perM2: 50, min: 3500 },
-      warehouse:    { perM2: 35, min: 4500 },
-      shop:         { perM2: 50, min: 3000 },
-      restaurant:   { perM2: 60, min: 4000 },
-    },
-    deratization: {
-      apartment:    { perM2: 55, min: 3000 },
-      house:        { perM2: 65, min: 4000 },
-      office:       { perM2: 60, min: 4500 },
-      warehouse:    { perM2: 45, min: 5500 },
-      shop:         { perM2: 60, min: 4000 },
-      restaurant:   { perM2: 70, min: 5000 },
-    },
-    ozonation: {
-      apartment:    { perM2: 40, min: 2000 },
-      house:        { perM2: 50, min: 2800 },
-      office:       { perM2: 45, min: 3000 },
-      warehouse:    { perM2: 30, min: 4000 },
-      shop:         { perM2: 45, min: 2800 },
-      restaurant:   { perM2: 55, min: 3500 },
-    },
-    complex: {
-      apartment:    { perM2: 80, min: 4500 },
-      house:        { perM2: 95, min: 5500 },
-      office:       { perM2: 85, min: 6000 },
-      warehouse:    { perM2: 70, min: 8000 },
-      shop:         { perM2: 85, min: 5500 },
-      restaurant:   { perM2: 100, min: 7000 },
-    },
-  },
-  ur: {
-    disinsection: {
-      apartment:    { perM2: 55, min: 3000 },
-      house:        { perM2: 65, min: 4000 },
-      office:       { perM2: 60, min: 4500 },
-      warehouse:    { perM2: 45, min: 5500 },
-      shop:         { perM2: 60, min: 4000 },
-      restaurant:   { perM2: 70, min: 5000 },
-    },
-    disinfection: {
-      apartment:    { perM2: 50, min: 3000 },
-      house:        { perM2: 60, min: 3500 },
-      office:       { perM2: 55, min: 4000 },
-      warehouse:    { perM2: 40, min: 5000 },
-      shop:         { perM2: 55, min: 3500 },
-      restaurant:   { perM2: 65, min: 4500 },
-    },
-    deratization: {
-      apartment:    { perM2: 60, min: 3500 },
-      house:        { perM2: 70, min: 4500 },
-      office:       { perM2: 65, min: 5000 },
-      warehouse:    { perM2: 50, min: 6000 },
-      shop:         { perM2: 65, min: 4500 },
-      restaurant:   { perM2: 75, min: 5500 },
-    },
-    ozonation: {
-      apartment:    { perM2: 45, min: 2500 },
-      house:        { perM2: 55, min: 3200 },
-      office:       { perM2: 50, min: 3500 },
-      warehouse:    { perM2: 35, min: 4500 },
-      shop:         { perM2: 50, min: 3200 },
-      restaurant:   { perM2: 60, min: 4000 },
-    },
-    complex: {
-      apartment:    { perM2: 90, min: 5000 },
-      house:        { perM2: 105, min: 6000 },
-      office:       { perM2: 95, min: 6500 },
-      warehouse:    { perM2: 80, min: 9000 },
-      shop:         { perM2: 95, min: 6000 },
-      restaurant:   { perM2: 110, min: 7500 },
-    },
-  },
+// ЖЁСТКИЙ ПОТОЛОК ЦЕНЫ В КАЛЬКУЛЯТОРЕ
+const PRICE_CAP = 2000;
+
+// Новая ценовая политика - базовые цены по площади для квартир
+// 1-комн (до 50м²): 1500₽, 2-комн (до 75м²): 1800₽, 3-комн (до 100м²): 2100₽
+function getApartmentBasePrice(area: number): number {
+  if (area <= 50) return 1500;
+  if (area <= 75) return 1800;
+  if (area <= 100) return 2100;
+  // Для площади > 100м² добавляем +20% за каждые 50м² сверх
+  const extraBlocks = Math.ceil((area - 100) / 50);
+  return Math.min(2100 + extraBlocks * 300, PRICE_CAP);
+}
+
+// Коэффициенты типа объекта (относительно квартиры)
+const OBJECT_TYPE_COEFF: Record<ObjectType, number> = {
+  apartment: 1.0,
+  house: 1.15,      // Дом +15%
+  office: 1.1,      // Офис +10%
+  warehouse: 0.9,   // Склад -10% (большие объёмы)
+  shop: 1.05,       // Магазин +5%
+  restaurant: 1.2,  // Ресторан +20%
+};
+
+// Коэффициенты услуги
+const SERVICE_COEFF: Record<ServiceType, number> = {
+  disinsection: 1.0,    // Базовый
+  disinfection: 1.0,    // Базовый
+  deratization: 1.1,    // +10%
+  ozonation: 0.95,      // -5%
+  complex: 1.25,        // +25% (комплекс)
 };
 
 // Коэффициенты метода обработки
@@ -188,25 +133,33 @@ const SERVICE_LABELS: Record<ServiceType, string> = {
 };
 
 // ============================================================================
-// ФУНКЦИИ РАСЧЁТА ЦЕНЫ
+// ФУНКЦИИ РАСЧЁТА ЦЕНЫ (НОВАЯ ЛОГИКА)
 // ============================================================================
 
-function getBaseTariff(form: FormData): TariffEntry {
-  const clientBranch = form.clientType === 'company' || form.clientType === 'ip' ? 'ur' : 'fiz';
-  const serviceTariffs = TARIFFS[clientBranch][form.service];
-  const tariff = serviceTariffs?.[form.objectType] || { perM2: 50, min: 2500 };
-  
-  // Применяем коэффициенты метода и периодичности к цене за м²
-  const perM2Effective = tariff.perM2 * METHOD_COEFF[form.method] * FREQ_COEFF[form.frequency];
-  
-  return { perM2: perM2Effective, min: tariff.min };
-}
-
 function calcBasePrice(form: FormData): number {
-  const { perM2, min } = getBaseTariff(form);
-  const area = parseInt(form.area) || 0;
-  const raw = Math.round(perM2 * area);
-  return Math.max(raw, min);
+  const area = parseInt(form.area) || 50;
+  
+  // Получаем базовую цену от площади (для квартир)
+  let basePrice = getApartmentBasePrice(area);
+  
+  // Применяем коэффициент типа объекта
+  basePrice = Math.round(basePrice * OBJECT_TYPE_COEFF[form.objectType]);
+  
+  // Применяем коэффициент услуги
+  basePrice = Math.round(basePrice * SERVICE_COEFF[form.service]);
+  
+  // Применяем коэффициент метода
+  basePrice = Math.round(basePrice * METHOD_COEFF[form.method]);
+  
+  // Применяем коэффициент периодичности
+  basePrice = Math.round(basePrice * FREQ_COEFF[form.frequency]);
+  
+  // Юр. лица: +10%
+  if (form.clientType === 'company' || form.clientType === 'ip') {
+    basePrice = Math.round(basePrice * 1.1);
+  }
+  
+  return basePrice;
 }
 
 function calcDiscountPercent(form: FormData): number {
@@ -220,27 +173,27 @@ function calcDiscountPercent(form: FormData): number {
     p += 0.10;
   }
 
-  // Объёмная скидка по площади
-  const area = parseInt(form.area) || 0;
-  if (area > 50 && area <= 100)       p += 0.05;
-  else if (area > 100 && area <= 300) p += 0.10;
-  else if (area > 300 && area <= 700) p += 0.15;
-  else if (area > 700 && area <= 1500) p += 0.20;
-  else if (area > 1500)               p += 0.25;
+  // Комбо-скидка за 2+ услуги (если комплекс): +5%
+  if (form.service === 'complex') {
+    p += 0.05;
+  }
 
   // Периодичность
   if (form.frequency === 'monthly')        p += 0.05;
   else if (form.frequency === 'quarterly') p += 0.03;
 
-  // Ограничение до 30%
-  return Math.min(p, 0.30);
+  // Ограничение до 20% для более привлекательных цен
+  return Math.min(p, 0.20);
 }
 
 function calcPrice(form: FormData): PriceResult {
   const base = calcBasePrice(form);
   const discountPercent = calcDiscountPercent(form);
   const discountAmount = Math.round(base * discountPercent);
-  const final = Math.round(base - discountAmount);
+  let final = Math.round(base - discountAmount);
+  
+  // ЖЁСТКИЙ ПОТОЛОК: не показываем выше 2000₽ в калькуляторе
+  final = Math.min(final, PRICE_CAP);
 
   return {
     basePrice: base,
@@ -589,6 +542,17 @@ export default function Calculator() {
                     <p className="text-[10px] sm:text-xs opacity-80">Гарантия 1 год</p>
                   </div>
                 </div>
+                {/* Уведомление о минимальной цене */}
+                <p className="text-[10px] sm:text-xs opacity-80 text-center mt-2 border-t border-white/20 pt-2">
+                  Это мин. цена. Итоговая может отличаться после диагностики
+                </p>
+              </div>
+              
+              {/* Призыв к действию */}
+              <div className="bg-secondary/10 rounded-lg p-2 sm:p-3">
+                <p className="text-xs sm:text-sm text-center font-medium text-secondary">
+                  Оставьте заявку для точного расчёта и гарантии
+                </p>
               </div>
 
               {/* Основные поля - 2 колонки */}
