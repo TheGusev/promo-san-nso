@@ -32,7 +32,7 @@ export default function FloatingButtons() {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col gap-2 sm:gap-3">
+    <div className="fixed bottom-36 right-2 sm:bottom-6 sm:right-6 z-40 flex flex-col gap-2 sm:gap-3">
       {/* Телефон - только мобильные */}
       <Button
         size="lg"
