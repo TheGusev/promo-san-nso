@@ -1,7 +1,6 @@
 import { useEffect, lazy, Suspense } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import Hero from "@/components/Hero";
-import PriceTable from "@/components/PriceTable";
 import Services from "@/components/Services";
 import Calculator from "@/components/Calculator";
 import AboutSection from "@/components/AboutSection";
@@ -37,16 +36,13 @@ const Index = () => {
       <SiteHeader />
       <main>
         <Hero />
-        <PriceTable />
+        <Services />
         <Calculator />
         <Suspense fallback={<div className="h-96" />}>
           <section id="reviews">
             <Reviews />
           </section>
         </Suspense>
-        <section id="services">
-          <Services />
-        </section>
         <AboutSection />
         <Suspense fallback={<div className="h-64" />}>
           <FAQ />

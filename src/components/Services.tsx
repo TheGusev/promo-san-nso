@@ -51,13 +51,15 @@ const services = [
 
 export default function Services() {
   return (
-    <section id="services" className="py-12 md:py-20 bg-background">
+    <section id="prices" className="py-12 md:py-20 bg-background">
       <div className="container px-2 sm:px-4">
         <AnimatedSection animation="fade-up">
           <div className="text-center mb-8 md:mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">Наши услуги</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Комплексные санитарные решения для дома и бизнеса в Новосибирске
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4">
+              Наши цены на услуги <span className="text-primary">в Новосибирске</span>
+            </h2>
+            <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto">
+              Фиксированные цены без скрытых доплат. Выезд специалиста — бесплатно.
             </p>
           </div>
         </AnimatedSection>
