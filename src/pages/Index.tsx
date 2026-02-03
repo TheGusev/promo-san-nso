@@ -13,7 +13,7 @@ import { userParams } from "@/lib/yandexMetrika";
 import { getTrackingContext } from "@/lib/tracking";
 
 const Reviews = lazy(() => import("@/components/Reviews"));
-const Articles = lazy(() => import("@/components/Articles"));
+
 const FAQ = lazy(() => import("@/components/FAQ"));
 const Footer = lazy(() => import("@/components/Footer"));
 
@@ -48,11 +48,6 @@ const Index = () => {
           <Services />
         </section>
         <AboutSection />
-        <Suspense fallback={<div className="h-96" />}>
-          <section id="articles">
-            <Articles />
-          </section>
-        </Suspense>
         <Suspense fallback={<div className="h-64" />}>
           <FAQ />
         </Suspense>
