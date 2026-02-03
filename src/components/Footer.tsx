@@ -34,12 +34,12 @@ export default function Footer() {
           <div>
             <h3 className="font-semibold mb-4">Услуги</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link to="/dezinfeksiya" className="hover:text-primary transition-colors">Дезинфекция</Link></li>
-              <li><Link to="/dezinseksiya" className="hover:text-primary transition-colors">Дезинсекция</Link></li>
-              <li><Link to="/deratizatsiya" className="hover:text-primary transition-colors">Дератизация</Link></li>
-              <li><Link to="/ozonirovanie" className="hover:text-primary transition-colors">Озонирование</Link></li>
-              <li><Link to="/dezodoratsiya" className="hover:text-primary transition-colors">Дезодорация</Link></li>
-              <li><Link to="/sertifikatsiya" className="hover:text-primary transition-colors">Подготовка к СЭС</Link></li>
+              <li><Link to="/usluga/dezinfeksiya" className="hover:text-primary transition-colors">Дезинфекция</Link></li>
+              <li><Link to="/usluga/dezinseksiya" className="hover:text-primary transition-colors">Дезинсекция</Link></li>
+              <li><Link to="/usluga/deratizatsiya" className="hover:text-primary transition-colors">Дератизация</Link></li>
+              <li><Link to="/usluga/ozonirovanie" className="hover:text-primary transition-colors">Озонирование</Link></li>
+              <li><Link to="/usluga/dezodoratsiya" className="hover:text-primary transition-colors">Дезодорация</Link></li>
+              <li><Link to="/usluga/sertifikatsiya" className="hover:text-primary transition-colors">Подготовка к СЭС</Link></li>
             </ul>
           </div>
 
