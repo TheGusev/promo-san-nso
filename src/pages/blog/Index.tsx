@@ -1,50 +1,53 @@
-import { Link } from "react-router-dom";
-import { FileText, Calendar } from "lucide-react";
+import { useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { FileText, Calendar, Clock, Filter, Search } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
 import { SEOHead } from "@/components/shared/SEOHead";
 import { RelatedLinks } from "@/components/shared/RelatedLinks";
 import { SITE_CONFIG } from "@/data/siteConfig";
-
-// Заглушка для статей блога — будут заменены реальными данными
-const PLACEHOLDER_ARTICLES = [
-  {
-    slug: "kak-izbavitsya-ot-klopov",
-    title: "Как избавиться от клопов в квартире",
-    excerpt: "Подробное руководство по борьбе с постельными клопами: признаки заражения, методы обработки, профилактика.",
-    date: "2025-01-15",
-    category: "Советы",
-  },
-  {
-    slug: "tarakany-v-kvartire",
-    title: "Тараканы в квартире: причины и методы борьбы",
-    excerpt: "Почему появляются тараканы, как их обнаружить и какие методы борьбы наиболее эффективны.",
-    date: "2025-01-10",
-    category: "Советы",
-  },
-  {
-    slug: "dezinfektsiya-posle-remonta",
-    title: "Дезинфекция после ремонта",
-    excerpt: "Когда и зачем нужна дезинфекция после ремонта квартиры или дома.",
-    date: "2025-01-05",
-    category: "Услуги",
-  },
-  {
-    slug: "sanpin-dlya-obshchepita",
-    title: "СанПиН для общепита: требования к дезинсекции",
-    excerpt: "Какие санитарные требования предъявляются к кафе и ресторанам, как часто нужна обработка.",
-    date: "2024-12-28",
-    category: "СанПиН",
-  },
-];
+import { BLOG_TOPICS, BLOG_CATEGORIES, getArticlesByCategory, BlogTopic } from "@/data/blogTopics";
 
 export default function BlogIndex() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchQuery, setSearchQuery] = useState("");
+  
+  const activeCategory = searchParams.get("category") as keyof typeof BLOG_CATEGORIES | null;
+
+  // Фильтрация статей
+  const filteredArticles = BLOG_TOPICS.filter((article) => {
+    const matchesCategory = !activeCategory || article.category === activeCategory;
+    const matchesSearch = !searchQuery || 
+      article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      article.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      article.keywords.some(k => k.toLowerCase().includes(searchQuery.toLowerCase()));
+    return matchesCategory && matchesSearch;
+  }).sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime());
+
+  // Группировка по категориям для отображения
+  const categoryCounts = Object.keys(BLOG_CATEGORIES).map((key) => ({
+    key: key as keyof typeof BLOG_CATEGORIES,
+    ...BLOG_CATEGORIES[key as keyof typeof BLOG_CATEGORIES],
+    count: getArticlesByCategory(key as keyof typeof BLOG_CATEGORIES).length,
+  }));
+
+  const handleCategoryClick = (category: string | null) => {
+    if (category) {
+      setSearchParams({ category });
+    } else {
+      setSearchParams({});
+    }
+  };
+
   return (
     <MainLayout>
       <SEOHead
         title={`Блог СЭС — статьи о дезинсекции и дератизации | ${SITE_CONFIG.companyName}`}
-        description="Полезные статьи о борьбе с вредителями, дезинфекции, санитарных нормах. Советы экспертов СЭС Новосибирска."
+        description="Полезные статьи о борьбе с вредителями, дезинфекции, санитарных нормах. Советы экспертов СЭС Новосибирска. 50+ профессиональных статей."
         canonical="https://promo-san-nso.lovable.app/blog"
       />
 
@@ -59,57 +62,143 @@ export default function BlogIndex() {
             Полезные статьи о борьбе с вредителями, дезинфекции помещений, 
             санитарных нормах и правилах. Советы от профессионалов.
           </p>
+
+          {/* Статистика */}
+          <div className="mt-6 flex flex-wrap gap-4">
+            <Badge variant="secondary" className="text-sm py-1 px-3">
+              <FileText className="h-4 w-4 mr-1" />
+              {BLOG_TOPICS.length} статей
+            </Badge>
+            {categoryCounts.map((cat) => (
+              <Badge key={cat.key} variant="outline" className="text-sm py-1 px-3">
+                {cat.name}: {cat.count}
+              </Badge>
+            ))}
+          </div>
         </div>
       </section>
 
-      <section className="py-12 md:py-16">
+      {/* Фильтры */}
+      <section className="py-6 border-b">
         <div className="container px-4">
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {PLACEHOLDER_ARTICLES.map((article) => (
-              <Card key={article.slug} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                    <span className="rounded-full bg-primary/10 text-primary px-2 py-0.5 text-xs font-medium">
-                      {article.category}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      {new Date(article.date).toLocaleDateString("ru-RU")}
-                    </span>
-                  </div>
-                  <CardTitle className="text-lg line-clamp-2">
-                    <Link 
-                      to={`/blog/${article.slug}`}
-                      className="hover:text-primary transition-colors"
-                    >
-                      {article.title}
-                    </Link>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="line-clamp-3">
-                    {article.excerpt}
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            {/* Категории */}
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant={!activeCategory ? "default" : "outline"}
+                size="sm"
+                onClick={() => handleCategoryClick(null)}
+              >
+                Все статьи
+              </Button>
+              {categoryCounts.map((cat) => (
+                <Button
+                  key={cat.key}
+                  variant={activeCategory === cat.key ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handleCategoryClick(cat.key)}
+                >
+                  {cat.name}
+                  <Badge variant="secondary" className="ml-2 text-xs">
+                    {cat.count}
+                  </Badge>
+                </Button>
+              ))}
+            </div>
 
-          <div className="mt-12 text-center">
-            <div className="inline-flex items-center gap-2 rounded-lg border bg-muted/50 px-6 py-4">
-              <FileText className="h-5 w-5 text-muted-foreground" />
-              <span className="text-muted-foreground">
-                Раздел в разработке. Скоро здесь появятся новые статьи.
-              </span>
+            {/* Поиск */}
+            <div className="relative w-full md:w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Поиск статей..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+              />
             </div>
           </div>
         </div>
       </section>
 
+      {/* Список статей */}
+      <section className="py-12 md:py-16">
+        <div className="container px-4">
+          {filteredArticles.length > 0 ? (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredArticles.map((article) => (
+                <ArticleCard key={article.slug} article={article} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <h2 className="text-xl font-semibold mb-2">Статьи не найдены</h2>
+              <p className="text-muted-foreground mb-4">
+                Попробуйте изменить параметры поиска или выбрать другую категорию.
+              </p>
+              <Button variant="outline" onClick={() => {
+                setSearchQuery("");
+                setSearchParams({});
+              }}>
+                Сбросить фильтры
+              </Button>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Перелинковка */}
       <section className="border-t py-8">
         <RelatedLinks type="services" title="Услуги" />
         <RelatedLinks type="pests" title="Вредители" />
       </section>
     </MainLayout>
+  );
+}
+
+// Компонент карточки статьи
+function ArticleCard({ article }: { article: BlogTopic }) {
+  const categoryInfo = BLOG_CATEGORIES[article.category];
+
+  return (
+    <Card className="hover:shadow-lg transition-shadow group">
+      <CardHeader>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+          <Badge 
+            variant="secondary" 
+            className="text-xs font-medium"
+          >
+            {categoryInfo.name}
+          </Badge>
+          <span className="flex items-center gap-1">
+            <Calendar className="h-3 w-3" />
+            {new Date(article.publishDate).toLocaleDateString("ru-RU")}
+          </span>
+          <span className="flex items-center gap-1">
+            <Clock className="h-3 w-3" />
+            {article.readTime} мин
+          </span>
+        </div>
+        <CardTitle className="text-lg line-clamp-2 group-hover:text-primary transition-colors">
+          <Link to={`/blog/${article.slug}`}>
+            {article.title}
+          </Link>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <CardDescription className="line-clamp-3 mb-4">
+          {article.description}
+        </CardDescription>
+        
+        {/* Ключевые слова */}
+        <div className="flex flex-wrap gap-1">
+          {article.keywords.slice(0, 2).map((keyword) => (
+            <Badge key={keyword} variant="outline" className="text-xs">
+              {keyword}
+            </Badge>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
