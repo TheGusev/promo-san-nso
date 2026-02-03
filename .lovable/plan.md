@@ -1,27 +1,48 @@
 
-# План: Раскрывающиеся секции "Отзывы" и "FAQ" на мобильных
+# План: Плавная анимация открытия/закрытия секций с framer-motion
 
-## Проблема
-На мобильных устройствах секции "Отзывы" и "Часто задаваемые вопросы" занимают много места на экране. Нужно спрятать их под раскрывающиеся заголовки.
+## Задача
+Добавить плавную анимацию высоты и прозрачности при открытии/закрытии раскрывающихся секций "Отзывы" и "FAQ" на мобильных устройствах.
+
+## Текущее состояние
+- Компонент `MobileCollapsibleSection` использует Radix UI `Collapsible`
+- Анимация иконки (поворот стрелки) уже работает через CSS transition
+- Контент раскрывается мгновенно, без плавной анимации высоты
 
 ## Решение
-Создать обёрточный компонент `MobileCollapsibleSection`, который:
-- На **мобильных** (< 768px): показывает заголовок с иконкой-стрелкой, при клике раскрывает контент
-- На **десктопе**: показывает контент полностью без возможности сворачивания
+Заменить Radix `CollapsibleContent` на `motion.div` из framer-motion с анимацией `height: auto`.
 
 ---
 
-## Файлы для создания/изменения
+## Изменения
 
-### 1. Создать `src/components/MobileCollapsibleSection.tsx`
+### 1. Установить framer-motion
 
-Новый компонент-обёртка:
+Добавить зависимость в `package.json`:
+
+```json
+"framer-motion": "^11.0.0"
+```
+
+---
+
+### 2. Обновить `src/components/MobileCollapsibleSection.tsx`
+
+**Изменения:**
+
+| Элемент | Было | Станет |
+|---------|------|--------|
+| Импорты | Radix Collapsible | framer-motion `motion`, `AnimatePresence` |
+| Контейнер контента | `<CollapsibleContent>` | `<motion.div>` с анимацией |
+| Анимация | Нет | Плавное раскрытие высоты + fade |
+
+**Новый код:**
 
 ```tsx
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface MobileCollapsibleSectionProps {
@@ -45,97 +66,79 @@ export function MobileCollapsibleSection({
     return <>{children}</>;
   }
 
-  // На мобильных — Collapsible с заголовком
+  // На мобильных — с плавной анимацией
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <CollapsibleTrigger className="w-full py-4 px-4 bg-muted/50 flex items-center justify-between">
+    <div className="w-full">
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full py-4 px-4 bg-muted/50 rounded-lg flex items-center justify-between"
+      >
         <div className="text-left">
           <h2 className="text-xl font-bold">{title}</h2>
-          {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+          {subtitle && (
+            <p className="text-sm text-muted-foreground">{subtitle}</p>
+          )}
         </div>
-        <ChevronDown className={cn(
-          "h-5 w-5 transition-transform duration-200",
-          isOpen && "rotate-180"
-        )} />
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        {children}
-      </CollapsibleContent>
-    </Collapsible>
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+        >
+          <ChevronDown className="h-5 w-5" />
+        </motion.div>
+      </button>
+      
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ 
+              duration: 0.3, 
+              ease: [0.04, 0.62, 0.23, 0.98] 
+            }}
+            style={{ overflow: "hidden" }}
+          >
+            {children}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 ```
 
 ---
 
-### 2. Изменить `src/pages/Index.tsx`
+## Детали анимации
 
-Обернуть секции Reviews и FAQ в `MobileCollapsibleSection`:
-
-```tsx
-import { MobileCollapsibleSection } from "@/components/MobileCollapsibleSection";
-
-// ...
-
-<Suspense fallback={<div className="h-96" />}>
-  <MobileCollapsibleSection 
-    title="Отзывы наших клиентов" 
-    subtitle="Нажмите, чтобы развернуть"
-  >
-    <section id="reviews">
-      <Reviews />
-    </section>
-  </MobileCollapsibleSection>
-</Suspense>
-
-<Suspense fallback={<div className="h-64" />}>
-  <MobileCollapsibleSection 
-    title="Часто задаваемые вопросы" 
-    subtitle="Нажмите, чтобы развернуть"
-  >
-    <FAQ />
-  </MobileCollapsibleSection>
-</Suspense>
-```
+| Параметр | Значение | Описание |
+|----------|----------|----------|
+| `height` | `0` → `auto` | Плавное раскрытие высоты |
+| `opacity` | `0` → `1` | Fade эффект |
+| `duration` | `0.3s` | Длительность анимации |
+| `ease` | `[0.04, 0.62, 0.23, 0.98]` | Кастомная кривая для естественного движения |
+| Иконка | CSS → framer-motion | Более плавный поворот стрелки |
 
 ---
 
 ## Визуальный результат
 
-### Мобильная версия (свёрнуто):
+**Открытие:**
+1. Пользователь нажимает на заголовок
+2. Стрелка плавно поворачивается на 180°
+3. Контент плавно "выезжает" сверху вниз с fade-in
 
-```text
-┌────────────────────────────────────┐
-│ Отзывы наших клиентов          ▼  │
-│ Нажмите, чтобы развернуть          │
-└────────────────────────────────────┘
-
-┌────────────────────────────────────┐
-│ Часто задаваемые вопросы       ▼  │
-│ Нажмите, чтобы развернуть          │
-└────────────────────────────────────┘
-```
-
-### Мобильная версия (развёрнуто):
-
-```text
-┌────────────────────────────────────┐
-│ Отзывы наших клиентов          ▲  │
-│ Нажмите, чтобы развернуть          │
-├────────────────────────────────────┤
-│ [Карточки отзывов...]              │
-└────────────────────────────────────┘
-```
-
-### Десктоп версия:
-
-Без изменений — секции отображаются полностью как раньше.
+**Закрытие:**
+1. Пользователь нажимает на заголовок
+2. Стрелка плавно возвращается в исходное положение
+3. Контент плавно "уезжает" снизу вверх с fade-out
 
 ---
 
-## Итого файлов
+## Файлы для изменения
 
 | Файл | Действие |
 |------|----------|
-| `src/components/MobileCollapsibleSection.tsx` | Создать |
-| `src/pages/Index.tsx` | Обернуть Reviews и FAQ в MobileCollapsibleSection |
+| `package.json` | Добавить `framer-motion` |
+| `src/components/MobileCollapsibleSection.tsx` | Переписать с использованием framer-motion |
