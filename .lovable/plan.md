@@ -1,54 +1,31 @@
 
-# План: Удаление раздела "Полезные статьи" с главной страницы
+# План: Удаление цветного градиента с Hero
 
-## Обоснование
+## Проблема
+Градиентный overlay `bg-gradient-to-r from-primary/30 to-secondary/20` (синий → зелёный) накладывается поверх фоновых изображений, окрашивая их в зелёный оттенок.
 
-Раздел "Полезные статьи" дублируется:
-- На главной странице — компонент `Articles`
-- В блоге `/blog` — полноценная страница с фильтрами, поиском и категориями
-
-Блог предоставляет лучший UX для работы со статьями, поэтому дублирование на главной излишне.
+## Решение
+Удалить градиентный overlay, оставив только тёмный overlay (`bg-black/55`) для читаемости текста.
 
 ---
 
-## Изменения в Index.tsx
+## Изменения в Hero.tsx
 
-1. **Удалить lazy-импорт:**
-   ```tsx
-   const Articles = lazy(() => import("@/components/Articles"));
-   ```
-
-2. **Удалить Suspense + section с Articles:**
-   ```tsx
-   <Suspense fallback={<div className="h-96" />}>
-     <section id="articles">
-       <Articles />
-     </section>
-   </Suspense>
-   ```
+**Удалить строку 65-66:**
+```tsx
+{/* Gradient overlay for brand colors */}
+<div className="absolute inset-0 bg-gradient-to-r from-primary/30 to-secondary/20" aria-hidden="true" />
+```
 
 ---
 
-## Новая структура главной страницы
+## Результат
 
-После удаления:
-
+Слои после изменения:
 ```text
-Hero
-  ↓
-PriceTable
-  ↓
-Calculator
-  ↓
-Reviews
-  ↓
-Services
-  ↓
-AboutSection
-  ↓
-FAQ
-  ↓
-Footer
+[Фоновые изображения] — естественные цвета
+[Тёмный overlay bg-black/55] — для читаемости текста
+[Контент] — белый текст и кнопки
 ```
 
 ---
@@ -57,6 +34,4 @@ Footer
 
 | Файл | Действие |
 |------|----------|
-| `src/pages/Index.tsx` | Удалить импорт и использование `Articles` |
-
-**Примечание:** Файл `src/components/Articles.tsx` сохраняется — он может использоваться в других местах или понадобиться позже.
+| `src/components/Hero.tsx` | Удалить градиентный overlay (строки 65-66) |
