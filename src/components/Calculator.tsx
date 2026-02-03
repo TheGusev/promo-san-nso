@@ -507,7 +507,7 @@ export default function Calculator() {
 
   return (
     <>
-      <section id="calculator" ref={calcRef} className="py-4 sm:py-8 md:py-16 bg-background pb-32 sm:pb-8">
+      <section id="calculator" ref={calcRef} className="py-4 sm:py-8 md:py-16 bg-background pb-20 sm:pb-8">
         <div className="container px-2 sm:px-4">
           {/* Компактный заголовок */}
           <div className="text-center mb-3 sm:mb-6 md:mb-10">
