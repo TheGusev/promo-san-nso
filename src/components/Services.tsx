@@ -10,42 +10,48 @@ const services = [
     title: "Дезинфекция",
     description: "Уничтожение вирусов, бактерий и грибков. Обработка помещений профессиональными препаратами.",
     price: "от 1500₽",
-    features: ["Холодный/горячий туман", "Безопасные препараты", "Гарантия результата"]
+    features: ["Холодный/горячий туман", "Безопасные препараты", "Гарантия результата"],
+    bgImage: "/images/services/dezinfeksiya.png"
   },
   {
     icon: Bug,
     title: "Дезинсекция",
     description: "Уничтожение клопов, тараканов, муравьёв и других насекомых. Современные методы обработки.",
     price: "от 1500₽",
-    features: ["Эффект до 6 месяцев", "Без запаха", "Безопасно для людей"]
+    features: ["Эффект до 6 месяцев", "Без запаха", "Безопасно для людей"],
+    bgImage: "/images/services/dezinseksiya.png"
   },
   {
     icon: Rat,
     title: "Дератизация",
     description: "Профессиональное уничтожение грызунов. Барьерная защита и регулярное обслуживание.",
     price: "от 1800₽",
-    features: ["Комплексная защита", "Барьерная обработка", "Долгосрочный эффект"]
+    features: ["Комплексная защита", "Барьерная обработка", "Долгосрочный эффект"],
+    bgImage: "/images/services/deratizatsiya.png"
   },
   {
     icon: Wind,
     title: "Озонирование",
     description: "Глубокая очистка воздуха и поверхностей. Устранение неприятных запахов и аллергенов.",
     price: "от 1500₽",
-    features: ["Экологично", "Без химии", "Удаление запахов"]
+    features: ["Экологично", "Без химии", "Удаление запахов"],
+    bgImage: "/images/services/ozonirovanie.png"
   },
   {
     icon: Droplets,
     title: "Дезодорация",
     description: "Устранение сложных запахов: дым, гарь, плесень, животные. Профессиональное оборудование.",
     price: "от 1500₽",
-    features: ["Устойчивый результат", "Любые запахи", "Быстрый эффект"]
+    features: ["Устойчивый результат", "Любые запахи", "Быстрый эффект"],
+    bgImage: "/images/services/dezodoratsiya.png"
   },
   {
     icon: FileCheck,
     title: "Сертификация",
     description: "Подготовка к проверкам СЭС. Полный пакет документов для Роспотребнадзора.",
     price: "от 3000₽",
-    features: ["Все документы", "Акты и протоколы", "Консультации"]
+    features: ["Все документы", "Акты и протоколы", "Консультации"],
+    bgImage: "/images/services/sertifikatsiya.png"
   }
 ];
 
@@ -67,37 +73,45 @@ export default function Services() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
           {services.map((service, index) => (
             <AnimatedSection key={index} animation="scale-up" delay={index * 100}>
-              <Card className="p-6 hover:shadow-elevated transition-all duration-300 h-full">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-4">
-                  <service.icon className="h-6 w-6 text-primary" />
+              <Card className="relative overflow-hidden p-6 hover:shadow-elevated transition-all duration-300 h-full">
+                {/* Background image */}
+                <div 
+                  className="absolute inset-0 opacity-20 bg-cover bg-center bg-no-repeat"
+                  style={{ backgroundImage: `url(${service.bgImage})` }}
+                />
+                
+                <div className="relative z-10">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 mb-4">
+                    <service.icon className="h-6 w-6 text-primary" />
+                  </div>
+                  
+                  <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
+                  <p className="text-sm text-muted-foreground mb-4">{service.description}</p>
+                  
+                  <div className="flex items-center justify-between mb-4 pb-4 border-b">
+                    <span className="text-2xl font-bold text-primary">{service.price}</span>
+                  </div>
+                  
+                  <ul className="space-y-2 mb-4">
+                    {service.features.map((feature, i) => (
+                      <li key={i} className="flex items-center gap-2 text-sm">
+                        <div className="h-1.5 w-1.5 rounded-full bg-secondary" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  
+                  <Button 
+                    className="w-full" 
+                    variant="outline"
+                    onClick={() => {
+                      logTrafficEvent('service_click', { service: service.title });
+                      document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                  >
+                    Рассчитать стоимость
+                  </Button>
                 </div>
-                
-                <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
-                <p className="text-sm text-muted-foreground mb-4">{service.description}</p>
-                
-                <div className="flex items-center justify-between mb-4 pb-4 border-b">
-                  <span className="text-2xl font-bold text-primary">{service.price}</span>
-                </div>
-                
-                <ul className="space-y-2 mb-4">
-                  {service.features.map((feature, i) => (
-                    <li key={i} className="flex items-center gap-2 text-sm">
-                      <div className="h-1.5 w-1.5 rounded-full bg-secondary" />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                
-                <Button 
-                  className="w-full" 
-                  variant="outline"
-                  onClick={() => {
-                    logTrafficEvent('service_click', { service: service.title });
-                    document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                >
-                  Рассчитать стоимость
-                </Button>
               </Card>
             </AnimatedSection>
           ))}
