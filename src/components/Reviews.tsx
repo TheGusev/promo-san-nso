@@ -71,7 +71,7 @@ export default function Reviews() {
               Отзывы <span className="text-primary">наших клиентов</span>
             </h2>
             <p className="text-muted-foreground text-lg mb-6">
-              Более 500 довольных клиентов за последний год
+              Более 150 довольных клиентов
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               <Button variant="outline" className="gap-2" onClick={() => setShowForm(true)}>
