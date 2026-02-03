@@ -25,8 +25,8 @@ export default function Map2GIS() {
   }, []);
   const organizationUrl = "https://go.2gis.com/oSzHM";
   
-  // Упрощенный embed URL - карта по координатам без конкретной организации (более надежный)
-  const embedUrl = "https://widgets.2gis.com/widget?type=map&options=%7B%22pos%22%3A%7B%22lat%22%3A55.030204%2C%22lon%22%3A82.92043%2C%22zoom%22%3A16%7D%2C%22opt%22%3A%7B%22city%22%3A%22novosibirsk%22%7D%7D";
+  // Яндекс Карты - надежное отображение на всех устройствах
+  const embedUrl = "https://yandex.ru/map-widget/v1/?ll=82.9274,55.0302&z=16&pt=82.9274,55.0302,pm2rdm";
 
   return (
     <div className="w-full space-y-4">
