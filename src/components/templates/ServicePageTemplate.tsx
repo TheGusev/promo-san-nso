@@ -73,7 +73,7 @@ export function ServicePageTemplate({ service }: ServicePageTemplateProps) {
       {/* Hero Section - новый унифицированный компонент */}
       <HeroService
         title={service.shortName}
-        heading={`${service.name} в ${SITE_CONFIG.regionGenitive}`}
+        heading={`${service.name} в ${SITE_CONFIG.regionPrepositional}`}
         description={service.description}
         priceFrom={service.priceFrom}
         icon={Icon}
@@ -194,7 +194,7 @@ export function ServicePageTemplate({ service }: ServicePageTemplateProps) {
         <div className="container px-4">
           <h2 className="text-2xl font-bold md:text-3xl mb-6 flex items-center gap-3">
             <Banknote className="h-8 w-8 text-primary" />
-            Цены на {service.shortName.toLowerCase()} в {SITE_CONFIG.regionGenitive}
+            Цены на {service.shortName.toLowerCase()} в {SITE_CONFIG.regionPrepositional}
           </h2>
           
           {hasDetailedContent && content ? (
@@ -448,7 +448,7 @@ export function ServicePageTemplate({ service }: ServicePageTemplateProps) {
       <section className="py-12 md:py-16">
         <div className="container px-4">
           <CTABlock
-            title={`Заказать ${service.shortName.toLowerCase()} в ${SITE_CONFIG.regionGenitive}`}
+            title={`Заказать ${service.shortName.toLowerCase()} в ${SITE_CONFIG.regionPrepositional}`}
             subtitle="Позвоните нам или оставьте заявку — мы перезвоним в течение 5 минут"
             variant="hero"
           />

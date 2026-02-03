@@ -28,7 +28,7 @@ export default function UslugiIndex() {
           <Breadcrumbs items={[{ label: "Услуги" }]} />
           
           <h1 className="mt-6 text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">
-            Услуги СЭС в {SITE_CONFIG.regionGenitive}
+            Услуги СЭС в {SITE_CONFIG.regionPrepositional}
           </h1>
           <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
             Профессиональная санитарно-эпидемиологическая служба. Уничтожение вредителей,

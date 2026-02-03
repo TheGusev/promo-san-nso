@@ -68,7 +68,7 @@ export default function ComboPage() {
 
   // Meta
   const metaTitle = `${entry.mainKeyword} — СЭС ${SITE_CONFIG.companyName}`;
-  const metaDescription = `${entry.serviceName} ${getObjectGenitive(entry)}${entry.pestSlug ? ` от ${entry.pestName?.toLowerCase()}` : ""}${entry.districtSlug ? ` в ${entry.districtName}е` : ` в ${SITE_CONFIG.region}е`}. Цена от ${entry.priceFrom || 2500}₽. Гарантия ${entry.guaranteeDays ? Math.round(entry.guaranteeDays / 30) : 3} мес. Выезд за 30 мин.`;
+  const metaDescription = `${entry.serviceName} ${getObjectGenitive(entry)}${entry.pestSlug ? ` от ${entry.pestName?.toLowerCase()}` : ""}${entry.districtSlug ? ` в ${district?.nameLocative || entry.districtName}` : ` в ${SITE_CONFIG.regionPrepositional}`}. Цена от ${entry.priceFrom || 2500}₽. Гарантия ${entry.guaranteeDays ? Math.round(entry.guaranteeDays / 30) : 3} мес. Выезд за 30 мин.`;
 
   // Schema.org
   const serviceSchema = service ? getServiceSchema({
@@ -163,7 +163,7 @@ export default function ComboPage() {
           <div className="container px-4">
             <div className="mx-auto max-w-3xl">
               <h2 className="text-2xl font-bold md:text-3xl mb-6">
-                Чем опасны {entry.pestName?.toLowerCase()} {entry.districtSlug ? `в ${entry.districtName}е` : `в ${SITE_CONFIG.region}е`}
+                Чем опасны {entry.pestName?.toLowerCase()} {entry.districtSlug ? `в ${district?.nameLocative || entry.districtName}` : `в ${SITE_CONFIG.regionPrepositional}`}
               </h2>
               <div className="prose prose-lg max-w-none text-muted-foreground">
                 {situation.split("\n\n").map((p, i) => (
