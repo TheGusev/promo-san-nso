@@ -15,6 +15,7 @@ import NotFound from "./pages/NotFound";
 import UslugiIndex from "./pages/uslugi/Index";
 import ServicePage from "./pages/usluga/ServicePage";
 import VreditediIndex from "./pages/vrediteli/Index";
+import PestPage from "./pages/vreditel/PestPage";
 import ObektyIndex from "./pages/obekty/Index";
 import RayonyIndex from "./pages/rayony/Index";
 import BlogIndex from "./pages/blog/Index";
@@ -48,7 +49,7 @@ const App = () => (
               
               {/* Вредители */}
               <Route path="/vrediteli" element={<VreditediIndex />} />
-              {/* TODO: <Route path="/vreditel/:pestSlug" element={<PestPage />} /> */}
+              <Route path="/vreditel/:pestSlug" element={<PestPage />} />
               
               {/* Объекты */}
               <Route path="/obekty" element={<ObektyIndex />} />
