@@ -8,11 +8,13 @@ export const SITE_CONFIG = {
   companyName: "СанРешения",
   companyNameFull: "ООО «Санитарные Решения»",
   legalName: "ООО «Санитарные Решения»",
+  description: "СЭС служба в Новосибирске: дезинсекция, дератизация и дезинфекция квартир, домов и объектов бизнеса.",
   
   // Контакты (офисный телефон для звонков)
   phone: "+7 (383) 312-16-60",
   phoneClean: "73833121660",
   phoneDisplay: "8 (383) 312-16-60",
+  phoneTel: "+7-383-312-16-60", // для schema.org
   
   // Мобильный номер для мессенджеров (WhatsApp)
   whatsapp: "+79628265020",
@@ -20,8 +22,18 @@ export const SITE_CONFIG = {
   
   telegram: "@sanitarnye_resheniya_nsk",
   email: "west-centro@mail.ru",
-  address: "Новосибирск",
-  addressFull: "г. Новосибирск",
+  
+  // Адрес (полная структура для Schema.org)
+  address: {
+    streetAddress: "ул. Державина, 28",
+    city: "Новосибирск",
+    region: "Новосибирская область",
+    postalCode: "630005",
+    country: "RU",
+  },
+  addressShort: "Новосибирск",
+  addressFull: "г. Новосибирск, ул. Державина, 28",
+  
   workingHours: "24/7",
   workingHoursText: "Работаем круглосуточно",
   
@@ -42,10 +54,10 @@ export const SITE_CONFIG = {
     telegram: "https://t.me/sanitarnye_resheniya_nsk",
   },
   
-  // Координаты для карты
+  // Координаты для карты (Schema.org GeoCoordinates)
   coordinates: {
-    lat: 55.0304,
-    lng: 82.9204,
+    latitude: 55.0302,
+    longitude: 82.9274,
   },
 } as const;
 

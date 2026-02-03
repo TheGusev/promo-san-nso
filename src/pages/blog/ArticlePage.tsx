@@ -11,6 +11,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { SITE_CONFIG } from "@/data/siteConfig";
 import { getArticleBySlug, getRelatedArticles, BLOG_CATEGORIES, BlogTopic } from "@/data/blogTopics";
 import { generateArticleContent, generateTableOfContents } from "@/lib/blogContentGenerator";
+import { getArticleSchema, getFaqSchema } from "@/lib/schema";
 
 export default function ArticlePage() {
   const { articleSlug } = useParams<{ articleSlug: string }>();
@@ -25,46 +26,16 @@ export default function ArticlePage() {
   const relatedArticles = getRelatedArticles(topic.slug, 3);
   const categoryInfo = BLOG_CATEGORIES[topic.category];
 
-  // Schema.org для статьи
-  const articleSchema = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: topic.title,
+  // Schema.org для статьи (используем централизованную функцию)
+  const articleSchema = getArticleSchema({
+    title: topic.title,
     description: topic.description,
-    datePublished: topic.publishDate,
-    dateModified: topic.publishDate,
-    author: {
-      "@type": "Organization",
-      name: SITE_CONFIG.companyName,
-      url: SITE_CONFIG.siteUrl,
-    },
-    publisher: {
-      "@type": "Organization",
-      name: SITE_CONFIG.companyName,
-      logo: {
-        "@type": "ImageObject",
-        url: `${SITE_CONFIG.siteUrl}/og-image.jpg`,
-      },
-    },
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": `${SITE_CONFIG.siteUrl}/blog/${topic.slug}`,
-    },
-  };
+    slug: topic.slug,
+    publishDate: topic.publishDate,
+  });
 
-  // FAQ Schema
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: content.faq.map((item) => ({
-      "@type": "Question",
-      name: item.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: item.answer,
-      },
-    })),
-  };
+  // FAQ Schema (используем централизованную функцию)
+  const faqSchema = getFaqSchema(content.faq);
 
   const getRelatedLinkIcon = (type: string) => {
     switch (type) {
