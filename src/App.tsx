@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { ABTestProvider } from "@/contexts/ABTestContext";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 // Страницы
 import Index from "./pages/Index";
@@ -44,6 +45,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <ScrollToTop />
             <Routes>
               {/* Главная */}
               <Route path="/" element={<Index />} />
