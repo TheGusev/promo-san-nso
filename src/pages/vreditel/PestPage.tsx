@@ -49,7 +49,6 @@ export default function PestPage() {
 
           <div className="mt-6 grid gap-8 lg:grid-cols-2 lg:items-center">
             <div>
-              {/* LSI: место для ключей в H1 и подзаголовке */}
               <h1 className="text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">
                 {pest.name} в {SITE_CONFIG.regionPrepositional}: как распознать и вывести
               </h1>
@@ -138,9 +137,9 @@ export default function PestPage() {
                   <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-destructive/10">
                     <AlertTriangle className="h-6 w-6 text-destructive" />
                   </div>
-                  <h2 className="text-2xl font-bold md:text-3xl">
-                    Чем опасен{pest.category === "rodents" ? "ы" : ""} {pest.namePlural}
-                  </h2>
+                <h2 className="text-2xl font-bold md:text-3xl">
+                  Чем опасны {pest.namePlural}
+                </h2>
                 </div>
                 <div className="prose max-w-none text-muted-foreground">
                   {content.danger.split('\n\n').map((paragraph, i) => (
