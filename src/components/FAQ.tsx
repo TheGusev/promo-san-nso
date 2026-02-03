@@ -51,7 +51,7 @@ const faqs = [
 
 export default function FAQ() {
   return (
-    <section id="faq" className="py-16 sm:py-20 bg-muted/50" aria-label="Часто задаваемые вопросы о дезинфекции в Новосибирске">
+    <section id="faq" className="py-4 sm:py-20 bg-muted/50" aria-label="Часто задаваемые вопросы о дезинфекции в Новосибирске">
       <div className="container px-2 sm:px-4">
         <AnimatedSection animation="fade-up">
           <div className="text-center mb-10 sm:mb-12">

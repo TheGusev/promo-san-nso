@@ -57,7 +57,7 @@ const services = [
 
 export default function Services() {
   return (
-    <section id="prices" className="py-12 md:py-20 bg-background">
+    <section id="prices" className="py-4 md:py-20 bg-background">
       <div className="container px-2 sm:px-4">
         <AnimatedSection animation="fade-up">
           <div className="text-center mb-8 md:mb-12">

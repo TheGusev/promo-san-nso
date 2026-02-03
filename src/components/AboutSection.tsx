@@ -3,7 +3,7 @@ import { AnimatedSection } from "@/components/ui/animated-section";
 
 export default function AboutSection() {
   return (
-    <section className="py-12 sm:py-16 bg-background" id="about" aria-label="О компании СанРешения">
+    <section className="py-4 sm:py-16 bg-background" id="about" aria-label="О компании СанРешения">
       <div className="container px-4">
         <AnimatedSection animation="fade-up">
           <div className="max-w-4xl mx-auto">
