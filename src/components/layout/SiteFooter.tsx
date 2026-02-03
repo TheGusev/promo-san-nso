@@ -35,16 +35,6 @@ export function SiteFooter() {
               Уничтожение насекомых, грызунов, дезинфекция помещений.
               Работаем с частными лицами и организациями.
             </p>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-muted-foreground" />
-                <span>{SITE_CONFIG.workingHoursText}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-muted-foreground" />
-                <span>{SITE_CONFIG.addressFull}</span>
-              </div>
-            </div>
           </div>
 
           {/* Услуги */}
