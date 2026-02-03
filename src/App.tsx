@@ -19,6 +19,7 @@ import PestPage from "./pages/vreditel/PestPage";
 import ObektyIndex from "./pages/obekty/Index";
 import ObjectPage from "./pages/obekt/ObjectPage";
 import RayonyIndex from "./pages/rayony/Index";
+import DistrictPage from "./pages/rayon/DistrictPage";
 import BlogIndex from "./pages/blog/Index";
 
 // Админка
@@ -58,7 +59,7 @@ const App = () => (
               
               {/* Районы */}
               <Route path="/rayony" element={<RayonyIndex />} />
-              {/* TODO: <Route path="/rayon/:districtSlug" element={<DistrictPage />} /> */}
+              <Route path="/rayon/:districtSlug" element={<DistrictPage />} />
               
               {/* Блог */}
               <Route path="/blog" element={<BlogIndex />} />
