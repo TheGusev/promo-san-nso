@@ -76,6 +76,18 @@ export function SEOHead({
       link.href = canonical;
     }
 
+    // Hreflang для русскоязычной версии
+    const hreflangRu = document.querySelector('link[rel="alternate"][hreflang="ru"]') as HTMLLinkElement;
+    if (!hreflangRu) {
+      const link = document.createElement("link");
+      link.rel = "alternate";
+      link.hreflang = "ru";
+      link.href = canonical || SITE_CONFIG.siteUrl;
+      document.head.appendChild(link);
+    } else {
+      hreflangRu.href = canonical || SITE_CONFIG.siteUrl;
+    }
+
     // Cleanup: возвращаем старый title при размонтировании
     return () => {
       // Опционально: можно вернуть дефолтный title

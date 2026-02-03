@@ -20,7 +20,7 @@ export function SiteFooter() {
           height="100%"
           frameBorder="0"
           loading="lazy"
-          title="Карта расположения офиса Гордез в Новосибирске"
+          title="Карта расположения офиса СанРешения в Новосибирске"
         />
       </div>
 

@@ -390,6 +390,36 @@ export default function ObjectPage() {
         </section>
       )}
 
+      {/* Блок СанПиН для B2B объектов */}
+      {(objectType.category === "commercial" || objectType.category === "industrial") && (
+        <section className="py-8">
+          <div className="container px-4">
+            <Card className="border-primary/20 bg-primary/5">
+              <CardContent className="p-6">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                    <FileText className="h-6 w-6 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold mb-2">Требования СанПиН для бизнеса</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Узнайте, какие документы нужны для проверки Роспотребнадзора. Мы предоставляем полный пакет: договор, акты, сертификаты.
+                    </p>
+                    <Link 
+                      to="/sanpin" 
+                      className="inline-flex items-center gap-2 text-primary font-medium hover:underline"
+                    >
+                      Нормативные требования
+                      <ChevronRight className="h-4 w-4" />
+                    </Link>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+      )}
+
       {/* FAQ Teaser */}
       <section className="py-8 bg-muted/30">
         <div className="container px-4">
