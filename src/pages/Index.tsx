@@ -8,7 +8,7 @@ import HowWeWork from "@/components/HowWeWork";
 import Services from "@/components/Services";
 import Calculator from "@/components/Calculator";
 import AboutSection from "@/components/AboutSection";
-import FloatingButtons from "@/components/FloatingButtons";
+import FloatingContact from "@/components/FloatingContact";
 import PopupForm from "@/components/PopupForm";
 import { useEngagementTracking } from "@/hooks/useEngagementTracking";
 import { useTrafficLogging } from "@/hooks/useTrafficLogging";
@@ -68,7 +68,7 @@ const Index = () => {
           <Footer />
         </section>
       </Suspense>
-      <FloatingButtons />
+      <FloatingContact />
       <PopupForm />
     </div>
   );
