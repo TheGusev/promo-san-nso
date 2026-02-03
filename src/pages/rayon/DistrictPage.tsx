@@ -5,6 +5,7 @@ import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
 import { SEOHead } from "@/components/shared/SEOHead";
 import { CTABlock } from "@/components/shared/CTABlock";
 import { RelatedLinks } from "@/components/shared/RelatedLinks";
+import { FAQTeaser, FAQ_PRESETS } from "@/components/shared/FAQTeaser";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -387,6 +388,17 @@ export default function DistrictPage() {
           </div>
         </section>
       )}
+
+      {/* FAQ Teaser */}
+      <section className="py-8 bg-muted/30">
+        <div className="container px-4">
+          <FAQTeaser 
+            limit={3}
+            variant="compact"
+            title="Ответы на частые вопросы"
+          />
+        </div>
+      </section>
 
       {/* CTA */}
       <CTABlock

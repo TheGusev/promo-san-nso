@@ -8,6 +8,7 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
 import { CTABlock } from "@/components/shared/CTABlock";
 import { RelatedLinks } from "@/components/shared/RelatedLinks";
+import { FAQTeaser, FAQ_PRESETS } from "@/components/shared/FAQTeaser";
 import { SEOHead } from "@/components/shared/SEOHead";
 import { CostCalculatorPlaceholder } from "@/components/shared/CostCalculatorPlaceholder";
 import { SITE_CONFIG } from "@/data/siteConfig";
@@ -460,6 +461,18 @@ export function ServicePageTemplate({ service }: ServicePageTemplateProps) {
             {service.name} по районам {SITE_CONFIG.regionGenitive}
           </h2>
           <RelatedLinks type="districts" title="" maxItems={10} />
+        </div>
+      </section>
+
+      {/* FAQ Teaser */}
+      <section className="py-8 bg-muted/30">
+        <div className="container px-4">
+          <FAQTeaser 
+            serviceSlug={service.slug}
+            questionIds={FAQ_PRESETS[service.slug as keyof typeof FAQ_PRESETS] || FAQ_PRESETS.default}
+            limit={3}
+            title="Частые вопросы о услуге"
+          />
         </div>
       </section>
 
