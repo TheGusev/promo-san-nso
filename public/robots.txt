@@ -1,46 +1,12 @@
-# Robots.txt для СанРешения (ООО Санитарные Решения)
+# Robots.txt для СанРешения
 # https://xn--d1aey.xn--p1ai (гордэз.рф)
-
-User-agent: Googlebot
-Allow: /
-Crawl-delay: 1
-
-User-agent: Yandex
-Allow: /
-Crawl-delay: 1
-Clean-param: utm_source&utm_medium&utm_campaign&utm_content&utm_term
-
-User-agent: Bingbot
-Allow: /
-Crawl-delay: 2
-
-User-agent: Mail.Ru
-Allow: /
-Crawl-delay: 2
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
 
 User-agent: *
 Allow: /
+
+# Технические и служебные пути
 Disallow: /admin/
-
-# Основные страницы услуг
-Allow: /dezinfeksiya
-Allow: /dezinseksiya
-Allow: /deratizatsiya
-Allow: /ozonirovanie
-Allow: /dezodoratsiya
-Allow: /sertifikatsiya
-
-# Служебные страницы
-Allow: /privacy
+Disallow: /api/
 
 # Sitemap
 Sitemap: https://xn--d1aey.xn--p1ai/sitemap.xml
-
-# Host (для Яндекса)
-Host: https://xn--d1aey.xn--p1ai

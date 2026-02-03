@@ -3,7 +3,7 @@
   <!-- Главная страница -->
   <url>
     <loc>https://xn--d1aey.xn--p1ai/</loc>
-    <changefreq>weekly</changefreq>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   
@@ -49,7 +49,7 @@
     <priority>0.3</priority>
   </url>
   
-  <!-- Услуги -->
+  <!-- Услуги (6) -->
   <url>
     <loc>https://xn--d1aey.xn--p1ai/usluga/dezinfeksiya</loc>
     <changefreq>weekly</changefreq>
@@ -81,7 +81,7 @@
     <priority>0.8</priority>
   </url>
   
-  <!-- Вредители -->
+  <!-- Вредители (12) -->
   <url>
     <loc>https://xn--d1aey.xn--p1ai/vreditel/klopy</loc>
     <changefreq>monthly</changefreq>
@@ -100,7 +100,32 @@
   <url>
     <loc>https://xn--d1aey.xn--p1ai/vreditel/muravi</loc>
     <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/vreditel/moli</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/vreditel/kozheed</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/vreditel/osy</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/vreditel/komary</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/vreditel/kleshchi</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://xn--d1aey.xn--p1ai/vreditel/krysy</loc>
@@ -113,12 +138,12 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/vreditel/kleshchi</loc>
+    <loc>https://xn--d1aey.xn--p1ai/vreditel/kroty</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   
-  <!-- Объекты -->
+  <!-- Объекты (15) -->
   <url>
     <loc>https://xn--d1aey.xn--p1ai/obekt/kvartira</loc>
     <changefreq>monthly</changefreq>
@@ -128,6 +153,21 @@
     <loc>https://xn--d1aey.xn--p1ai/obekt/dom</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/obekt/dacha</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/obekt/uchastok</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/obekt/obshezhitie</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://xn--d1aey.xn--p1ai/obekt/ofis</loc>
@@ -140,16 +180,71 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://xn--d1aey.xn--p1ai/obekt/kafe</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/obekt/magazin</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/obekt/gostinitsa</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://xn--d1aey.xn--p1ai/obekt/sklad</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/obekt/proizvodstvo</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/obekt/detskiy-sad</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/obekt/shkola</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/obekt/bolnitsa</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
   
-  <!-- Районы -->
+  <!-- Районы (15) -->
   <url>
     <loc>https://xn--d1aey.xn--p1ai/rayon/centralny-rayon</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/rayon/zheleznodorozhny-rayon</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/rayon/zaeltsovsky-rayon</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/rayon/kalininsky-rayon</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/rayon/kirovsky-rayon</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://xn--d1aey.xn--p1ai/rayon/leninsky-rayon</loc>
@@ -162,13 +257,337 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://xn--d1aey.xn--p1ai/rayon/pervomaysky-rayon</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://xn--d1aey.xn--p1ai/rayon/sovetsky-rayon</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://xn--d1aey.xn--p1ai/rayon/dzerzhinsky-rayon</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://xn--d1aey.xn--p1ai/rayon/berdsk</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/rayon/iskitim</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/rayon/ob</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/rayon/krasnoobsk</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/rayon/novosibirskaya-oblast</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Programmatic-страницы (30) -->
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/klopy-kvartira-centralny-rayon</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/klopy-kvartira-leninsky-rayon</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/klopy-kvartira-oktyabrsky-rayon</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/klopy-kvartira</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/tarakany-kvartira-centralny-rayon</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/tarakany-kvartira</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/tarakany-restoran-centralny-rayon</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/tarakany-restoran</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/blohi-kvartira</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/muravi-kvartira</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/muravi-dom</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/deratizatsiya/krysy-sklad</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/deratizatsiya/krysy-sklad-leninsky-rayon</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/deratizatsiya/myshi-dom</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/deratizatsiya/myshi-dom-sovetsky-rayon</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/deratizatsiya/myshi-kvartira</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/dezinfeksiya/kvartira</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/dezinfeksiya/kvartira-centralny-rayon</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/dezinfeksiya/ofis</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/dezinfeksiya/restoran</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/kvartira-centralny-rayon</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/kvartira-leninsky-rayon</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/deratizatsiya/dom-berdsk</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/kleshchi-uchastok</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/kleshchi-uchastok-sovetsky-rayon</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/kleshchi-uchastok-berdsk</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/ozonirovanie/kvartira</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/ozonirovanie/avtomobil</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/dezodoratsiya/kvartira</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/dezodoratsiya/dom</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- Блог (50 статей) -->
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/kak-raspoznat-postelnykh-klopov</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/skolko-zhivut-klopy-bez-edy</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/otkuda-berutsya-klopy</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/tarakany-v-kvartire-prichiny</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/blohi-v-kvartire-otkuda</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/krysy-v-chastnom-dome</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/myshi-v-dome-zimoy</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/muravi-v-kvartire</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/moli-v-kvartire</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/kozheed-v-kvartire</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/osy-i-shershni-na-dache</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/kleshchi-na-uchastke</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/cheshuynitsy-v-vannoy</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/mokritsy-v-kvartire</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/pauky-v-dome</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/dezinfeksiya-posle-smerti</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/dezinfeksiya-posle-zatopleniya</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/kak-izbavitsya-ot-pleseni</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/dezinfeksiya-v-meditsinskikh-uchrezhdeniyakh</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/dezinfeksiya-posle-bolezni</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/ozonirovanie-pomeshcheniy</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/udalenie-zapakha-v-kvartire</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/dezinfeksiya-sklada</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/deratizatsiya-sklada</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/obrabotka-podvala-ot-bloh</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/dezinfeksiya-avtomobilya</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/fumigatsiya-sklada</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://xn--d1aey.xn--p1ai/blog/sanpin-dlya-obshchepita</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 </urlset>
