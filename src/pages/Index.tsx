@@ -6,6 +6,7 @@ import Calculator from "@/components/Calculator";
 import AboutSection from "@/components/AboutSection";
 import FloatingContact from "@/components/FloatingContact";
 import PopupForm from "@/components/PopupForm";
+import { MobileCollapsibleSection } from "@/components/MobileCollapsibleSection";
 import { useEngagementTracking } from "@/hooks/useEngagementTracking";
 import { useTrafficLogging } from "@/hooks/useTrafficLogging";
 import { userParams } from "@/lib/yandexMetrika";
@@ -40,12 +41,22 @@ const Index = () => {
         <Calculator />
         <AboutSection />
         <Suspense fallback={<div className="h-96" />}>
-          <section id="reviews">
-            <Reviews />
-          </section>
+          <MobileCollapsibleSection 
+            title="Отзывы наших клиентов" 
+            subtitle="Нажмите, чтобы развернуть"
+          >
+            <section id="reviews">
+              <Reviews />
+            </section>
+          </MobileCollapsibleSection>
         </Suspense>
         <Suspense fallback={<div className="h-64" />}>
-          <FAQ />
+          <MobileCollapsibleSection 
+            title="Часто задаваемые вопросы" 
+            subtitle="Нажмите, чтобы развернуть"
+          >
+            <FAQ />
+          </MobileCollapsibleSection>
         </Suspense>
       </main>
       <Suspense fallback={<div className="h-32" />}>
