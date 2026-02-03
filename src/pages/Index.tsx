@@ -1,5 +1,5 @@
 import { useEffect, lazy, Suspense } from "react";
-import Header from "@/components/Header";
+import { SiteHeader } from "@/components/layout/SiteHeader";
 import Hero from "@/components/Hero";
 import PriceTable from "@/components/PriceTable";
 import StatsCounter from "@/components/StatsCounter";
@@ -37,7 +37,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <SiteHeader />
       <main>
         <Hero />
         <PriceTable />
