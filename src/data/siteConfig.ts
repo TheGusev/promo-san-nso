@@ -18,6 +18,7 @@ export const SITE_CONFIG = {
   // SEO
   region: "Новосибирск",
   regionGenitive: "Новосибирска",
+  regionPrepositional: "Новосибирске",
   regionFull: "Новосибирск и Новосибирская область",
   
   // Юридические данные (заглушки)
