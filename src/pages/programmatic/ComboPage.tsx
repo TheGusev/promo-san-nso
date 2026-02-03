@@ -14,6 +14,7 @@ import { getPestBySlug } from "@/data/pests";
 import { getObjectBySlug } from "@/data/objects";
 import { getDistrictBySlug } from "@/data/districts";
 import { SITE_CONFIG } from "@/data/siteConfig";
+import { getServiceSchema, getFaqSchema } from "@/lib/schema";
 import {
   generateH1,
   generateIntro,
@@ -69,12 +70,38 @@ export default function ComboPage() {
   const metaTitle = `${entry.mainKeyword} — СЭС ${SITE_CONFIG.companyName}`;
   const metaDescription = `${entry.serviceName} ${getObjectGenitive(entry)}${entry.pestSlug ? ` от ${entry.pestName?.toLowerCase()}` : ""}${entry.districtSlug ? ` в ${entry.districtName}е` : ` в ${SITE_CONFIG.region}е`}. Цена от ${entry.priceFrom || 2500}₽. Гарантия ${entry.guaranteeDays ? Math.round(entry.guaranteeDays / 30) : 3} мес. Выезд за 30 мин.`;
 
+  // Schema.org
+  const serviceSchema = service ? getServiceSchema({
+    service,
+    pest,
+    object,
+    district,
+    url: generateComboUrl(entry),
+    priceFrom: entry.priceFrom,
+  }) : null;
+
+  const faqSchemaData = getFaqSchema(faq);
+
   return (
     <MainLayout>
       <SEOHead
         title={metaTitle}
         description={metaDescription}
         canonical={`${SITE_CONFIG.siteUrl}${generateComboUrl(entry)}`}
+      />
+
+      {/* Schema.org: Service */}
+      {serviceSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+        />
+      )}
+
+      {/* Schema.org: FAQ */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchemaData) }}
       />
 
       {/* Hero */}

@@ -16,6 +16,7 @@ import { getServiceContent, type ServiceContent } from "@/data/serviceContent";
 import { getPestBySlug } from "@/data/pests";
 import { getObjectBySlug } from "@/data/objects";
 import { cn } from "@/lib/utils";
+import { getServiceSchema, getFaqSchema } from "@/lib/schema";
 
 interface ServicePageTemplateProps {
   service: Service;
@@ -36,6 +37,17 @@ export function ServicePageTemplate({ service }: ServicePageTemplateProps) {
   // Если нет детального контента — используем базовую версию
   const hasDetailedContent = !!content;
 
+  // Генерируем Schema.org
+  const serviceSchema = getServiceSchema({
+    service,
+    url: `/usluga/${service.slug}`,
+    priceFrom: service.priceFrom,
+  });
+
+  const faqSchemaData = hasDetailedContent && content 
+    ? getFaqSchema(content.faq) 
+    : null;
+
   return (
     <MainLayout>
       <SEOHead
@@ -43,6 +55,20 @@ export function ServicePageTemplate({ service }: ServicePageTemplateProps) {
         description={service.metaDescription}
         canonical={`${SITE_CONFIG.siteUrl}/usluga/${service.slug}`}
       />
+
+      {/* Schema.org: Service */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+      />
+      
+      {/* Schema.org: FAQ (если есть контент) */}
+      {faqSchemaData && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchemaData) }}
+        />
+      )}
 
       {/* Hero Section - новый унифицированный компонент */}
       <HeroService
