@@ -1,74 +1,141 @@
 
-
-# План: Удаление дублирующейся статистики в блоге
+# План: Раскрывающиеся секции "Отзывы" и "FAQ" на мобильных
 
 ## Проблема
-
-На странице блога (`/blog`) одна и та же информация отображается дважды:
-
-1. **Верхний блок (статистика)** — некликабельные бейджи: "52 статей", "Вредители: 15", "Дезинфекция: 12" и т.д.
-2. **Нижний блок (фильтры)** — кликабельные кнопки категорий с теми же числами
-
-Это создаёт визуальное дублирование.
-
----
+На мобильных устройствах секции "Отзывы" и "Часто задаваемые вопросы" занимают много места на экране. Нужно спрятать их под раскрывающиеся заголовки.
 
 ## Решение
-
-Удалить верхний блок статистики (строки 66-77 в `src/pages/blog/Index.tsx`), оставив только интерактивные кнопки фильтров.
+Создать обёрточный компонент `MobileCollapsibleSection`, который:
+- На **мобильных** (< 768px): показывает заголовок с иконкой-стрелкой, при клике раскрывает контент
+- На **десктопе**: показывает контент полностью без возможности сворачивания
 
 ---
 
-## Изменения в файле
+## Файлы для создания/изменения
 
-**Файл:** `src/pages/blog/Index.tsx`
+### 1. Создать `src/components/MobileCollapsibleSection.tsx`
 
-| Действие | Строки | Описание |
-|----------|--------|----------|
-| Удалить | 66-77 | Блок "Статистика" с бейджами |
-
-**Удаляемый код:**
+Новый компонент-обёртка:
 
 ```tsx
-{/* Статистика */}
-<div className="mt-6 flex flex-wrap gap-4">
-  <Badge variant="secondary" className="text-sm py-1 px-3">
-    <FileText className="h-4 w-4 mr-1" />
-    {BLOG_TOPICS.length} статей
-  </Badge>
-  {categoryCounts.map((cat) => (
-    <Badge key={cat.key} variant="outline" className="text-sm py-1 px-3">
-      {cat.name}: {cat.count}
-    </Badge>
-  ))}
-</div>
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { cn } from "@/lib/utils";
+
+interface MobileCollapsibleSectionProps {
+  title: string;
+  subtitle?: string;
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}
+
+export function MobileCollapsibleSection({ 
+  title, 
+  subtitle, 
+  children, 
+  defaultOpen = false 
+}: MobileCollapsibleSectionProps) {
+  const isMobile = useIsMobile();
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  // На десктопе — показываем как обычно
+  if (!isMobile) {
+    return <>{children}</>;
+  }
+
+  // На мобильных — Collapsible с заголовком
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <CollapsibleTrigger className="w-full py-4 px-4 bg-muted/50 flex items-center justify-between">
+        <div className="text-left">
+          <h2 className="text-xl font-bold">{title}</h2>
+          {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+        </div>
+        <ChevronDown className={cn(
+          "h-5 w-5 transition-transform duration-200",
+          isOpen && "rotate-180"
+        )} />
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        {children}
+      </CollapsibleContent>
+    </Collapsible>
+  );
+}
 ```
 
 ---
 
-## Результат
+### 2. Изменить `src/pages/Index.tsx`
 
-Останется только один блок с кнопками категорий, которые:
-- Показывают количество статей в каждой категории
-- Позволяют кликать и фильтровать статьи
-- Не дублируют информацию
+Обернуть секции Reviews и FAQ в `MobileCollapsibleSection`:
+
+```tsx
+import { MobileCollapsibleSection } from "@/components/MobileCollapsibleSection";
+
+// ...
+
+<Suspense fallback={<div className="h-96" />}>
+  <MobileCollapsibleSection 
+    title="Отзывы наших клиентов" 
+    subtitle="Нажмите, чтобы развернуть"
+  >
+    <section id="reviews">
+      <Reviews />
+    </section>
+  </MobileCollapsibleSection>
+</Suspense>
+
+<Suspense fallback={<div className="h-64" />}>
+  <MobileCollapsibleSection 
+    title="Часто задаваемые вопросы" 
+    subtitle="Нажмите, чтобы развернуть"
+  >
+    <FAQ />
+  </MobileCollapsibleSection>
+</Suspense>
+```
 
 ---
 
-## Дополнительные задачи (из предыдущего плана)
+## Визуальный результат
+
+### Мобильная версия (свёрнуто):
+
+```text
+┌────────────────────────────────────┐
+│ Отзывы наших клиентов          ▼  │
+│ Нажмите, чтобы развернуть          │
+└────────────────────────────────────┘
+
+┌────────────────────────────────────┐
+│ Часто задаваемые вопросы       ▼  │
+│ Нажмите, чтобы развернуть          │
+└────────────────────────────────────┘
+```
+
+### Мобильная версия (развёрнуто):
+
+```text
+┌────────────────────────────────────┐
+│ Отзывы наших клиентов          ▲  │
+│ Нажмите, чтобы развернуть          │
+├────────────────────────────────────┤
+│ [Карточки отзывов...]              │
+└────────────────────────────────────┘
+```
+
+### Десктоп версия:
+
+Без изменений — секции отображаются полностью как раньше.
+
+---
+
+## Итого файлов
 
 | Файл | Действие |
 |------|----------|
-| `src/components/AboutSection.tsx` | Удалить блок "3000+ клиентов", изменить grid на 3 колонки |
-| `src/components/Reviews.tsx` | Изменить "500" → "150" довольных клиентов |
-
----
-
-## Итого файлов для изменения
-
-| Файл | Изменение |
-|------|-----------|
-| `src/pages/blog/Index.tsx` | Удалить строки 66-77 (блок статистики) |
-| `src/components/AboutSection.tsx` | Удалить блок "3000+ клиентов" |
-| `src/components/Reviews.tsx` | Изменить "500" → "150" |
-
+| `src/components/MobileCollapsibleSection.tsx` | Создать |
+| `src/pages/Index.tsx` | Обернуть Reviews и FAQ в MobileCollapsibleSection |
