@@ -125,7 +125,7 @@ export default function ObektyIndex() {
       <SEOHead
         title={`Обработка объектов от вредителей в Новосибирске — квартиры, дома, офисы | ${SITE_CONFIG.companyName}`}
         description="Профессиональная обработка квартир, частных домов, офисов, ресторанов, складов от насекомых и грызунов в Новосибирске. Гарантия результата. Документы для проверок."
-        canonical="https://promo-san-nso.lovable.app/obekty"
+        canonical={`${SITE_CONFIG.siteUrl}/obekty`}
       />
 
       {/* Hero */}

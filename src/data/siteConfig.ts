@@ -1,13 +1,23 @@
-// Центральная конфигурация сайта СЭС "Гордез"
+// Центральная конфигурация сайта СЭС «СанРешения»
 
 export const SITE_CONFIG = {
-  companyName: "Гордез",
-  companyNameFull: "ООО «Гордез»",
-  legalName: "ООО «Гордез»",
+  // Production URL (punycode гордэз.рф)
+  siteUrl: "https://xn--d1aey.xn--p1ai",
+  
+  // Бренд
+  companyName: "СанРешения",
+  companyNameFull: "ООО «Санитарные Решения»",
+  legalName: "ООО «Санитарные Решения»",
+  
+  // Контакты (офисный телефон для звонков)
   phone: "+7 (383) 312-16-60",
   phoneClean: "73833121660",
   phoneDisplay: "8 (383) 312-16-60",
+  
+  // Мобильный номер для мессенджеров (WhatsApp)
   whatsapp: "+79628265020",
+  whatsappClean: "79628265020",
+  
   telegram: "@sanitarnye_resheniya_nsk",
   email: "west-centro@mail.ru",
   address: "Новосибирск",
@@ -21,9 +31,9 @@ export const SITE_CONFIG = {
   regionPrepositional: "Новосибирске",
   regionFull: "Новосибирск и Новосибирская область",
   
-  // Юридические данные (заглушки)
-  inn: "5402000000",
-  ogrn: "1225400000000",
+  // Юридические данные
+  inn: "5410169338",
+  ogrn: "1255400030555",
   
   // Социальные сети и ссылки
   links: {

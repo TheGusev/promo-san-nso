@@ -98,7 +98,7 @@ export default function FAQPage() {
       <SEOHead
         title={`Частые вопросы о дезинсекции и дератизации | СЭС ${SITE_CONFIG.companyName}`}
         description="Ответы на частые вопросы о дезинсекции, дератизации, дезинфекции. Как подготовить квартиру, безопасность для детей, цены, гарантии. FAQ от СЭС Новосибирска."
-        canonical="https://promo-san-nso.lovable.app/faq"
+        canonical={`${SITE_CONFIG.siteUrl}/faq`}
       />
 
       <script

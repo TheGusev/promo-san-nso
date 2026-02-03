@@ -44,6 +44,42 @@ export const generateComboSlug = (entry: MatrixEntry): string => {
   return parts.join("-");
 };
 
+// Helper-функции для падежей
+const GENITIVE_MAP: Record<string, string> = {
+  'квартира': 'квартиры',
+  'частный дом': 'частного дома',
+  'склад': 'склада',
+  'ресторан': 'ресторана',
+  'офис': 'офиса',
+  'участок': 'участка',
+  'дача': 'дачи',
+  'общежитие': 'общежития',
+  'гостиница': 'гостиницы',
+  'кафе': 'кафе',
+  'магазин': 'магазина',
+  'производство': 'производства',
+  'детский сад': 'детского сада',
+  'школа': 'школы',
+  'больница': 'больницы',
+};
+
+const ACCUSATIVE_MAP: Record<string, string> = {
+  'Дезинсекция': 'дезинсекцию',
+  'Дератизация': 'дератизацию',
+  'Дезинфекция': 'дезинфекцию',
+  'Озонирование': 'озонирование',
+  'Дезодорация': 'дезодорацию',
+};
+
+export const getObjectGenitive = (entry: MatrixEntry): string => {
+  const obj = entry.objectName.toLowerCase();
+  return GENITIVE_MAP[obj] || entry.objectName;
+};
+
+export const getServiceAccusative = (entry: MatrixEntry): string => {
+  return ACCUSATIVE_MAP[entry.serviceName] || entry.serviceName.toLowerCase();
+};
+
 // Примеры записей матрицы (расширяемо)
 export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
   // === ДЕЗИНСЕКЦИЯ ===

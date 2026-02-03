@@ -235,6 +235,17 @@ export function SiteHeader() {
                 Блог
               </Link>
             </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <Link
+                to="/faq"
+                className={cn(
+                  "group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
+                )}
+              >
+                Вопросы
+              </Link>
+            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
 
@@ -311,6 +322,12 @@ export function SiteHeader() {
               <SheetClose asChild>
                 <Link to="/blog" className="py-2 text-sm font-medium hover:text-primary transition-colors">
                   Блог
+                </Link>
+              </SheetClose>
+
+              <SheetClose asChild>
+                <Link to="/faq" className="py-2 text-sm font-medium hover:text-primary transition-colors">
+                  Вопросы
                 </Link>
               </SheetClose>
 

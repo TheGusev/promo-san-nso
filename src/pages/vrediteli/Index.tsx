@@ -66,7 +66,7 @@ export default function VreditediIndex() {
       <SEOHead
         title={`Уничтожение вредителей в Новосибирске — борьба с насекомыми и грызунами | ${SITE_CONFIG.companyName}`}
         description="Профессиональное уничтожение насекомых и грызунов в Новосибирске и области: клопы, тараканы, блохи, крысы, мыши, муравьи. Гарантия результата до 1 года. Работаем 24/7."
-        canonical="https://promo-san-nso.lovable.app/vrediteli"
+        canonical={`${SITE_CONFIG.siteUrl}/vrediteli`}
       />
 
       {/* Hero */}

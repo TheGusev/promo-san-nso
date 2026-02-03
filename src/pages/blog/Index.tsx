@@ -48,7 +48,7 @@ export default function BlogIndex() {
       <SEOHead
         title={`Блог СЭС — статьи о дезинсекции и дератизации | ${SITE_CONFIG.companyName}`}
         description="Полезные статьи о борьбе с вредителями, дезинфекции, санитарных нормах. Советы экспертов СЭС Новосибирска. 50+ профессиональных статей."
-        canonical="https://promo-san-nso.lovable.app/blog"
+        canonical={`${SITE_CONFIG.siteUrl}/blog`}
       />
 
       <section className="bg-gradient-to-b from-primary/5 to-background py-8 md:py-12">
