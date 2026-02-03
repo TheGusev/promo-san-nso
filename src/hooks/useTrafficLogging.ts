@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { getTrackingContext } from '@/lib/tracking';
+import { getTrackingContext, getPageType } from '@/lib/tracking';
 import { useABTest } from '@/contexts/ABTestContext';
 
 /**
@@ -30,11 +30,16 @@ export async function logTrafficEvent(
         yclid: tracking.yclid,
         variant_id: eventData?.variant_id || null,
         keyword_raw: tracking.keyword || null,
-        event_data: eventData || {}
+        event_data: {
+          ...eventData,
+          page_type: getPageType()
+        }
       }
     });
   } catch (error) {
-    console.error('Error logging traffic event:', error);
+    if (import.meta.env.DEV) {
+      console.error('Error logging traffic event:', error);
+    }
   }
 }
 

@@ -17,9 +17,13 @@ export function reachGoal(goalName: string, params?: Record<string, any>) {
   if (typeof window !== 'undefined' && window.ym) {
     try {
       window.ym(COUNTER_ID, 'reachGoal', goalName, params);
-      console.log('[YM] Goal reached:', goalName, params);
+      if (import.meta.env.DEV) {
+        console.log('[YM] Goal reached:', goalName, params);
+      }
     } catch (error) {
-      console.error('[YM] Error reaching goal:', error);
+      if (import.meta.env.DEV) {
+        console.error('[YM] Error reaching goal:', error);
+      }
     }
   }
 }
@@ -33,9 +37,13 @@ export function hit(url?: string, options?: { title?: string; referer?: string }
   if (typeof window !== 'undefined' && window.ym) {
     try {
       window.ym(COUNTER_ID, 'hit', url || window.location.pathname, options);
-      console.log('[YM] Hit sent:', url || window.location.pathname);
+      if (import.meta.env.DEV) {
+        console.log('[YM] Hit sent:', url || window.location.pathname);
+      }
     } catch (error) {
-      console.error('[YM] Error sending hit:', error);
+      if (import.meta.env.DEV) {
+        console.error('[YM] Error sending hit:', error);
+      }
     }
   }
 }
@@ -48,9 +56,13 @@ export function userParams(params: Record<string, any>) {
   if (typeof window !== 'undefined' && window.ym) {
     try {
       window.ym(COUNTER_ID, 'userParams', params);
-      console.log('[YM] User params sent:', params);
+      if (import.meta.env.DEV) {
+        console.log('[YM] User params sent:', params);
+      }
     } catch (error) {
-      console.error('[YM] Error sending user params:', error);
+      if (import.meta.env.DEV) {
+        console.error('[YM] Error sending user params:', error);
+      }
     }
   }
 }

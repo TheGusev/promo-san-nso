@@ -45,6 +45,29 @@ export function getUTMParams(): Record<string, string> {
   };
 }
 
+export function getPageType(): string {
+  const path = window.location.pathname;
+  
+  if (path === '/') return 'home';
+  if (path.startsWith('/usluga/')) return 'service';
+  if (path.startsWith('/vreditel/')) return 'pest';
+  if (path.startsWith('/obekt/')) return 'object';
+  if (path.startsWith('/rayon/')) return 'district';
+  if (path.startsWith('/uslugi')) return 'services_list';
+  if (path.startsWith('/vrediteli')) return 'pests_list';
+  if (path.startsWith('/obekty')) return 'objects_list';
+  if (path.startsWith('/rayony')) return 'districts_list';
+  if (path.startsWith('/blog')) return 'blog';
+  if (path.startsWith('/faq')) return 'faq';
+  if (path.startsWith('/sanpin')) return 'sanpin';
+  if (path.startsWith('/admin')) return 'admin';
+  if (path.startsWith('/privacy')) return 'legal';
+  // Programmatic combo pages have multiple segments like /dezinfeksiya-kvartiry-leninskiy
+  if (path.split('/').filter(Boolean).length === 1 && path !== '/') return 'programmatic';
+  
+  return 'other';
+}
+
 export function getTrackingContext() {
   const utm = getUTMParams();
   return {
