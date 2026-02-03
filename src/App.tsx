@@ -17,6 +17,7 @@ import ServicePage from "./pages/usluga/ServicePage";
 import VreditediIndex from "./pages/vrediteli/Index";
 import PestPage from "./pages/vreditel/PestPage";
 import ObektyIndex from "./pages/obekty/Index";
+import ObjectPage from "./pages/obekt/ObjectPage";
 import RayonyIndex from "./pages/rayony/Index";
 import BlogIndex from "./pages/blog/Index";
 
@@ -53,7 +54,7 @@ const App = () => (
               
               {/* Объекты */}
               <Route path="/obekty" element={<ObektyIndex />} />
-              {/* TODO: <Route path="/obekt/:objectSlug" element={<ObjectPage />} /> */}
+              <Route path="/obekt/:objectSlug" element={<ObjectPage />} />
               
               {/* Районы */}
               <Route path="/rayony" element={<RayonyIndex />} />
