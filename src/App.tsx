@@ -21,6 +21,7 @@ import ObjectPage from "./pages/obekt/ObjectPage";
 import RayonyIndex from "./pages/rayony/Index";
 import DistrictPage from "./pages/rayon/DistrictPage";
 import BlogIndex from "./pages/blog/Index";
+import ComboPage from "./pages/programmatic/ComboPage";
 
 // Админка
 import AdminLogin from "./pages/admin/Login";
@@ -64,6 +65,9 @@ const App = () => (
               {/* Блог */}
               <Route path="/blog" element={<BlogIndex />} />
               {/* TODO: <Route path="/blog/:articleSlug" element={<ArticlePage />} /> */}
+              
+              {/* Programmatic-страницы (комбинации услуга × вредитель × объект × район) */}
+              <Route path="/:serviceSlug/:comboSlug" element={<ComboPage />} />
               
               {/* Редиректы со старых URL */}
               <Route path="/dezinfeksiya" element={<Navigate to="/usluga/dezinfeksiya" replace />} />
