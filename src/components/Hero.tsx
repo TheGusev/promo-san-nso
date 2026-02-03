@@ -62,8 +62,6 @@ export default function Hero() {
       {/* Dark overlay for text readability */}
       <div className="absolute inset-0 bg-black/55" aria-hidden="true" />
       
-      {/* Gradient overlay for brand colors */}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/30 to-secondary/20" aria-hidden="true" />
       
       <div className="container relative px-4">
         <div className="mx-auto max-w-4xl text-center">
