@@ -4,6 +4,7 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
 import { SEOHead } from "@/components/shared/SEOHead";
 import { CTABlock } from "@/components/shared/CTABlock";
+import { FAQTeaser } from "@/components/shared/FAQTeaser";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -285,6 +286,19 @@ export default function ComboPage() {
               ))}
             </Accordion>
           </div>
+        </div>
+      </section>
+
+      {/* FAQ Teaser - ссылка на центральный FAQ */}
+      <section className="py-6">
+        <div className="container px-4">
+          <FAQTeaser 
+            serviceSlug={entry.serviceSlug}
+            pestSlug={entry.pestSlug}
+            objectSlug={entry.objectSlug}
+            limit={2}
+            variant="inline"
+          />
         </div>
       </section>
 

@@ -22,6 +22,7 @@ import RayonyIndex from "./pages/rayony/Index";
 import DistrictPage from "./pages/rayon/DistrictPage";
 import BlogIndex from "./pages/blog/Index";
 import ArticlePage from "./pages/blog/ArticlePage";
+import FAQPage from "./pages/faq/Index";
 import ComboPage from "./pages/programmatic/ComboPage";
 
 // Админка
@@ -66,6 +67,9 @@ const App = () => (
               {/* Блог */}
               <Route path="/blog" element={<BlogIndex />} />
               <Route path="/blog/:articleSlug" element={<ArticlePage />} />
+              
+              {/* FAQ */}
+              <Route path="/faq" element={<FAQPage />} />
               
               {/* Programmatic-страницы (комбинации услуга × вредитель × объект × район) */}
               <Route path="/:serviceSlug/:comboSlug" element={<ComboPage />} />
