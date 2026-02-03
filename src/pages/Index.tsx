@@ -2,9 +2,6 @@ import { useEffect, lazy, Suspense } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import Hero from "@/components/Hero";
 import PriceTable from "@/components/PriceTable";
-import StatsCounter from "@/components/StatsCounter";
-import WhyChooseUs from "@/components/WhyChooseUs";
-import HowWeWork from "@/components/HowWeWork";
 import Services from "@/components/Services";
 import Calculator from "@/components/Calculator";
 import AboutSection from "@/components/AboutSection";
@@ -42,9 +39,6 @@ const Index = () => {
         <Hero />
         <PriceTable />
         <Calculator />
-        <StatsCounter />
-        <WhyChooseUs />
-        <HowWeWork />
         <Suspense fallback={<div className="h-96" />}>
           <section id="reviews">
             <Reviews />
