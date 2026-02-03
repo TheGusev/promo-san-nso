@@ -76,7 +76,7 @@ export default function Services() {
               <Card className="relative overflow-hidden p-6 hover:shadow-elevated transition-all duration-300 h-full">
                 {/* Background image */}
                 <div 
-                  className="absolute inset-0 opacity-20 bg-cover bg-center bg-no-repeat"
+                  className="absolute inset-0 opacity-30 bg-cover bg-center bg-no-repeat"
                   style={{ backgroundImage: `url(${service.bgImage})` }}
                 />
                 
