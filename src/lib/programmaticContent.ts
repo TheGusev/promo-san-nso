@@ -2,28 +2,38 @@
 
 import { MatrixEntry } from "@/data/programmaticMatrix";
 import { SITE_CONFIG } from "@/data/siteConfig";
+import { getDistrictBySlug } from "@/data/districts";
+
+// Helper: получить предложный падеж района
+const getDistrictLocative = (entry: MatrixEntry): string => {
+  if (!entry.districtSlug) return SITE_CONFIG.regionPrepositional;
+  const district = getDistrictBySlug(entry.districtSlug);
+  return district?.nameLocative || entry.districtName || SITE_CONFIG.regionPrepositional;
+};
 
 // Генерация H1
 export const generateH1 = (entry: MatrixEntry): string => {
+  const districtLocative = getDistrictLocative(entry);
+  
   const templates = {
     withPestAndDistrict: [
-      `${entry.pestName} в ${entry.objectName}е: профессиональная ${entry.serviceName.toLowerCase()} в ${entry.districtName}е`,
+      `${entry.pestName} в ${entry.objectName}е: профессиональная ${entry.serviceName.toLowerCase()} в ${districtLocative}`,
       `Уничтожение ${getPestGenitive(entry.pestName)} в ${entry.objectName}е — ${entry.districtName}`,
       `${entry.serviceName} от ${getPestGenitive(entry.pestName)} в ${entry.objectName}е (${entry.districtName})`,
     ],
     withPestNoDistrict: [
-      `${entry.pestName} в ${entry.objectName}е: ${entry.serviceName.toLowerCase()} в ${SITE_CONFIG.region}е`,
+      `${entry.pestName} в ${entry.objectName}е: ${entry.serviceName.toLowerCase()} в ${SITE_CONFIG.regionPrepositional}`,
       `Уничтожение ${getPestGenitive(entry.pestName)} в ${entry.objectName}е — СЭС ${SITE_CONFIG.companyName}`,
       `${entry.serviceName} от ${getPestGenitive(entry.pestName)}: обработка ${entry.objectName}ы`,
     ],
     noPestWithDistrict: [
-      `${entry.serviceName} ${entry.objectName}ы в ${entry.districtName}е — СЭС ${SITE_CONFIG.companyName}`,
-      `Обработка ${entry.objectName}ы: ${entry.serviceName.toLowerCase()} в ${entry.districtName}е`,
+      `${entry.serviceName} ${entry.objectName}ы в ${districtLocative} — СЭС ${SITE_CONFIG.companyName}`,
+      `Обработка ${entry.objectName}ы: ${entry.serviceName.toLowerCase()} в ${districtLocative}`,
       `СЭС ${entry.districtName}: ${entry.serviceName.toLowerCase()} ${entry.objectName}ы`,
     ],
     noPestNoDistrict: [
-      `${entry.serviceName} ${entry.objectName}ы в ${SITE_CONFIG.region}е — профессиональная обработка`,
-      `${entry.serviceName} ${entry.objectName}ы: вызов СЭС в ${SITE_CONFIG.region}е`,
+      `${entry.serviceName} ${entry.objectName}ы в ${SITE_CONFIG.regionPrepositional} — профессиональная обработка`,
+      `${entry.serviceName} ${entry.objectName}ы: вызов СЭС в ${SITE_CONFIG.regionPrepositional}`,
       `Профессиональная ${entry.serviceName.toLowerCase()} ${entry.objectName}ы — ${SITE_CONFIG.companyName}`,
     ],
   };
@@ -46,9 +56,10 @@ export const generateH1 = (entry: MatrixEntry): string => {
 
 // Генерация вступления
 export const generateIntro = (entry: MatrixEntry): string => {
+  const districtLocative = getDistrictLocative(entry);
   const location = entry.districtSlug 
-    ? `в ${entry.districtName}е (${SITE_CONFIG.region})` 
-    : `в ${SITE_CONFIG.region}е и области`;
+    ? `в ${districtLocative} (${SITE_CONFIG.region})` 
+    : `в ${SITE_CONFIG.regionPrepositional} и области`;
     
   const pestMention = entry.pestName 
     ? `${entry.pestName} — одна из самых частых проблем` 
@@ -138,9 +149,10 @@ export const generatePricing = (entry: MatrixEntry): { text: string; factors: st
   };
 
   const price = objectPrices[entry.objectSlug] || `от ${priceFrom}₽`;
+  const districtLocative = getDistrictLocative(entry);
 
   return {
-    text: `Стоимость ${entry.serviceName.toLowerCase()}и ${entry.objectName}ы${entry.pestSlug ? ` от ${getPestGenitive(entry.pestName)}` : ""} ${entry.districtSlug ? `в ${entry.districtName}е` : `в ${SITE_CONFIG.region}е`}: **${price}**. Выезд бесплатный. Точную стоимость назовём после осмотра — она зависит от площади, степени заражения и выбранного метода обработки.`,
+    text: `Стоимость ${entry.serviceName.toLowerCase()}и ${entry.objectName}ы${entry.pestSlug ? ` от ${getPestGenitive(entry.pestName)}` : ""} ${entry.districtSlug ? `в ${districtLocative}` : `в ${SITE_CONFIG.regionPrepositional}`}: **${price}**. Выезд бесплатный. Точную стоимость назовём после осмотра — она зависит от площади, степени заражения и выбранного метода обработки.`,
     factors: [
       "Площадь помещения (м²)",
       entry.pestSlug ? `Степень заражения ${getPestGenitive(entry.pestName).toLowerCase()}` : "Тип обработки",
@@ -163,12 +175,13 @@ export const generateGuarantee = (entry: MatrixEntry): string => {
 export const generateFAQ = (entry: MatrixEntry): { question: string; answer: string }[] => {
   const location = entry.districtSlug ? entry.districtName : SITE_CONFIG.region;
   const pestMention = entry.pestName ? entry.pestName.toLowerCase() : "насекомых";
+  const districtLocative = getDistrictLocative(entry);
   
   const faq: { question: string; answer: string }[] = [];
 
   // Цена
   faq.push({
-    question: `Сколько стоит ${entry.serviceName.toLowerCase()} ${entry.objectName}ы ${entry.districtSlug ? `в ${entry.districtName}е` : `в ${SITE_CONFIG.region}е`}?`,
+    question: `Сколько стоит ${entry.serviceName.toLowerCase()} ${entry.objectName}ы ${entry.districtSlug ? `в ${districtLocative}` : `в ${SITE_CONFIG.regionPrepositional}`}?`,
     answer: `Стоимость зависит от площади и степени заражения. Минимальная цена — от ${entry.priceFrom || 2500}₽. Выезд бесплатный. Точную стоимость назовём после осмотра или по телефону после уточнения деталей.`,
   });
 
