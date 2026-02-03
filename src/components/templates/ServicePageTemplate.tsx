@@ -1,11 +1,10 @@
 import { Link } from "react-router-dom";
-import { Phone, Clock, Shield, CheckCircle, Star, ChevronRight, FileText, AlertTriangle, Banknote, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Clock, Shield, CheckCircle, Star, FileText, AlertTriangle, Banknote, ArrowRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { MainLayout } from "@/components/layout/MainLayout";
-import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
+import { HeroService } from "@/components/HeroService";
 import { CTABlock } from "@/components/shared/CTABlock";
 import { RelatedLinks } from "@/components/shared/RelatedLinks";
 import { FAQTeaser, FAQ_PRESETS } from "@/components/shared/FAQTeaser";
@@ -45,67 +44,15 @@ export function ServicePageTemplate({ service }: ServicePageTemplateProps) {
         canonical={`https://promo-san-nso.lovable.app/usluga/${service.slug}`}
       />
 
-      {/* Hero Section */}
-      {/* LSI: H1 с основным ключом "[Услуга] в Новосибирске" */}
-      <section className="bg-gradient-to-b from-primary/5 to-background py-8 md:py-12">
-        <div className="container px-4">
-          <Breadcrumbs
-            items={[
-              { label: "Услуги", href: "/uslugi" },
-              { label: service.name },
-            ]}
-          />
-
-          <div className="mt-6 grid gap-8 lg:grid-cols-2 lg:items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm text-primary mb-4">
-                <Icon className="h-4 w-4" />
-                {service.shortName}
-              </div>
-              <h1 className="text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">
-                {service.name} в {SITE_CONFIG.regionGenitive}
-              </h1>
-              <p className="mt-4 text-lg text-muted-foreground">
-                {service.description}
-              </p>
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                <Button size="lg" className="gap-2" asChild>
-                  <a href={`tel:${SITE_CONFIG.phoneClean}`}>
-                    <Phone className="h-5 w-5" />
-                    Вызвать специалиста
-                  </a>
-                </Button>
-                <Button size="lg" variant="outline" className="gap-2" asChild>
-                  <a href={`tel:${SITE_CONFIG.phoneClean}`}>
-                    {SITE_CONFIG.phoneDisplay}
-                  </a>
-                </Button>
-              </div>
-              <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
-                <Clock className="h-4 w-4" />
-                <span>Работаем по {SITE_CONFIG.regionFull} {SITE_CONFIG.workingHours}</span>
-              </div>
-            </div>
-
-            <div className="flex justify-center">
-              <div className="relative">
-                <div className="absolute inset-0 bg-primary/20 rounded-full blur-3xl" />
-                <div className="relative bg-background rounded-2xl border p-8 shadow-lg">
-                  <div className="text-center">
-                    <div className="text-sm text-muted-foreground mb-2">Цена</div>
-                    <div className="text-4xl font-bold text-primary">
-                      {service.priceUnit} {service.priceFrom.toLocaleString("ru-RU")} ₽
-                    </div>
-                    <div className="text-sm text-muted-foreground mt-2">
-                      Точная цена после диагностики
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Hero Section - новый унифицированный компонент */}
+      <HeroService
+        title={service.shortName}
+        heading={`${service.name} в ${SITE_CONFIG.regionGenitive}`}
+        description={service.description}
+        priceFrom={service.priceFrom}
+        icon={Icon}
+        serviceSlug={service.slug}
+      />
 
       {/* Основной текст услуги */}
       {/* LSI: основные ключевые фразы услуги в тексте */}
