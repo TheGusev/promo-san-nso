@@ -53,10 +53,6 @@ export default function AboutSection() {
                 </div>
               </div>
             </div>
-
-            <p className="text-center text-muted-foreground mt-6 text-sm">
-              ИНН: 5410169338 • ОГРН: 1255400030555 • Работаем с 2025 года
-            </p>
           </div>
         </AnimatedSection>
       </div>
