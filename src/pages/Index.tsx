@@ -38,12 +38,12 @@ const Index = () => {
         <Hero />
         <Services />
         <Calculator />
+        <AboutSection />
         <Suspense fallback={<div className="h-96" />}>
           <section id="reviews">
             <Reviews />
           </section>
         </Suspense>
-        <AboutSection />
         <Suspense fallback={<div className="h-64" />}>
           <FAQ />
         </Suspense>
