@@ -8,7 +8,7 @@ import { FAQTeaser } from "@/components/shared/FAQTeaser";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { getMatrixEntry, generateComboUrl, MatrixEntry } from "@/data/programmaticMatrix";
+import { getMatrixEntry, generateComboUrl, MatrixEntry, getObjectGenitive, getServiceAccusative } from "@/data/programmaticMatrix";
 import { getServiceBySlug } from "@/data/services";
 import { getPestBySlug } from "@/data/pests";
 import { getObjectBySlug } from "@/data/objects";
@@ -67,14 +67,14 @@ export default function ComboPage() {
 
   // Meta
   const metaTitle = `${entry.mainKeyword} — СЭС ${SITE_CONFIG.companyName}`;
-  const metaDescription = `${entry.serviceName} ${entry.objectName}ы${entry.pestSlug ? ` от ${entry.pestName?.toLowerCase()}` : ""}${entry.districtSlug ? ` в ${entry.districtName}е` : ` в ${SITE_CONFIG.region}е`}. Цена от ${entry.priceFrom || 2500}₽. Гарантия ${entry.guaranteeDays ? Math.round(entry.guaranteeDays / 30) : 3} мес. Выезд за 30 мин.`;
+  const metaDescription = `${entry.serviceName} ${getObjectGenitive(entry)}${entry.pestSlug ? ` от ${entry.pestName?.toLowerCase()}` : ""}${entry.districtSlug ? ` в ${entry.districtName}е` : ` в ${SITE_CONFIG.region}е`}. Цена от ${entry.priceFrom || 2500}₽. Гарантия ${entry.guaranteeDays ? Math.round(entry.guaranteeDays / 30) : 3} мес. Выезд за 30 мин.`;
 
   return (
     <MainLayout>
       <SEOHead
         title={metaTitle}
         description={metaDescription}
-        canonical={`https://promo-san-nso.lovable.app${generateComboUrl(entry)}`}
+        canonical={`${SITE_CONFIG.siteUrl}${generateComboUrl(entry)}`}
       />
 
       {/* Hero */}
@@ -152,7 +152,7 @@ export default function ComboPage() {
       <section className="py-12 md:py-16">
         <div className="container px-4">
           <h2 className="text-2xl font-bold md:text-3xl mb-8 text-center">
-            Как проходит {entry.serviceName.toLowerCase()} {entry.objectName}ы
+            Как проходит {getServiceAccusative(entry)} {getObjectGenitive(entry)}
           </h2>
           <div className="grid gap-6 md:grid-cols-5 max-w-5xl mx-auto">
             {treatmentSteps.map((step) => (
@@ -245,7 +245,7 @@ export default function ComboPage() {
                 className="flex items-center justify-between rounded-lg border bg-background p-4 hover:bg-accent transition-colors group"
               >
                 <span className="group-hover:text-primary transition-colors">
-                  Обработка {entry.objectName}ы
+                  Обработка {getObjectGenitive(entry)}
                 </span>
                 <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-primary" />
               </Link>
@@ -304,7 +304,7 @@ export default function ComboPage() {
 
       {/* CTA */}
       <CTABlock
-        title={`Заказать ${entry.serviceName.toLowerCase()}у ${entry.objectName}ы`}
+        title={`Заказать ${getServiceAccusative(entry)} ${getObjectGenitive(entry)}`}
         subtitle={`${entry.districtSlug ? `Выезд в ${entry.districtName} от 30 минут` : "Выезд по Новосибирску от 30 минут"}. Звоните!`}
       />
     </MainLayout>

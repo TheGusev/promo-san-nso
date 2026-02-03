@@ -33,7 +33,7 @@ export default function DistrictPage() {
       <SEOHead
         title={content?.metaTitle || district.metaTitle}
         description={content?.metaDescription || district.metaDescription}
-        canonical={`https://promo-san-nso.lovable.app/rayon/${district.slug}`}
+        canonical={`${SITE_CONFIG.siteUrl}/rayon/${district.slug}`}
       />
 
       {/* Hero Section */}

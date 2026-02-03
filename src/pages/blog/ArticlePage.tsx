@@ -36,19 +36,19 @@ export default function ArticlePage() {
     author: {
       "@type": "Organization",
       name: SITE_CONFIG.companyName,
-      url: "https://promo-san-nso.lovable.app",
+      url: SITE_CONFIG.siteUrl,
     },
     publisher: {
       "@type": "Organization",
       name: SITE_CONFIG.companyName,
       logo: {
         "@type": "ImageObject",
-        url: "https://promo-san-nso.lovable.app/og-image.jpg",
+        url: `${SITE_CONFIG.siteUrl}/og-image.jpg`,
       },
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `https://promo-san-nso.lovable.app/blog/${topic.slug}`,
+      "@id": `${SITE_CONFIG.siteUrl}/blog/${topic.slug}`,
     },
   };
 
@@ -84,7 +84,7 @@ export default function ArticlePage() {
       <SEOHead
         title={`${topic.title} | Блог СЭС ${SITE_CONFIG.companyName}`}
         description={topic.description}
-        canonical={`https://promo-san-nso.lovable.app/blog/${topic.slug}`}
+        canonical={`${SITE_CONFIG.siteUrl}/blog/${topic.slug}`}
         type="article"
       />
 
@@ -232,7 +232,7 @@ export default function ArticlePage() {
               {/* CTA */}
               <CTABlock
                 title="Нужна профессиональная помощь?"
-                subtitle="Специалисты СЭС «Гордез» готовы помочь вам решить проблему быстро и эффективно."
+                subtitle={`Специалисты СЭС «${SITE_CONFIG.companyName}» готовы помочь вам решить проблему быстро и эффективно.`}
                 className="not-prose"
               />
             </article>

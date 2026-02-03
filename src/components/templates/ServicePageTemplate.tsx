@@ -41,7 +41,7 @@ export function ServicePageTemplate({ service }: ServicePageTemplateProps) {
       <SEOHead
         title={service.metaTitle}
         description={service.metaDescription}
-        canonical={`https://promo-san-nso.lovable.app/usluga/${service.slug}`}
+        canonical={`${SITE_CONFIG.siteUrl}/usluga/${service.slug}`}
       />
 
       {/* Hero Section - новый унифицированный компонент */}
@@ -55,7 +55,6 @@ export function ServicePageTemplate({ service }: ServicePageTemplateProps) {
       />
 
       {/* Основной текст услуги */}
-      {/* LSI: основные ключевые фразы услуги в тексте */}
       {hasDetailedContent && content && (
         <section className="py-12 md:py-16">
           <div className="container px-4">
@@ -96,7 +95,6 @@ export function ServicePageTemplate({ service }: ServicePageTemplateProps) {
       )}
 
       {/* Какие объекты обрабатываем + внутренние ссылки */}
-      {/* LSI: типы объектов + услуга */}
       {hasDetailedContent && content && (
         <section className="py-12 md:py-16">
           <div className="container px-4">
@@ -143,7 +141,6 @@ export function ServicePageTemplate({ service }: ServicePageTemplateProps) {
       )}
 
       {/* Методы обработки */}
-      {/* LSI: методы + услуга в городе */}
       {hasDetailedContent && content && (
         <section className="py-12 md:py-16 bg-muted/30">
           <div className="container px-4">
@@ -285,7 +282,6 @@ export function ServicePageTemplate({ service }: ServicePageTemplateProps) {
       )}
 
       {/* Связанные вредители — внутренние ссылки */}
-      {/* LSI: [вредитель] + [услуга] + новосибирск */}
       {hasDetailedContent && content && content.relatedPests.length > 0 && (
         <section className="py-12 md:py-16 bg-muted/30">
           <div className="container px-4">
@@ -367,7 +363,6 @@ export function ServicePageTemplate({ service }: ServicePageTemplateProps) {
       </section>
 
       {/* Связанные статьи блога */}
-      {/* LSI: информационные ключи по теме услуги */}
       {hasDetailedContent && content && content.relatedArticles.length > 0 && (
         <section className="py-12 md:py-16">
           <div className="container px-4">

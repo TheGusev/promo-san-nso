@@ -34,7 +34,7 @@ export default function PestPage() {
       <SEOHead
         title={content?.metaTitle || `${pest.name} в Новосибирске — уничтожение ${pest.nameGenitive} | ${SITE_CONFIG.companyName}`}
         description={content?.metaDescription || pest.metaDescription}
-        canonical={`https://promo-san-nso.lovable.app/vreditel/${pest.slug}`}
+        canonical={`${SITE_CONFIG.siteUrl}/vreditel/${pest.slug}`}
       />
 
       {/* Hero Section */}

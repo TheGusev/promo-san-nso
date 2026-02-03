@@ -94,7 +94,7 @@ export default function RayonyIndex() {
       <SEOHead
         title={`СЭС по районам Новосибирска и области — ${SITE_CONFIG.companyName}`}
         description="Вызов СЭС в любой район Новосибирска и области. Дезинсекция, дератизация, дезинфекция. Выезд от 30 минут. Уничтожение вредителей с гарантией. Работаем 24/7."
-        canonical="https://promo-san-nso.lovable.app/rayony"
+        canonical={`${SITE_CONFIG.siteUrl}/rayony`}
       />
 
       {/* Hero */}

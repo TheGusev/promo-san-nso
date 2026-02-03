@@ -19,7 +19,7 @@ export default function UslugiIndex() {
       <SEOHead
         title={`Услуги СЭС в Новосибирске — ${SITE_CONFIG.companyName}`}
         description="Профессиональные услуги санитарно-эпидемиологической службы в Новосибирске: дезинфекция, дезинсекция, дератизация, озонирование. Работаем 24/7."
-        canonical="https://promo-san-nso.lovable.app/uslugi"
+        canonical={`${SITE_CONFIG.siteUrl}/uslugi`}
       />
 
       {/* Hero */}

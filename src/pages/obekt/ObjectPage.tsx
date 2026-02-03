@@ -32,7 +32,7 @@ export default function ObjectPage() {
       <SEOHead
         title={content?.metaTitle || objectType.metaTitle}
         description={content?.metaDescription || objectType.metaDescription}
-        canonical={`https://promo-san-nso.lovable.app/obekt/${objectType.slug}`}
+        canonical={`${SITE_CONFIG.siteUrl}/obekt/${objectType.slug}`}
       />
 
       {/* Hero Section */}

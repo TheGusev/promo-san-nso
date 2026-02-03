@@ -35,7 +35,7 @@ export const pestContent: Record<string, PestContent> = {
     name: "Постельные клопы",
     nameGenitive: "клопов",
     namePlural: "клопы",
-    metaTitle: "Уничтожение клопов в Новосибирске — обработка квартир от клопов | Гордез",
+    metaTitle: "Уничтожение клопов в Новосибирске — обработка квартир от клопов | СанРешения",
     metaDescription: "Профессиональное уничтожение постельных клопов в Новосибирске. Обработка квартир, домов, общежитий. Гарантия до 1 года. Работаем 24/7. Звоните!",
     
     heroSubtitle: "Профессиональная дезинсекция с гарантией результата до 12 месяцев",
@@ -90,7 +90,7 @@ export const pestContent: Record<string, PestContent> = {
 **5. Контрольный осмотр** — через 10–14 дней, при необходимости повторная обработка (входит в гарантию)`,
 
     relatedServices: ["dezinseksiya"],
-    commonObjects: ["kvartira", "chastnyi-dom", "obshchezhitie", "gostinitsa", "hostel"],
+    commonObjects: ["kvartira", "dom", "obshezhitie", "gostinitsa"],
     relatedArticles: [
       { slug: "kak-podgotovit-kvartiru-k-obrabotke-ot-klopov", title: "Как подготовить квартиру к обработке от клопов" },
       { slug: "otkuda-berutsya-klopy-v-kvartire", title: "Откуда берутся клопы в чистой квартире" },
@@ -134,7 +134,7 @@ export const pestContent: Record<string, PestContent> = {
     name: "Тараканы",
     nameGenitive: "тараканов",
     namePlural: "тараканы",
-    metaTitle: "Уничтожение тараканов в Новосибирске — травля тараканов в квартире | Гордез",
+    metaTitle: "Уничтожение тараканов в Новосибирске — травля тараканов в квартире | СанРешения",
     metaDescription: "Профессиональная дезинсекция от тараканов в Новосибирске. Обработка квартир, кафе, ресторанов, складов. Гарантия результата. Работаем 24/7.",
     
     heroSubtitle: "Эффективная дезинсекция квартир, домов и предприятий общепита",
@@ -193,7 +193,7 @@ export const pestContent: Record<string, PestContent> = {
 **5. Контроль** — повторный визит через 2 недели при необходимости.`,
 
     relatedServices: ["dezinseksiya"],
-    commonObjects: ["kvartira", "chastnyi-dom", "obshchezhitie", "restoran", "kafe", "magazin", "sklad"],
+    commonObjects: ["kvartira", "dom", "obshezhitie", "restoran", "kafe", "magazin", "sklad"],
     relatedArticles: [
       { slug: "pochemu-tarakany-vozvrashchayutsya", title: "Почему тараканы возвращаются после травли" },
       { slug: "tarakany-v-restorane-chto-delat", title: "Тараканы в ресторане: как избежать штрафа Роспотребнадзора" },

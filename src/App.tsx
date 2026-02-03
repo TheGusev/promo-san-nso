@@ -25,6 +25,7 @@ import BlogIndex from "./pages/blog/Index";
 import ArticlePage from "./pages/blog/ArticlePage";
 import FAQPage from "./pages/faq/Index";
 import ComboPage from "./pages/programmatic/ComboPage";
+import SanpinIndex from "./pages/sanpin/Index";
 
 // Админка
 import AdminLogin from "./pages/admin/Login";
@@ -72,6 +73,9 @@ const App = () => (
               
               {/* FAQ */}
               <Route path="/faq" element={<FAQPage />} />
+              
+              {/* СанПиН и нормативные документы */}
+              <Route path="/sanpin" element={<SanpinIndex />} />
               
               {/* Programmatic-страницы (комбинации услуга × вредитель × объект × район) */}
               <Route path="/:serviceSlug/:comboSlug" element={<ComboPage />} />

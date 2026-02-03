@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ChevronRight, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SITE_CONFIG } from "@/data/siteConfig";
 
 export interface BreadcrumbItem {
   label: string;
@@ -22,13 +23,13 @@ export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
         "@type": "ListItem",
         position: 1,
         name: "Главная",
-        item: "https://promo-san-nso.lovable.app/",
+        item: `${SITE_CONFIG.siteUrl}/`,
       },
       ...items.map((item, index) => ({
         "@type": "ListItem",
         position: index + 2,
         name: item.label,
-        ...(item.href && { item: `https://promo-san-nso.lovable.app${item.href}` }),
+        ...(item.href && { item: `${SITE_CONFIG.siteUrl}${item.href}` }),
       })),
     ],
   };
