@@ -1,4 +1,4 @@
-import { Shield, Award, Users, MapPin } from "lucide-react";
+import { Shield, Award, MapPin } from "lucide-react";
 import { AnimatedSection } from "@/components/ui/animated-section";
 
 export default function AboutSection() {
@@ -30,7 +30,7 @@ export default function AboutSection() {
             </div>
 
             {/* Key points */}
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
               <div className="flex items-start gap-3 p-4 bg-muted/50 rounded-lg">
                 <Shield className="h-6 w-6 text-primary flex-shrink-0 mt-0.5" />
                 <div>
@@ -43,13 +43,6 @@ export default function AboutSection() {
                 <div>
                   <div className="font-semibold text-sm">Лицензия и сертификаты</div>
                   <div className="text-xs text-muted-foreground">Документы для СЭС и Роспотребнадзора</div>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 p-4 bg-muted/50 rounded-lg">
-                <Users className="h-6 w-6 text-primary flex-shrink-0 mt-0.5" />
-                <div>
-                  <div className="font-semibold text-sm">3 000+ клиентов</div>
-                  <div className="text-xs text-muted-foreground">Частные и коммерческие объекты</div>
                 </div>
               </div>
               <div className="flex items-start gap-3 p-4 bg-muted/50 rounded-lg">

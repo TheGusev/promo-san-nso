@@ -63,18 +63,6 @@ export default function BlogIndex() {
             санитарных нормах и правилах. Советы от профессионалов.
           </p>
 
-          {/* Статистика */}
-          <div className="mt-6 flex flex-wrap gap-4">
-            <Badge variant="secondary" className="text-sm py-1 px-3">
-              <FileText className="h-4 w-4 mr-1" />
-              {BLOG_TOPICS.length} статей
-            </Badge>
-            {categoryCounts.map((cat) => (
-              <Badge key={cat.key} variant="outline" className="text-sm py-1 px-3">
-                {cat.name}: {cat.count}
-              </Badge>
-            ))}
-          </div>
         </div>
       </section>
 
