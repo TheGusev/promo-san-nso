@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface MobileCollapsibleSectionProps {
   title: string;
@@ -25,22 +24,43 @@ export function MobileCollapsibleSection({
     return <>{children}</>;
   }
 
-  // На мобильных — Collapsible с заголовком
+  // На мобильных — с плавной анимацией
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <CollapsibleTrigger className="w-full py-4 px-4 bg-muted/50 flex items-center justify-between">
+    <div className="w-full">
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full py-4 px-4 bg-muted/50 rounded-lg flex items-center justify-between"
+      >
         <div className="text-left">
           <h2 className="text-xl font-bold">{title}</h2>
-          {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+          {subtitle && (
+            <p className="text-sm text-muted-foreground">{subtitle}</p>
+          )}
         </div>
-        <ChevronDown className={cn(
-          "h-5 w-5 transition-transform duration-200",
-          isOpen && "rotate-180"
-        )} />
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        {children}
-      </CollapsibleContent>
-    </Collapsible>
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+        >
+          <ChevronDown className="h-5 w-5" />
+        </motion.div>
+      </button>
+      
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ 
+              duration: 0.3, 
+              ease: [0.04, 0.62, 0.23, 0.98] 
+            }}
+            style={{ overflow: "hidden" }}
+          >
+            {children}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
