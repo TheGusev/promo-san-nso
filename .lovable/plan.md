@@ -1,147 +1,172 @@
 
+# План: Исправление склонений топонима "Новосибирск"
 
-# План: Исправление проблем из технического чек-листа
+## Обнаруженная проблема
 
-## Обзор
+По сайту встречается грамматическая ошибка **"в Новосибирска"** вместо правильного **"в Новосибирске"**. Причина — использование `regionGenitive` (родительный падеж) вместо `regionPrepositional` (предложный падеж) с предлогом "в".
 
-Исправляем 3 технические проблемы, выявленные в аудите. Четвёртая (Core Web Vitals) требует внешней проверки после деплоя.
+### Правильные формы
+
+| Падеж | Форма | Пример использования |
+|-------|-------|---------------------|
+| Родительный | Новосибирска | "из Новосибирска", "районы Новосибирска" |
+| Предложный | Новосибирске | "в Новосибирске", "о Новосибирске" |
 
 ---
 
-## 1. Удаление console.log в production
+## Файлы с ошибками
 
-### Проблема
-Отладочные логи выводятся в консоль браузера и edge functions в production:
-- `src/lib/yandexMetrika.ts` — 4 console.log/error (строки 20, 22, 36, 38, 51, 53)
-- `src/hooks/useTrafficLogging.ts` — 1 console.error (строка 37)
-- Edge functions (7 файлов) — многочисленные console.log
+### 1. src/components/templates/ServicePageTemplate.tsx
 
-### Решение
+| Строка | Ошибка | Исправление |
+|--------|--------|-------------|
+| 76 | `в ${SITE_CONFIG.regionGenitive}` | `в ${SITE_CONFIG.regionPrepositional}` |
+| 197 | `в ${SITE_CONFIG.regionGenitive}` | `в ${SITE_CONFIG.regionPrepositional}` |
+| 451 | `в ${SITE_CONFIG.regionGenitive}` | `в ${SITE_CONFIG.regionPrepositional}` |
+| 429 | `по районам ${regionGenitive}` | **Правильно** (родительный) |
 
-**Frontend** — обернуть в `import.meta.env.DEV`:
+**Результат:** "Дезинфекция в Новосибирске" вместо "Дезинфекция в Новосибирска"
+
+---
+
+### 2. src/pages/uslugi/Index.tsx
+
+| Строка | Ошибка | Исправление |
+|--------|--------|-------------|
+| 31 | `в ${SITE_CONFIG.regionGenitive}` | `в ${SITE_CONFIG.regionPrepositional}` |
+
+**Результат:** "Услуги СЭС в Новосибирске"
+
+---
+
+### 3. src/lib/programmaticContent.ts
+
+Проблема: используется конструкция `${SITE_CONFIG.region}е` — это даёт "Новосибирске" буквально добавляя "е" к "Новосибирск", но при этом не склоняет слово.
+
+| Строки | Ошибка | Исправление |
+|--------|--------|-------------|
+| 15 | `в ${SITE_CONFIG.region}е` | `в ${SITE_CONFIG.regionPrepositional}` |
+| 25-26 | `в ${SITE_CONFIG.region}е` | `в ${SITE_CONFIG.regionPrepositional}` |
+| 50-51 | `в ${entry.districtName}е (${SITE_CONFIG.region})` → `(${SITE_CONFIG.region})` | Использовать `entry.districtName` без добавления "е" + `${SITE_CONFIG.region}` корректен (именительный) |
+| 143, 171 | `в ${SITE_CONFIG.region}е` | `в ${SITE_CONFIG.regionPrepositional}` |
+
+**Примечание:** Для районов нужно использовать поле `nameLocative` вместо `${districtName}е`.
+
+---
+
+### 4. src/pages/programmatic/ComboPage.tsx
+
+| Строки | Ошибка | Исправление |
+|--------|--------|-------------|
+| 71 | `в ${entry.districtName}е` / `в ${SITE_CONFIG.region}е` | Использовать `district?.nameLocative` и `SITE_CONFIG.regionPrepositional` |
+| 166 | `в ${entry.districtName}е` / `в ${SITE_CONFIG.region}е` | Аналогично |
+
+---
+
+## Структура данных (уже корректна)
+
+В `siteConfig.ts` поля уже существуют:
+```typescript
+region: "Новосибирск",
+regionGenitive: "Новосибирска",
+regionPrepositional: "Новосибирске",
+```
+
+В `districts.ts` каждый район имеет `nameLocative`:
+```typescript
+nameLocative: "Центральном районе",  // для "в Центральном районе"
+```
+
+---
+
+## План изменений
+
+### Шаг 1: ServicePageTemplate.tsx
+Заменить 3 использования `regionGenitive` на `regionPrepositional` в контексте предлога "в".
+
+### Шаг 2: uslugi/Index.tsx
+Заменить `regionGenitive` на `regionPrepositional` в заголовке H1.
+
+### Шаг 3: programmaticContent.ts
+- Заменить все `${SITE_CONFIG.region}е` на `${SITE_CONFIG.regionPrepositional}`
+- Добавить параметр `districtLocative` в функции генерации или использовать lookup из districts
+- Обновить шаблоны для использования корректных падежных форм
+
+### Шаг 4: ComboPage.tsx
+- Передавать `district?.nameLocative` в meta description
+- Использовать `SITE_CONFIG.regionPrepositional` вместо `${SITE_CONFIG.region}е`
+
+---
+
+## Технические детали
+
+### Изменение в programmaticContent.ts
+
+Текущий код:
+```typescript
+const location = entry.districtSlug 
+  ? `в ${entry.districtName}е (${SITE_CONFIG.region})` 
+  : `в ${SITE_CONFIG.region}е и области`;
+```
+
+Исправленный код:
+```typescript
+const location = entry.districtSlug 
+  ? `в ${entry.districtLocative} (${SITE_CONFIG.region})` 
+  : `в ${SITE_CONFIG.regionPrepositional} и области`;
+```
+
+Для этого нужно:
+1. Расширить интерфейс `MatrixEntry` полем `districtLocative?: string`
+2. Или делать lookup по `districtSlug` в runtime
+
+### Рекомендуемый подход
+
+Добавить helper-функцию для получения предложного падежа района:
 
 ```typescript
-// yandexMetrika.ts
-if (import.meta.env.DEV) {
-  console.log('[YM] Goal reached:', goalName, params);
+import { getDistrictBySlug } from "@/data/districts";
+
+function getDistrictLocative(entry: MatrixEntry): string {
+  if (!entry.districtSlug) return SITE_CONFIG.regionPrepositional;
+  const district = getDistrictBySlug(entry.districtSlug);
+  return district?.nameLocative || entry.districtName;
 }
 ```
 
-**Edge functions** — оставить console.log для мониторинга в Deno (логи не видны пользователям, полезны для отладки в Cloud Dashboard). Можно обернуть в ENV-переменную DEBUG при необходимости.
-
-### Файлы для изменения
-
-| Файл | Изменение |
-|------|-----------|
-| `src/lib/yandexMetrika.ts` | Обернуть console.log в DEV check |
-| `src/hooks/useTrafficLogging.ts` | Обернуть console.error в DEV check |
-
 ---
-
-## 2. Footer ссылки на canonical URL
-
-### Проблема
-Ссылки в Footer (строки 37-42) используют старые URL:
-- `/dezinfeksiya` → редирект на `/usluga/dezinfeksiya`
-- `/dezinseksiya` → редирект на `/usluga/dezinseksiya`
-- и т.д.
-
-Это вызывает лишние 301-редиректы и ухудшает SEO.
-
-### Решение
-Заменить на canonical URL `/usluga/[slug]`:
-
-```typescript
-// Было:
-<Link to="/dezinfeksiya">Дезинфекция</Link>
-
-// Станет:
-<Link to="/usluga/dezinfeksiya">Дезинфекция</Link>
-```
-
-### Файл для изменения
-
-| Файл | Изменение |
-|------|-----------|
-| `src/components/Footer.tsx` | Заменить 6 ссылок на услуги (строки 37-42) |
-
----
-
-## 3. Сегментация аналитики — добавление page_type
-
-### Проблема
-События в `logTrafficEvent` не передают `page_type`, что затрудняет анализ конверсий по типам страниц в Метрике.
-
-### Решение
-Добавить автоматическое определение `page_type` на основе URL:
-
-```typescript
-// src/lib/tracking.ts — новая функция
-export function getPageType(): string {
-  const path = window.location.pathname;
-  
-  if (path === '/') return 'home';
-  if (path.startsWith('/usluga/')) return 'service';
-  if (path.startsWith('/vreditel/')) return 'pest';
-  if (path.startsWith('/obekt/')) return 'object';
-  if (path.startsWith('/rayon/')) return 'district';
-  if (path.startsWith('/uslugi')) return 'services_list';
-  if (path.startsWith('/vrediteli')) return 'pests_list';
-  if (path.startsWith('/obekty')) return 'objects_list';
-  if (path.startsWith('/rayony')) return 'districts_list';
-  if (path.startsWith('/blog')) return 'blog';
-  if (path.startsWith('/faq')) return 'faq';
-  if (path.startsWith('/sanpin')) return 'sanpin';
-  if (path.includes('/')) return 'programmatic'; // combo pages
-  
-  return 'other';
-}
-```
-
-Интегрировать в `logTrafficEvent`:
-
-```typescript
-// src/hooks/useTrafficLogging.ts
-const tracking = getTrackingContext();
-const pageType = getPageType();
-
-await supabase.functions.invoke('log-traffic-event', {
-  body: {
-    ...existingFields,
-    page_type: pageType, // Добавить в event_data
-  }
-});
-```
-
-### Файлы для изменения
-
-| Файл | Изменение |
-|------|-----------|
-| `src/lib/tracking.ts` | Добавить функцию getPageType() |
-| `src/hooks/useTrafficLogging.ts` | Передавать page_type в event_data |
-
----
-
-## 4. Core Web Vitals
-
-### Статус
-Требуется внешняя проверка в PageSpeed Insights после деплоя на production. Это не code change — нужно протестировать https://xn--d1aey.xn--p1ai в PageSpeed.
-
----
-
-## Итоговый список файлов
-
-| # | Файл | Действие |
-|---|------|----------|
-| 1 | `src/lib/yandexMetrika.ts` | Обернуть console.log в DEV |
-| 2 | `src/hooks/useTrafficLogging.ts` | Обернуть console.error в DEV + добавить page_type |
-| 3 | `src/lib/tracking.ts` | Добавить getPageType() |
-| 4 | `src/components/Footer.tsx` | Canonical URL для услуг |
 
 ## Ожидаемый результат
 
-- Консоль браузера чистая в production
-- Нет лишних 301-редиректов из Footer
-- Аналитика содержит page_type для сегментации
-- Core Web Vitals — ручная проверка после деплоя
+**Было:**
+- "Дезинфекция в Новосибирска" ❌
+- "Услуги СЭС в Новосибирска" ❌
+- "Цены на дезинфекцию в Новосибирска" ❌
+
+**Станет:**
+- "Дезинфекция в Новосибирске" ✅
+- "Услуги СЭС в Новосибирске" ✅
+- "Цены на дезинфекцию в Новосибирске" ✅
+
+---
+
+## Проверка после исправлений
+
+1. Открыть страницы:
+   - `/uslugi` — заголовок H1
+   - `/usluga/dezinfeksiya` — заголовок и CTA блоки
+   - Любая programmatic страница — meta description и заголовки
+
+2. Поиск по коду: `grep -r "в Новосибирска" src/` должен вернуть 0 результатов
+
+---
+
+## Итого файлов для редактирования
+
+| # | Файл | Количество изменений |
+|---|------|---------------------|
+| 1 | `src/components/templates/ServicePageTemplate.tsx` | 3 замены |
+| 2 | `src/pages/uslugi/Index.tsx` | 1 замена |
+| 3 | `src/lib/programmaticContent.ts` | ~8 замен + helper |
+| 4 | `src/pages/programmatic/ComboPage.tsx` | 2 замены + import |
 
