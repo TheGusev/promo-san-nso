@@ -1,6 +1,27 @@
 <!doctype html>
 <html lang="ru">
   <head>
+    <!-- Skip-link for accessibility (screen readers) -->
+    <style>
+      .skip-link {
+        position: absolute;
+        top: -40px;
+        left: 0;
+        background: hsl(var(--primary));
+        color: hsl(var(--primary-foreground));
+        padding: 8px 16px;
+        z-index: 9999;
+        text-decoration: none;
+        border-radius: 0 0 4px 0;
+        font-weight: 500;
+        transition: top 0.2s;
+      }
+      .skip-link:focus {
+        top: 0;
+        outline: 2px solid hsl(var(--ring));
+        outline-offset: 2px;
+      }
+    </style>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
@@ -452,6 +473,9 @@
   </head>
 
   <body>
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="skip-link">Перейти к основному содержимому</a>
+    
     <!-- Yandex.Metrika noscript -->
     <noscript><div><img src="https://mc.yandex.ru/watch/104205609" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
     
