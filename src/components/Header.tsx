@@ -7,12 +7,12 @@ import { reachGoal } from "@/lib/yandexMetrika";
 import { logTrafficEvent } from "@/hooks/useTrafficLogging";
 
 const services = [
-  { name: "Дезинфекция", href: "/dezinfeksiya" },
-  { name: "Дезинсекция", href: "/dezinseksiya" },
-  { name: "Дератизация", href: "/deratizatsiya" },
-  { name: "Озонирование", href: "/ozonirovanie" },
-  { name: "Дезодорация", href: "/dezodoratsiya" },
-  { name: "Подготовка к СЭС", href: "/sertifikatsiya" },
+  { name: "Дезинфекция", href: "/usluga/dezinfeksiya" },
+  { name: "Дезинсекция", href: "/usluga/dezinseksiya" },
+  { name: "Дератизация", href: "/usluga/deratizatsiya" },
+  { name: "Озонирование", href: "/usluga/ozonirovanie" },
+  { name: "Дезодорация", href: "/usluga/dezodoratsiya" },
+  { name: "Подготовка к СЭС", href: "/usluga/sertifikatsiya" },
 ];
 
 export default function Header() {
