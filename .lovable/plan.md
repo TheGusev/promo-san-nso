@@ -1,141 +1,212 @@
 
-# План: Исправление всех оставшихся ошибок для достижения 100/100
 
-## Текущий статус после аудита
+# Исправление домена: xn--d1aey.xn--p1ai (дко.рф) на xn--c1acj0ak3f.xn--p1ai (гордэз.рф)
 
-| # | Критерий | Текущий балл | Проблема | Решение |
-|---|----------|--------------|----------|---------|
-| 1 | Header.tsx — legacy URL | 96/100 | Ссылки `/dezinfeksiya` вызывают 301 редирект | Заменить на `/usluga/dezinfeksiya` |
-| 2 | sitemap.xml — lastmod | 98/100 | Нет дат последнего изменения | Добавить `<lastmod>` теги |
-| 3 | Accessibility — skip-link | 98/100 | Нет skip-to-content для screen readers | Добавить skip-link в index.html |
-| 4 | Грамматика — "в Новосибирска" | 100/100 | Все найденные случаи корректны | Подтверждено |
+## Корневая причина всех проблем
+
+В коде везде используется **неправильный punycode**:
+
+| Что записано | Какой домен на самом деле | Что нужно |
+|---|---|---|
+| `xn--d1aey.xn--p1ai` | **дко.рф** | Это чужой/другой домен |
+| `xn--c1acj0ak3f.xn--p1ai` | **гордэз.рф** | Это правильный домен |
+
+Именно из-за этого:
+- Яндекс Вебмастер не принимал URL на переобход (домен не совпадает с сайтом)
+- Sitemap из robots.txt показывал 0 ссылок (другой домен)
+- Вручную добавленный `https://гордэз.рф/sitemap.xml` работает (115 ссылок, статус ОК) -- потому что домен совпадает
 
 ---
 
-## Шаг 1: Исправить Header.tsx — canonical URL
+## Файлы для исправления
 
-### Файл: `src/components/Header.tsx`
+### 1. src/data/siteConfig.ts (1 замена)
+Строка 5: заменить `xn--d1aey.xn--p1ai` на `xn--c1acj0ak3f.xn--p1ai`
 
-**Было (строки 9-16):**
-```typescript
-const services = [
-  { name: "Дезинфекция", href: "/dezinfeksiya" },
-  { name: "Дезинсекция", href: "/dezinseksiya" },
-  { name: "Дератизация", href: "/deratizatsiya" },
-  { name: "Озонирование", href: "/ozonirovanie" },
-  { name: "Дезодорация", href: "/dezodoratsiya" },
-  { name: "Подготовка к СЭС", href: "/sertifikatsiya" },
-];
+Это центральная конфигурация -- от неё зависят canonical URL, Schema.org и все динамические ссылки.
+
+### 2. public/robots.txt (2 замены)
+- Строка 2: комментарий
+- Строка 12: `Sitemap: https://xn--c1acj0ak3f.xn--p1ai/sitemap.xml`
+
+### 3. public/sitemap.xml (~115 замен)
+Заменить все `xn--d1aey.xn--p1ai` на `xn--c1acj0ak3f.xn--p1ai` во всех 115 тегах `<loc>`.
+
+### 4. index.html (~20 замен)
+Заменить все `xn--d1aey.xn--p1ai` на `xn--c1acj0ak3f.xn--p1ai` в:
+- canonical URL
+- hreflang ссылках
+- og:url, og:image
+- twitter:image
+- Schema.org (WebSite, LocalBusiness, Organization, BreadcrumbList, Service)
+
+---
+
+## Список URL для переобхода (после исправления)
+
+После публикации исправлений -- вот готовый список для вставки в Яндекс Вебмастер (Переобход страниц). Можно использовать **относительные URL** чтобы точно не было ошибок:
+
+**Основные (8 страниц):**
+```
+/
+/uslugi
+/vrediteli
+/obekty
+/rayony
+/blog
+/faq
+/sanpin
 ```
 
-**Станет:**
-```typescript
-const services = [
-  { name: "Дезинфекция", href: "/usluga/dezinfeksiya" },
-  { name: "Дезинсекция", href: "/usluga/dezinseksiya" },
-  { name: "Дератизация", href: "/usluga/deratizatsiya" },
-  { name: "Озонирование", href: "/usluga/ozonirovanie" },
-  { name: "Дезодорация", href: "/usluga/dezodoratsiya" },
-  { name: "Подготовка к СЭС", href: "/usluga/sertifikatsiya" },
-];
+**Услуги (6):**
+```
+/usluga/dezinfeksiya
+/usluga/dezinseksiya
+/usluga/deratizatsiya
+/usluga/ozonirovanie
+/usluga/dezodoratsiya
+/usluga/sertifikatsiya
 ```
 
-**Результат:** Устраняет 6 лишних 301-редиректов, улучшает скорость загрузки и SEO.
-
----
-
-## Шаг 2: Добавить lastmod в sitemap.xml
-
-### Файл: `public/sitemap.xml`
-
-Добавить теги `<lastmod>` ко всем URL. Формат: `YYYY-MM-DD`
-
-**Пример:**
-```xml
-<url>
-  <loc>https://xn--d1aey.xn--p1ai/</loc>
-  <lastmod>2026-02-04</lastmod>
-  <changefreq>daily</changefreq>
-  <priority>1.0</priority>
-</url>
+**Вредители (12):**
+```
+/vreditel/klopy
+/vreditel/tarakany
+/vreditel/blohi
+/vreditel/muravi
+/vreditel/moli
+/vreditel/kozheed
+/vreditel/osy
+/vreditel/komary
+/vreditel/kleshchi
+/vreditel/krysy
+/vreditel/myshi
+/vreditel/kroty
 ```
 
-**Логика дат:**
-- Главная и индексные страницы: текущая дата (2026-02-04)
-- Услуги, вредители, объекты, районы: 2026-02-01
-- Programmatic-страницы: 2026-01-15
-- Блог-статьи: 2026-01-01
-
----
-
-## Шаг 3: Добавить skip-to-content для accessibility
-
-### Файл: `index.html`
-
-Добавить после `<body>`:
-```html
-<body>
-  <!-- Skip to main content for accessibility -->
-  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2 focus:rounded-md focus:outline-none">
-    Перейти к основному содержимому
-  </a>
+**Объекты (15):**
+```
+/obekt/kvartira
+/obekt/dom
+/obekt/dacha
+/obekt/uchastok
+/obekt/obshezhitie
+/obekt/ofis
+/obekt/restoran
+/obekt/kafe
+/obekt/magazin
+/obekt/gostinitsa
+/obekt/sklad
+/obekt/proizvodstvo
+/obekt/detskiy-sad
+/obekt/shkola
+/obekt/bolnitsa
 ```
 
-### Файл: `src/pages/Index.tsx`
+**Районы (15):**
+```
+/rayon/centralny-rayon
+/rayon/zheleznodorozhny-rayon
+/rayon/zaeltsovsky-rayon
+/rayon/kalininsky-rayon
+/rayon/kirovsky-rayon
+/rayon/leninsky-rayon
+/rayon/oktyabrsky-rayon
+/rayon/pervomaysky-rayon
+/rayon/sovetsky-rayon
+/rayon/dzerzhinsky-rayon
+/rayon/berdsk
+/rayon/iskitim
+/rayon/ob
+/rayon/krasnoobsk
+/rayon/novosibirskaya-oblast
+```
 
-Добавить `id="main-content"` к основному контейнеру:
-```tsx
-<main id="main-content">
-  {/* существующий контент */}
-</main>
+**Programmatic (30):**
+```
+/dezinseksiya/klopy-kvartira-centralny-rayon
+/dezinseksiya/klopy-kvartira-leninsky-rayon
+/dezinseksiya/klopy-kvartira-oktyabrsky-rayon
+/dezinseksiya/klopy-kvartira
+/dezinseksiya/tarakany-kvartira-centralny-rayon
+/dezinseksiya/tarakany-kvartira
+/dezinseksiya/tarakany-restoran-centralny-rayon
+/dezinseksiya/tarakany-restoran
+/dezinseksiya/blohi-kvartira
+/dezinseksiya/muravi-kvartira
+/dezinseksiya/muravi-dom
+/deratizatsiya/krysy-sklad
+/deratizatsiya/krysy-sklad-leninsky-rayon
+/deratizatsiya/myshi-dom
+/deratizatsiya/myshi-dom-sovetsky-rayon
+/deratizatsiya/myshi-kvartira
+/dezinfeksiya/kvartira
+/dezinfeksiya/kvartira-centralny-rayon
+/dezinfeksiya/ofis
+/dezinfeksiya/restoran
+/dezinseksiya/kvartira-centralny-rayon
+/dezinseksiya/kvartira-leninsky-rayon
+/deratizatsiya/dom-berdsk
+/dezinseksiya/kleshchi-uchastok
+/dezinseksiya/kleshchi-uchastok-sovetsky-rayon
+/dezinseksiya/kleshchi-uchastok-berdsk
+/ozonirovanie/kvartira
+/ozonirovanie/avtomobil
+/dezodoratsiya/kvartira
+/dezodoratsiya/dom
+```
+
+**Блог (28):**
+```
+/blog/kak-raspoznat-postelnykh-klopov
+/blog/skolko-zhivut-klopy-bez-edy
+/blog/otkuda-berutsya-klopy
+/blog/tarakany-v-kvartire-prichiny
+/blog/blohi-v-kvartire-otkuda
+/blog/krysy-v-chastnom-dome
+/blog/myshi-v-dome-zimoy
+/blog/muravi-v-kvartire
+/blog/moli-v-kvartire
+/blog/kozheed-v-kvartire
+/blog/osy-i-shershni-na-dache
+/blog/kleshchi-na-uchastke
+/blog/cheshuynitsy-v-vannoy
+/blog/mokritsy-v-kvartire
+/blog/pauky-v-dome
+/blog/dezinfeksiya-posle-smerti
+/blog/dezinfeksiya-posle-zatopleniya
+/blog/kak-izbavitsya-ot-pleseni
+/blog/dezinfeksiya-v-meditsinskikh-uchrezhdeniyakh
+/blog/dezinfeksiya-posle-bolezni
+/blog/ozonirovanie-pomeshcheniy
+/blog/udalenie-zapakha-v-kvartire
+/blog/dezinfeksiya-sklada
+/blog/deratizatsiya-sklada
+/blog/obrabotka-podvala-ot-bloh
+/blog/dezinfeksiya-avtomobilya
+/blog/fumigatsiya-sklada
+/blog/sanpin-dlya-obshchepita
 ```
 
 ---
 
-## Шаг 4: Проверка грамматики (подтверждено)
+## Действия в Яндекс Вебмастере после публикации
 
-Поиск по коду показал:
-
-| Файл | Текст | Статус |
-|------|-------|--------|
-| blogContentGenerator.ts | "районов Новосибирска" | Корректно (родительный) |
-| districts.ts | комментарий | Не влияет на UI |
-| FAQ.tsx | "в Новосибирске" | Корректно (предложный) |
-
-Грамматических ошибок "в Новосибирска" в UI не обнаружено.
+1. Удалить проблемный sitemap `https://xn--d1aey.xn--p1ai/sitemap.xml` (он от чужого домена)
+2. Обновить вручную добавленный sitemap -- нажать "отправить на переобход"
+3. В "Переобход страниц" вставить относительные URL из списка выше (по 20 штук за раз -- лимит Яндекса)
 
 ---
 
-## Итоговая таблица изменений
+## Итого
 
-| # | Файл | Изменение |
-|---|------|-----------|
-| 1 | `src/components/Header.tsx` | 6 ссылок → canonical URL |
-| 2 | `public/sitemap.xml` | Добавить 120+ тегов `<lastmod>` |
-| 3 | `index.html` | Добавить skip-link после `<body>` |
-| 4 | `src/pages/Index.tsx` | Добавить `id="main-content"` |
+| # | Файл | Количество замен |
+|---|------|-----------------|
+| 1 | `src/data/siteConfig.ts` | 1 (siteUrl) |
+| 2 | `public/robots.txt` | 2 |
+| 3 | `public/sitemap.xml` | ~115 |
+| 4 | `index.html` | ~20 |
+| **Итого** | | **~138 замен** |
 
----
-
-## Ожидаемый результат после исправлений
-
-| # | Критерий | До | После |
-|---|----------|-----|-------|
-| 1 | Архитектура (Header canonical) | 96 | 100 |
-| 2 | SEO (sitemap lastmod) | 98 | 100 |
-| 3 | Accessibility (skip-link) | 98 | 100 |
-| 4 | Грамматика | 100 | 100 |
-| **ИТОГО** | | **97/100** | **100/100** |
-
----
-
-## Финальный чек-лист качества
-
-После внедрения изменений:
-
-1. Проверить Header — клик на услугу ведёт напрямую без редиректа
-2. Валидировать sitemap.xml через https://www.xml-sitemaps.com/validate-xml-sitemap.html
-3. Проверить skip-link — Tab в браузере показывает "Перейти к основному содержимому"
-4. Поиск по коду — `grep -r "в Новосибирска" src/` возвращает 0 результатов в JSX
-5. PageSpeed Insights — проверить Core Web Vitals на production
+Все замены одинаковые: `xn--d1aey.xn--p1ai` заменяется на `xn--c1acj0ak3f.xn--p1ai`.
 
