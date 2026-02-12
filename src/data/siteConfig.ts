@@ -2,7 +2,7 @@
 
 export const SITE_CONFIG = {
   // Production URL (punycode гордэз.рф)
-  siteUrl: "https://xn--d1aey.xn--p1ai",
+  siteUrl: "https://xn--c1acj0ak3f.xn--p1ai",
   
   // Бренд
   companyName: "СанРешения",

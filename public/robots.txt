@@ -1,5 +1,5 @@
 # Robots.txt для СанРешения
-# https://xn--d1aey.xn--p1ai (гордэз.рф)
+# https://xn--c1acj0ak3f.xn--p1ai (гордэз.рф)
 
 User-agent: *
 Allow: /
@@ -9,4 +9,4 @@ Disallow: /admin/
 Disallow: /api/
 
 # Sitemap
-Sitemap: https://xn--d1aey.xn--p1ai/sitemap.xml
+Sitemap: https://xn--c1acj0ak3f.xn--p1ai/sitemap.xml

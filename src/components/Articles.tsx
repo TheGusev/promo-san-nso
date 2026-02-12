@@ -367,7 +367,7 @@ export default function Articles() {
 
   // Schema.org разметка для статей
   useEffect(() => {
-    const baseUrl = "https://xn--d1aey.xn--p1ai";
+    const baseUrl = "https://xn--c1acj0ak3f.xn--p1ai";
     
     // Генерация схемы для отдельной статьи
     const generateArticleSchema = (article: typeof articles[0], position: number) => ({

@@ -16,13 +16,13 @@ export default function Privacy() {
           "@type": "ListItem",
           "position": 1,
           "name": "Главная",
-          "item": "https://xn--d1aey.xn--p1ai/"
+          "item": "https://xn--c1acj0ak3f.xn--p1ai/"
         },
         {
           "@type": "ListItem",
           "position": 2,
           "name": "Политика конфиденциальности",
-          "item": "https://xn--d1aey.xn--p1ai/privacy"
+          "item": "https://xn--c1acj0ak3f.xn--p1ai/privacy"
         }
       ]
     });
