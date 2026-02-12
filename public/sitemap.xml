@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Главная страница -->
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/</loc>
     <lastmod>2026-02-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -10,49 +10,49 @@
   
   <!-- Индексные страницы -->
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/uslugi</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/uslugi</loc>
     <lastmod>2026-02-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/vrediteli</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/vrediteli</loc>
     <lastmod>2026-02-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/obekty</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/obekty</loc>
     <lastmod>2026-02-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/rayony</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/rayony</loc>
     <lastmod>2026-02-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog</loc>
     <lastmod>2026-02-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/faq</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/faq</loc>
     <lastmod>2026-02-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/sanpin</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/sanpin</loc>
     <lastmod>2026-02-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/privacy</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/privacy</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
@@ -60,37 +60,37 @@
   
   <!-- Услуги (6) -->
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/usluga/dezinfeksiya</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/usluga/dezinfeksiya</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/usluga/dezinseksiya</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/usluga/dezinseksiya</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/usluga/deratizatsiya</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/usluga/deratizatsiya</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/usluga/ozonirovanie</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/usluga/ozonirovanie</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/usluga/dezodoratsiya</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/usluga/dezodoratsiya</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/usluga/sertifikatsiya</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/usluga/sertifikatsiya</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -98,73 +98,73 @@
   
   <!-- Вредители (12) -->
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/vreditel/klopy</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/vreditel/klopy</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/vreditel/tarakany</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/vreditel/tarakany</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/vreditel/blohi</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/vreditel/blohi</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/vreditel/muravi</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/vreditel/muravi</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/vreditel/moli</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/vreditel/moli</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/vreditel/kozheed</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/vreditel/kozheed</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/vreditel/osy</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/vreditel/osy</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/vreditel/komary</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/vreditel/komary</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/vreditel/kleshchi</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/vreditel/kleshchi</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/vreditel/krysy</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/vreditel/krysy</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/vreditel/myshi</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/vreditel/myshi</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/vreditel/kroty</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/vreditel/kroty</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -172,91 +172,91 @@
   
   <!-- Объекты (15) -->
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/obekt/kvartira</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/obekt/kvartira</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/obekt/dom</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/obekt/dom</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/obekt/dacha</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/obekt/dacha</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/obekt/uchastok</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/obekt/uchastok</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/obekt/obshezhitie</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/obekt/obshezhitie</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/obekt/ofis</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/obekt/ofis</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/obekt/restoran</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/obekt/restoran</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/obekt/kafe</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/obekt/kafe</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/obekt/magazin</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/obekt/magazin</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/obekt/gostinitsa</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/obekt/gostinitsa</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/obekt/sklad</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/obekt/sklad</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/obekt/proizvodstvo</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/obekt/proizvodstvo</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/obekt/detskiy-sad</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/obekt/detskiy-sad</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/obekt/shkola</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/obekt/shkola</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/obekt/bolnitsa</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/obekt/bolnitsa</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -264,91 +264,91 @@
   
   <!-- Районы (15) -->
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/rayon/centralny-rayon</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/rayon/centralny-rayon</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/rayon/zheleznodorozhny-rayon</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/rayon/zheleznodorozhny-rayon</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/rayon/zaeltsovsky-rayon</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/rayon/zaeltsovsky-rayon</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/rayon/kalininsky-rayon</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/rayon/kalininsky-rayon</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/rayon/kirovsky-rayon</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/rayon/kirovsky-rayon</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/rayon/leninsky-rayon</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/rayon/leninsky-rayon</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/rayon/oktyabrsky-rayon</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/rayon/oktyabrsky-rayon</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/rayon/pervomaysky-rayon</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/rayon/pervomaysky-rayon</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/rayon/sovetsky-rayon</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/rayon/sovetsky-rayon</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/rayon/dzerzhinsky-rayon</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/rayon/dzerzhinsky-rayon</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/rayon/berdsk</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/rayon/berdsk</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/rayon/iskitim</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/rayon/iskitim</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/rayon/ob</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/rayon/ob</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/rayon/krasnoobsk</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/rayon/krasnoobsk</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/rayon/novosibirskaya-oblast</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/rayon/novosibirskaya-oblast</loc>
     <lastmod>2026-02-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -356,351 +356,351 @@
   
   <!-- Programmatic-страницы (30) -->
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/klopy-kvartira-centralny-rayon</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/dezinseksiya/klopy-kvartira-centralny-rayon</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/klopy-kvartira-leninsky-rayon</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/dezinseksiya/klopy-kvartira-leninsky-rayon</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/klopy-kvartira-oktyabrsky-rayon</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/dezinseksiya/klopy-kvartira-oktyabrsky-rayon</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/klopy-kvartira</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/dezinseksiya/klopy-kvartira</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/tarakany-kvartira-centralny-rayon</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/dezinseksiya/tarakany-kvartira-centralny-rayon</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/tarakany-kvartira</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/dezinseksiya/tarakany-kvartira</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/tarakany-restoran-centralny-rayon</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/dezinseksiya/tarakany-restoran-centralny-rayon</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/tarakany-restoran</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/dezinseksiya/tarakany-restoran</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/blohi-kvartira</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/dezinseksiya/blohi-kvartira</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/muravi-kvartira</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/dezinseksiya/muravi-kvartira</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/muravi-dom</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/dezinseksiya/muravi-dom</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/deratizatsiya/krysy-sklad</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/deratizatsiya/krysy-sklad</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/deratizatsiya/krysy-sklad-leninsky-rayon</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/deratizatsiya/krysy-sklad-leninsky-rayon</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/deratizatsiya/myshi-dom</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/deratizatsiya/myshi-dom</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/deratizatsiya/myshi-dom-sovetsky-rayon</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/deratizatsiya/myshi-dom-sovetsky-rayon</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/deratizatsiya/myshi-kvartira</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/deratizatsiya/myshi-kvartira</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/dezinfeksiya/kvartira</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/dezinfeksiya/kvartira</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/dezinfeksiya/kvartira-centralny-rayon</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/dezinfeksiya/kvartira-centralny-rayon</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/dezinfeksiya/ofis</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/dezinfeksiya/ofis</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/dezinfeksiya/restoran</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/dezinfeksiya/restoran</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/kvartira-centralny-rayon</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/dezinseksiya/kvartira-centralny-rayon</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/kvartira-leninsky-rayon</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/dezinseksiya/kvartira-leninsky-rayon</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/deratizatsiya/dom-berdsk</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/deratizatsiya/dom-berdsk</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/kleshchi-uchastok</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/dezinseksiya/kleshchi-uchastok</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/kleshchi-uchastok-sovetsky-rayon</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/dezinseksiya/kleshchi-uchastok-sovetsky-rayon</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/dezinseksiya/kleshchi-uchastok-berdsk</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/dezinseksiya/kleshchi-uchastok-berdsk</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/ozonirovanie/kvartira</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/ozonirovanie/kvartira</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/ozonirovanie/avtomobil</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/ozonirovanie/avtomobil</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/dezodoratsiya/kvartira</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/dezodoratsiya/kvartira</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/dezodoratsiya/dom</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/dezodoratsiya/dom</loc>
     <lastmod>2026-01-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   
-  <!-- Блог (50 статей) -->
+  <!-- Блог (28 статей) -->
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/kak-raspoznat-postelnykh-klopov</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/kak-raspoznat-postelnykh-klopov</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/skolko-zhivut-klopy-bez-edy</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/skolko-zhivut-klopy-bez-edy</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/otkuda-berutsya-klopy</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/otkuda-berutsya-klopy</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/tarakany-v-kvartire-prichiny</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/tarakany-v-kvartire-prichiny</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/blohi-v-kvartire-otkuda</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/blohi-v-kvartire-otkuda</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/krysy-v-chastnom-dome</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/krysy-v-chastnom-dome</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/myshi-v-dome-zimoy</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/myshi-v-dome-zimoy</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/muravi-v-kvartire</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/muravi-v-kvartire</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/moli-v-kvartire</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/moli-v-kvartire</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/kozheed-v-kvartire</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/kozheed-v-kvartire</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/osy-i-shershni-na-dache</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/osy-i-shershni-na-dache</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/kleshchi-na-uchastke</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/kleshchi-na-uchastke</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/cheshuynitsy-v-vannoy</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/cheshuynitsy-v-vannoy</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/mokritsy-v-kvartire</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/mokritsy-v-kvartire</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/pauky-v-dome</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/pauky-v-dome</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/dezinfeksiya-posle-smerti</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/dezinfeksiya-posle-smerti</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/dezinfeksiya-posle-zatopleniya</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/dezinfeksiya-posle-zatopleniya</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/kak-izbavitsya-ot-pleseni</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/kak-izbavitsya-ot-pleseni</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/dezinfeksiya-v-meditsinskikh-uchrezhdeniyakh</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/dezinfeksiya-v-meditsinskikh-uchrezhdeniyakh</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/dezinfeksiya-posle-bolezni</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/dezinfeksiya-posle-bolezni</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/ozonirovanie-pomeshcheniy</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/ozonirovanie-pomeshcheniy</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/udalenie-zapakha-v-kvartire</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/udalenie-zapakha-v-kvartire</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/dezinfeksiya-sklada</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/dezinfeksiya-sklada</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/deratizatsiya-sklada</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/deratizatsiya-sklada</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/obrabotka-podvala-ot-bloh</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/obrabotka-podvala-ot-bloh</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/dezinfeksiya-avtomobilya</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/dezinfeksiya-avtomobilya</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/fumigatsiya-sklada</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/fumigatsiya-sklada</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://xn--d1aey.xn--p1ai/blog/sanpin-dlya-obshchepita</loc>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/blog/sanpin-dlya-obshchepita</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
