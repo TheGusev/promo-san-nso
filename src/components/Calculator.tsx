@@ -507,7 +507,7 @@ export default function Calculator() {
 
   return (
     <>
-      <section id="calculator" ref={calcRef} className="py-4 sm:py-8 md:py-16 bg-background pb-20 sm:pb-8">
+      <section id="calculator" ref={calcRef} className="py-4 sm:py-8 md:py-16 bg-background">
         <div className="container px-2 sm:px-4">
           {/* Компактный заголовок */}
           <div className="text-center mb-3 sm:mb-6 md:mb-10">
@@ -688,8 +688,8 @@ export default function Calculator() {
                 </CollapsibleContent>
               </Collapsible>
 
-              {/* Контактные данные - видны только на десктопе, на мобилке в sticky */}
-              <div className="hidden sm:block">
+              {/* Контактные данные */}
+              <div>
                 <div className="grid grid-cols-2 gap-2 sm:gap-3">
                   <div className="space-y-1">
                     <Label htmlFor="name" className="text-xs sm:text-sm">Имя *</Label>
@@ -733,7 +733,7 @@ export default function Calculator() {
                   </CollapsibleContent>
                 </Collapsible>
 
-                {/* Статусы и кнопка - десктоп */}
+                {/* Статусы и кнопка */}
                 <div className="space-y-2 mt-4">
                   {!isOnline && (
                     <div className="flex items-center gap-2 text-xs text-orange-500 bg-orange-500/10 p-2 rounded">
@@ -757,7 +757,7 @@ export default function Calculator() {
 
                   {isSubmitted && (
                     <div className="text-xs text-secondary bg-secondary/10 p-2 rounded text-center">
-                      ✓ Заявка отправлена
+                      ✓ Заявка отправлена! Перезвоним за 5 минут
                     </div>
                   )}
                   
@@ -790,59 +790,6 @@ export default function Calculator() {
         </div>
       </section>
 
-      {/* STICKY ФОРМА ДЛЯ МОБИЛКИ - всегда видна внизу экрана */}
-      <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border p-3 z-50 sm:hidden shadow-elevated">
-        <form onSubmit={handleSubmit} className="container">
-          {isSubmitted ? (
-            <div className="text-sm text-secondary bg-secondary/10 p-3 rounded text-center font-medium">
-              ✓ Заявка отправлена! Перезвоним за 5 минут
-            </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-[1fr,1fr] gap-2 mb-2">
-                <Input
-                  name="name-mobile"
-                  autoComplete="name"
-                  placeholder="Имя *"
-                  value={formData.name}
-                  onChange={(e) => handleFieldChange('name', e.target.value)}
-                  className="h-9 text-sm"
-                />
-                <PhoneInput
-                  value={formData.phone}
-                  onChange={(value) => handleFieldChange('phone', value)}
-                  className="h-9 text-sm"
-                />
-              </div>
-              <Button 
-                type="submit" 
-                size="default" 
-                className="w-full h-10 text-sm font-medium animate-pulse hover:animate-none" 
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Отправка...
-                  </>
-                ) : !isOnline ? (
-                  <>
-                    <WifiOff className="h-4 w-4 mr-2" />
-                    Сохранить
-                  </>
-                ) : (
-                  <>
-                    Заявка → {animatedFinalPrice.toLocaleString('ru-RU')} ₽
-                  </>
-                )}
-              </Button>
-              <p className="text-[9px] text-center text-muted-foreground mt-1">
-                Перезвоним за 5 минут · Гарантия 1 год
-              </p>
-            </>
-          )}
-        </form>
-      </div>
     </>
   );
 }
