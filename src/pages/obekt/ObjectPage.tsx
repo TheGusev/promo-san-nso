@@ -73,11 +73,14 @@ export default function ObjectPage() {
             </div>
 
             <div className="flex items-center justify-center">
-              <div className="relative">
-                <div className="absolute -inset-4 rounded-full bg-primary/10 blur-2xl" />
-                <div className="relative flex h-48 w-48 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/5 md:h-64 md:w-64">
-                  <Building className="h-24 w-24 text-primary/60 md:h-32 md:w-32" />
-                </div>
+              <div className="relative w-full max-w-md overflow-hidden rounded-2xl shadow-lg">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent z-10" />
+                <img
+                  src={objectType.heroImage || "/images/objects/default.jpg"}
+                  alt={`Обработка ${objectType.nameGenitive} в Новосибирске`}
+                  className="w-full h-64 md:h-80 object-cover"
+                  loading="eager"
+                />
               </div>
             </div>
           </div>

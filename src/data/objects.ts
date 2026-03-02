@@ -9,6 +9,7 @@ export interface ObjectType {
   nameGenitive: string; // родительный падеж для SEO
   namePlural: string;
   description: string;
+  heroImage?: string;
   metaTitle: string;
   metaDescription: string;
   category: ObjectCategory;
@@ -25,6 +26,7 @@ export const objects: ObjectType[] = [
     nameGenitive: "квартиры",
     namePlural: "квартир",
     description: "Обработка квартир любой площади от вредителей.",
+    heroImage: "/images/objects/kvartira.jpg",
     metaTitle: "Обработка квартиры от вредителей в Новосибирске | СанРешения",
     metaDescription: "Профессиональная обработка квартир в Новосибирске. Уничтожение клопов, тараканов, блох. Безопасно для детей и животных.",
     category: "residential",
@@ -38,6 +40,7 @@ export const objects: ObjectType[] = [
     nameGenitive: "частного дома",
     namePlural: "частных домов",
     description: "Комплексная обработка частных домов и коттеджей.",
+    heroImage: "/images/objects/dom.jpg",
     metaTitle: "Обработка частного дома от вредителей в Новосибирске | СанРешения",
     metaDescription: "Дезинсекция и дератизация частных домов в Новосибирске. Обработка дома, участка, подвала.",
     category: "residential",
@@ -51,6 +54,7 @@ export const objects: ObjectType[] = [
     nameGenitive: "дачи",
     namePlural: "дач",
     description: "Сезонная и круглогодичная обработка дачных участков.",
+    heroImage: "/images/objects/dacha.jpg",
     metaTitle: "Обработка дачи от вредителей в Новосибирске | СанРешения",
     metaDescription: "Обработка дачных участков от клещей, комаров, грызунов в Новосибирске. Подготовка к сезону.",
     category: "residential",
@@ -64,6 +68,7 @@ export const objects: ObjectType[] = [
     nameGenitive: "участка",
     namePlural: "участков",
     description: "Обработка дачных и садовых участков от клещей, комаров и других вредителей.",
+    heroImage: "/images/objects/uchastok.jpg",
     metaTitle: "Обработка участка от вредителей в Новосибирске | СанРешения",
     metaDescription: "Акарицидная обработка участков от клещей, комаров в Новосибирске. Защита территории на весь сезон.",
     category: "residential",
@@ -92,6 +97,7 @@ export const objects: ObjectType[] = [
     nameGenitive: "офиса",
     namePlural: "офисов",
     description: "Обработка офисных помещений без прерывания работы.",
+    heroImage: "/images/objects/ofis.jpg",
     metaTitle: "Обработка офиса от вредителей в Новосибирске | СанРешения",
     metaDescription: "Дезинсекция офисов в Новосибирске. Работаем в нерабочее время. Договор, акты для бухгалтерии.",
     category: "commercial",
@@ -105,6 +111,7 @@ export const objects: ObjectType[] = [
     nameGenitive: "ресторана",
     namePlural: "ресторанов",
     description: "Обработка ресторанов с соблюдением санитарных норм.",
+    heroImage: "/images/objects/restoran.jpg",
     metaTitle: "Обработка ресторана от вредителей в Новосибирске | СанРешения",
     metaDescription: "Дезинсекция ресторанов и кафе в Новосибирске. Соответствие СанПиН. Документы для Роспотребнадзора.",
     category: "commercial",
@@ -159,6 +166,7 @@ export const objects: ObjectType[] = [
     nameGenitive: "склада",
     namePlural: "складов",
     description: "Обработка складских помещений любой площади.",
+    heroImage: "/images/objects/sklad.jpg",
     metaTitle: "Обработка склада от вредителей в Новосибирске | СанРешения",
     metaDescription: "Дератизация и дезинсекция складов в Новосибирске. Защита продукции от грызунов и насекомых.",
     category: "industrial",
