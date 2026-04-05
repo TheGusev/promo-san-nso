@@ -315,7 +315,7 @@ export default function Privacy() {
                   <Phone className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="font-medium">Телефон</p>
-                    <a href="tel:+73833121660" className="text-primary hover:underline">+7 (383) 312-16-60</a>
+                    <a href="tel:+73833592050" className="text-primary hover:underline">+7 (383) 359-20-50</a>
                   </div>
                 </div>
                 
