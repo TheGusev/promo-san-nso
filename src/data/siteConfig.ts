@@ -12,7 +12,7 @@ export const SITE_CONFIG = {
   
   // Контакты (офисный телефон для звонков)
   phone: "+7 (383) 312-23-30",
-  phoneClean: "73833831223302",
+  phoneClean: "73833122330",
   phoneDisplay: "8 (383) 312-23-30",
   phoneTel: "+7-383-312-23-30", // для schema.org
   
