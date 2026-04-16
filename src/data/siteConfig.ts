@@ -16,9 +16,8 @@ export const SITE_CONFIG = {
   phoneDisplay: "8 (383) 312-23-30",
   phoneTel: "+7-383-312-23-30", // для schema.org
   
-  // Мобильный номер для мессенджеров (WhatsApp)
-  whatsapp: "+79628265020",
-  whatsappClean: "79628265020",
+  // MAX мессенджер
+  max: "MAX",
   
   telegram: "@sanitarnye_resheniya_nsk",
   email: "west-centro@mail.ru",
@@ -50,7 +49,7 @@ export const SITE_CONFIG = {
   // Социальные сети и ссылки
   links: {
     twoGis: "https://go.2gis.com/oSzHM",
-    whatsapp: "https://wa.me/79628265020",
+    max: "https://max.ru/u/f9LHodD0cOLpbsvDSn1NINA4hi9531hIqb1SAy6xUzvVnOUhOCvyXk9AG0w",
     telegram: "https://t.me/sanitarnye_resheniya_nsk",
   },
   
