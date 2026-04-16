@@ -1,31 +1,32 @@
 
 
-# Исправление tel: ссылок — добавить `+` для дозвона
+# Замена WhatsApp на MAX (VK Teams)
 
-## Проблема
+## Что делаем
+Убираем WhatsApp со всего сайта и заменяем на MAX с ссылкой `https://max.ru/u/f9LHodD0cOLpbsvDSn1NINA4hi9531hIqb1SAy6xUzvVnOUhOCvyXk9AG0w`.
 
-`phoneClean` в конфиге = `"73833122330"` (без `+`). Все ссылки `tel:${SITE_CONFIG.phoneClean}` генерируют `tel:73833122330` — телефон не звонит. Нужно `tel:+73833122330`.
-
-## Решение
+## Файлы для изменения (6 файлов)
 
 ### 1. `src/data/siteConfig.ts`
-Изменить `phoneClean` с `"73833122330"` на `"+73833122330"` — это автоматически исправит все 8+ компонентов, использующих `SITE_CONFIG.phoneClean` (FloatingContact, SiteHeader, SiteFooter, CTABlock, HeroService, FAQ, SanPIN).
+- Удалить `whatsapp`, `whatsappClean`
+- Заменить `links.whatsapp` на `links.max` с новой ссылкой
 
-### 2. Хардкод в 4 файлах
-Заменить `tel:+73833122330` (уже корректно с `+`) — проверить и убедиться что формат правильный:
+### 2. `src/components/FloatingContact.tsx`
+- Заменить кнопку WhatsApp на MAX (иконка MAX, синий цвет #0077FF)
+- Переименовать `handleWhatsApp` → `handleMax`, событие → `max_click`
 
-| Файл | Текущее значение | Статус |
-|------|-----------------|--------|
-| `Header.tsx` | `href="tel:+73833122330"` | Уже OK |
-| `Footer.tsx` | `href="tel:+73833122330"` | Уже OK |
-| `PriceTable.tsx` | `href="tel:+73833122330"` | Уже OK |
-| `Privacy.tsx` | `href="tel:+73833122330"` | Уже OK |
+### 3. `src/components/layout/SiteFooter.tsx` (строки 103-113)
+- Заменить иконку и ссылку WhatsApp на MAX
 
-Хардкод файлы уже имеют `+` в href — проблема только в динамических ссылках через `phoneClean`.
+### 4. `src/components/FAQ.tsx` (строка 24)
+- Заменить текст "в WhatsApp" → "в MAX"
 
-### 3. Отображение
-Оставить `phoneDisplay: "8 (383) 312-23-30"` и `phone: "+7 (383) 312-23-30"` как есть — отображение через 8 или +7 на усмотрение компонента.
+### 5. `src/data/faqData.ts` (строки 823, 872)
+- Заменить упоминания WhatsApp → MAX в текстах FAQ
 
-## Итого
-Одно изменение в `siteConfig.ts`: добавить `+` в `phoneClean`. Это починит дозвон на всём сайте.
+### 6. `src/components/Footer.tsx`
+- Проверить и убрать WhatsApp если есть (используется на некоторых страницах)
+
+## Иконка MAX
+Будет использована стилизованная буква "M" или текст "MAX" в круглой кнопке с фирменным синим цветом (#0077FF).
 
