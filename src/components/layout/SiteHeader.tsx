@@ -16,6 +16,7 @@ import { getAllServices } from "@/data/services";
 import { getInsects, getRodents } from "@/data/pests";
 import { getResidentialObjects, getCommercialObjects, getIndustrialObjects } from "@/data/objects";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export function SiteHeader() {
   const [isOpen, setIsOpen] = useState(false);
@@ -248,6 +249,11 @@ export function SiteHeader() {
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
+
+        {/* Theme toggle (desktop + mobile) */}
+        <div className="ml-auto lg:ml-2 flex items-center">
+          <ThemeToggle />
+        </div>
 
         {/* Mobile menu */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
