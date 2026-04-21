@@ -2,7 +2,7 @@ import { Check, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { AnimatedSection } from "@/components/ui/animated-section";
-import { reachGoal } from "@/lib/yandexMetrika";
+import { trackGoal } from "@/lib/analytics";
 
 const priceData = [
   {
@@ -57,7 +57,7 @@ const priceData = [
 
 export default function PriceTable() {
   const handleCallClick = () => {
-    reachGoal('phone_click');
+    trackGoal('phone_click');
   };
 
   const scrollToCalculator = () => {

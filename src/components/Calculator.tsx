@@ -469,7 +469,7 @@ export default function Calculator() {
       });
 
       // Track lead submission
-      reachGoal('lead_submit', {
+      trackGoal('lead_submit', {
         price: priceResult.finalPrice,
         service: formData.service,
         objectType: formData.objectType,

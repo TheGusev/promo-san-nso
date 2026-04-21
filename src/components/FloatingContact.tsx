@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Phone, X } from "lucide-react";
 import { SITE_CONFIG } from "@/data/siteConfig";
-import { reachGoal } from "@/lib/yandexMetrika";
+import { trackGoal } from "@/lib/analytics";
 import { logTrafficEvent } from "@/hooks/useTrafficLogging";
 import { cn } from "@/lib/utils";
 
@@ -26,21 +26,21 @@ export default function FloatingContact() {
   }, [isOpen]);
 
   const handleCall = () => {
-    reachGoal("phone_click");
+    trackGoal("phone_click");
     logTrafficEvent("phone_click");
     window.location.href = `tel:${SITE_CONFIG.phoneClean}`;
     setIsOpen(false);
   };
 
   const handleMax = () => {
-    reachGoal("max_click");
+    trackGoal("max_click");
     logTrafficEvent("max_click");
     window.open(SITE_CONFIG.links.max, "_blank");
     setIsOpen(false);
   };
 
   const handleTelegram = () => {
-    reachGoal("telegram_click");
+    trackGoal("telegram_click");
     logTrafficEvent("telegram_click");
     window.open(SITE_CONFIG.links.telegram, "_blank");
     setIsOpen(false);

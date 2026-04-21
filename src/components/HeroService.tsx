@@ -8,7 +8,7 @@ import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
 import { SITE_CONFIG } from "@/data/siteConfig";
 import { supabase } from "@/integrations/supabase/client";
 import { isValidRussianPhone, extractPhoneDigits } from "@/hooks/usePhoneMask";
-import { reachGoal } from "@/lib/yandexMetrika";
+import { trackGoal } from "@/lib/analytics";
 import { logTrafficEvent } from "@/hooks/useTrafficLogging";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -79,7 +79,7 @@ export function HeroService({
 
       if (error) throw error;
 
-      reachGoal("hero_form_submit");
+      trackGoal("hero_form_submit");
       logTrafficEvent("hero_form_submit");
 
       toast({
@@ -101,7 +101,7 @@ export function HeroService({
   };
 
   const handlePhoneClick = () => {
-    reachGoal("phone_click");
+    trackGoal("phone_click");
     logTrafficEvent("phone_click");
   };
 

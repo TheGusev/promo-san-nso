@@ -3,7 +3,6 @@ import { Button } from "./ui/button";
 import { ArrowRight, Shield } from "lucide-react";
 import { getCopy } from "@/config/copyMap";
 import { useABTest } from "@/contexts/ABTestContext";
-import { reachGoal } from "@/lib/yandexMetrika";
 
 const backgroundImages = [
   "/images/hero-bg-1.png",
@@ -35,8 +34,7 @@ export default function Hero() {
   }, []);
   
   const handleCTAClick = (type: 'primary' | 'secondary') => {
-    reachGoal('hero_cta_click', { variant: variantId, button: type });
-    
+    // hero_cta_click removed from Metrika — pure scroll, not a conversion.
     if (type === 'primary') {
       document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' });
     } else {
