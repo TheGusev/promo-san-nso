@@ -162,15 +162,14 @@ export default function ObektyIndex() {
             </div>
 
             <div className="hidden lg:flex items-center justify-center">
-              <div className="grid grid-cols-2 gap-4">
-                {[Home, Briefcase, Factory, Users].map((Icon, i) => (
-                  <div 
-                    key={i}
-                    className="flex h-24 w-24 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-primary/5"
-                  >
-                    <Icon className="h-10 w-10 text-primary/60" />
-                  </div>
-                ))}
+              <div className="relative w-full max-w-md overflow-hidden rounded-2xl shadow-lg">
+                <div className="absolute inset-0 z-10 bg-gradient-to-t from-background/40 via-transparent to-transparent" />
+                <img
+                  src="/placeholder.svg"
+                  alt="Обработка различных типов объектов в Новосибирске"
+                  loading="eager"
+                  className="h-64 w-full object-cover md:h-80"
+                />
               </div>
             </div>
           </div>

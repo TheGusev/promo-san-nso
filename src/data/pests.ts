@@ -15,6 +15,7 @@ export interface Pest {
   relatedServices: string[]; // slugs услуг
   order: number;
   isPopular: boolean;
+  heroImage?: string; // путь к hero-фото вредителя
 }
 
 export const pests: Pest[] = [
@@ -31,6 +32,7 @@ export const pests: Pest[] = [
     relatedServices: ["dezinseksiya"],
     order: 1,
     isPopular: true,
+    heroImage: "/images/pests/klopy.jpg",
   },
   {
     slug: "tarakany",
@@ -44,6 +46,7 @@ export const pests: Pest[] = [
     relatedServices: ["dezinseksiya"],
     order: 2,
     isPopular: true,
+    heroImage: "/images/pests/tarakany.jpg",
   },
   {
     slug: "blohi",
@@ -57,6 +60,7 @@ export const pests: Pest[] = [
     relatedServices: ["dezinseksiya"],
     order: 3,
     isPopular: true,
+    heroImage: "/images/pests/blohi.jpg",
   },
   {
     slug: "muravi",
@@ -70,6 +74,7 @@ export const pests: Pest[] = [
     relatedServices: ["dezinseksiya"],
     order: 4,
     isPopular: false,
+    heroImage: "/images/pests/muravi.jpg",
   },
   {
     slug: "moli",
@@ -83,6 +88,7 @@ export const pests: Pest[] = [
     relatedServices: ["dezinseksiya"],
     order: 5,
     isPopular: false,
+    heroImage: "/images/pests/moli.jpg",
   },
   {
     slug: "kozheed",
@@ -96,6 +102,7 @@ export const pests: Pest[] = [
     relatedServices: ["dezinseksiya"],
     order: 6,
     isPopular: false,
+    heroImage: "/images/pests/kozheed.jpg",
   },
   {
     slug: "osy",
@@ -109,6 +116,7 @@ export const pests: Pest[] = [
     relatedServices: ["dezinseksiya"],
     order: 7,
     isPopular: false,
+    heroImage: "/images/pests/osy.jpg",
   },
   {
     slug: "komary",
@@ -122,6 +130,7 @@ export const pests: Pest[] = [
     relatedServices: ["dezinseksiya"],
     order: 8,
     isPopular: false,
+    heroImage: "/images/pests/komary.jpg",
   },
   {
     slug: "kleshchi",
@@ -135,6 +144,7 @@ export const pests: Pest[] = [
     relatedServices: ["dezinseksiya"],
     order: 9,
     isPopular: true,
+    heroImage: "/images/pests/kleshchi.jpg",
   },
   
   // Грызуны
@@ -150,6 +160,7 @@ export const pests: Pest[] = [
     relatedServices: ["deratizatsiya"],
     order: 10,
     isPopular: true,
+    heroImage: "/images/pests/krysy.jpg",
   },
   {
     slug: "myshi",
@@ -163,6 +174,7 @@ export const pests: Pest[] = [
     relatedServices: ["deratizatsiya"],
     order: 11,
     isPopular: true,
+    heroImage: "/images/pests/myshi.jpg",
   },
   {
     slug: "kroty",
@@ -176,6 +188,7 @@ export const pests: Pest[] = [
     relatedServices: ["deratizatsiya"],
     order: 12,
     isPopular: false,
+    heroImage: "/images/pests/kroty.jpg",
   },
 ];
 

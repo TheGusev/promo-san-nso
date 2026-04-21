@@ -131,11 +131,14 @@ export default function RayonyIndex() {
             </div>
 
             <div className="hidden lg:flex items-center justify-center">
-              <div className="relative">
-                <div className="absolute -inset-4 rounded-full bg-primary/10 blur-2xl" />
-                <div className="relative flex h-48 w-48 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/5 md:h-64 md:w-64">
-                  <MapPin className="h-24 w-24 text-primary/60 md:h-32 md:w-32" />
-                </div>
+              <div className="relative w-full max-w-md overflow-hidden rounded-2xl shadow-lg">
+                <div className="absolute inset-0 z-10 bg-gradient-to-t from-background/40 via-transparent to-transparent" />
+                <img
+                  src="/placeholder.svg"
+                  alt="Панорама Новосибирска — СЭС по районам"
+                  loading="eager"
+                  className="h-64 w-full object-cover md:h-80"
+                />
               </div>
             </div>
           </div>

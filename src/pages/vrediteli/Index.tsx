@@ -102,12 +102,15 @@ export default function VreditediIndex() {
               </div>
             </div>
 
-            <div className="hidden lg:flex items-center justify-center gap-8">
-              <div className="flex h-32 w-32 items-center justify-center rounded-full bg-gradient-to-br from-destructive/20 to-destructive/5">
-                <Bug className="h-16 w-16 text-destructive/60" />
-              </div>
-              <div className="flex h-32 w-32 items-center justify-center rounded-full bg-gradient-to-br from-destructive/20 to-destructive/5">
-                <Rat className="h-16 w-16 text-destructive/60" />
+            <div className="hidden lg:flex items-center justify-center">
+              <div className="relative w-full max-w-md overflow-hidden rounded-2xl shadow-lg">
+                <div className="absolute inset-0 z-10 bg-gradient-to-t from-background/40 via-transparent to-transparent" />
+                <img
+                  src="/placeholder.svg"
+                  alt="Уничтожение вредителей в Новосибирске — фото"
+                  loading="eager"
+                  className="h-64 w-full object-cover md:h-80"
+                />
               </div>
             </div>
           </div>
