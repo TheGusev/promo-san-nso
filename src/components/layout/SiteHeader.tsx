@@ -52,10 +52,12 @@ export function SiteHeader() {
       </div>
 
       {/* Main header */}
-      <div className="container flex h-14 items-center justify-between px-4">
+      <div className="container flex h-14 items-center justify-between px-3 sm:px-4 gap-2">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
-          <span className="text-xl font-bold text-primary">{SITE_CONFIG.companyName}</span>
+        <Link to="/" className="flex items-center gap-2 min-w-0">
+          <span className="truncate text-base sm:text-lg lg:text-xl font-bold text-primary leading-tight">
+            Санитарные Решения
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -250,19 +252,18 @@ export function SiteHeader() {
           </NavigationMenuList>
         </NavigationMenu>
 
-        {/* Theme toggle (desktop + mobile) */}
-        <div className="ml-auto lg:ml-2 flex items-center">
+        {/* Theme toggle + mobile menu */}
+        <div className="ml-auto lg:ml-2 flex items-center gap-1">
           <ThemeToggle />
-        </div>
 
-        {/* Mobile menu */}
-        <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetTrigger asChild className="lg:hidden">
-            <Button variant="ghost" size="icon">
-              <Menu className="h-6 w-6" />
-              <span className="sr-only">Меню</span>
-            </Button>
-          </SheetTrigger>
+          {/* Mobile menu */}
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <SheetTrigger asChild className="lg:hidden">
+              <Button variant="ghost" size="icon" className="h-9 w-9 lg:h-10 lg:w-10">
+                <Menu className="h-5 w-5" />
+                <span className="sr-only">Меню</span>
+              </Button>
+            </SheetTrigger>
           <SheetContent side="right" className="w-full sm:w-80">
             <div className="flex flex-col gap-4 mt-8">
               <MobileNavSection title="Услуги" defaultOpen>
@@ -350,6 +351,7 @@ export function SiteHeader() {
             </div>
           </SheetContent>
         </Sheet>
+        </div>
       </div>
     </header>
   );
