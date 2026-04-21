@@ -27,7 +27,7 @@ import { logTrafficEvent } from "@/hooks/useTrafficLogging";
 import { queueLead, processQueue } from "@/lib/offlineQueue";
 import { supabase } from "@/integrations/supabase/client";
 import { SITE_CONFIG } from "@/data/siteConfig";
-import { getAllPests, type Pest } from "@/data/pests";
+import { getAllPests } from "@/data/pests";
 import {
   getAvailablePlaces,
   getPrice,
