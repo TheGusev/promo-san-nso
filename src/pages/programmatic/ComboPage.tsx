@@ -1,5 +1,6 @@
-import { useParams, Link, Navigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Phone, Clock, Shield, ChevronRight, CheckCircle2, HelpCircle, Banknote } from "lucide-react";
+import NotFound from "@/pages/NotFound";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
 import { SEOHead } from "@/components/shared/SEOHead";
@@ -28,14 +29,16 @@ import {
 export default function ComboPage() {
   const { serviceSlug, comboSlug } = useParams<{ serviceSlug: string; comboSlug: string }>();
 
-  if (!serviceSlug || !comboSlug) {
-    return <Navigate to="/uslugi" replace />;
+  // Если slug услуги невалидный — отдаём 404, а не тихий редирект (защита от дорвеев)
+  if (!serviceSlug || !comboSlug || !getServiceBySlug(serviceSlug)) {
+    return <NotFound />;
   }
 
   const entry = getMatrixEntry(serviceSlug, comboSlug);
 
+  // Если такой комбинации нет — тоже 404 (а не редирект на услугу)
   if (!entry) {
-    return <Navigate to={`/usluga/${serviceSlug}`} replace />;
+    return <NotFound />;
   }
 
   // Получаем связанные сущности
