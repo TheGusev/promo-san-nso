@@ -2,7 +2,7 @@ import { useEffect, lazy, Suspense } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import Hero from "@/components/Hero";
 import Services from "@/components/Services";
-import Calculator from "@/components/Calculator";
+import SimpleCalculator from "@/components/SimpleCalculator";
 import AboutSection from "@/components/AboutSection";
 import FloatingContact from "@/components/FloatingContact";
 import PopupForm from "@/components/PopupForm";
@@ -38,7 +38,7 @@ const Index = () => {
       <main id="main-content">
         <Hero />
         <Services />
-        <Calculator />
+        <SimpleCalculator />
         <AboutSection />
         <Suspense fallback={<div className="h-96" />}>
           <MobileCollapsibleSection 
