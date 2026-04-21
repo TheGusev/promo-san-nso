@@ -38,14 +38,13 @@ import {
 } from "@/data/calculatorPricing";
 import { Link } from "react-router-dom";
 
-// Иконка по категории/слагу вредителя
-function pestIcon(pest: Pest) {
-  if (pest.category === "rodents") return Rat;
-  if (pest.slug === "blohi" || pest.slug === "kleshchi") return Worm;
-  return Bug;
-}
-
 type Step = 1 | 2 | 3;
+
+const PEST_GROUP_LABELS: Record<"insects" | "rodents" | "other", string> = {
+  insects: "Насекомые",
+  rodents: "Грызуны",
+  other: "Другое",
+};
 
 export default function SimpleCalculator() {
   const { toast } = useToast();
