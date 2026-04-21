@@ -41,7 +41,7 @@ export default function Hero() {
     if (type === 'primary') {
       scrollToAnchor('calculator');
     } else {
-      scrollToAnchor('services');
+      navigate('/uslugi');
     }
   };
 
