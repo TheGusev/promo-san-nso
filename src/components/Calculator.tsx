@@ -24,7 +24,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getTrackingContext } from "@/lib/tracking";
 import { useABTest } from "@/contexts/ABTestContext";
 import { Calculator as CalcIcon, Sparkles, ChevronDown, Snowflake, Flame, Target, Layers, Loader2, WifiOff } from "lucide-react";
-import { reachGoal } from "@/lib/yandexMetrika";
+import { trackGoal } from "@/lib/analytics";
 import { logTrafficEvent } from "@/hooks/useTrafficLogging";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { queueLead, processQueue } from "@/lib/offlineQueue";
@@ -289,7 +289,7 @@ export default function Calculator() {
     // Трекинг calc_calculate при первом изменении (после начальных значений)
     if (!hasTrackedCalculate.current && parseInt(formData.area) > 0) {
       hasTrackedCalculate.current = true;
-      reachGoal('calc_calculate', {
+      trackGoal('calc_calculate', {
         service: formData.service,
         objectType: formData.objectType,
         area: parseInt(formData.area),
@@ -319,7 +319,7 @@ export default function Calculator() {
     }
   }, [isOnline, toast]);
 
-  // Track calculator visibility with Intersection Observer
+  // Track calculator visibility (DB only — calc_open removed from Metrika as noise).
   useEffect(() => {
     if (!calcRef.current || hasTrackedOpen.current) return;
 
@@ -328,7 +328,6 @@ export default function Calculator() {
         entries.forEach((entry) => {
           if (entry.isIntersecting && !hasTrackedOpen.current) {
             hasTrackedOpen.current = true;
-            reachGoal('calc_open');
             logTrafficEvent('calc_open', { variant_id: variantId });
           }
         });
@@ -470,7 +469,7 @@ export default function Calculator() {
       });
 
       // Track lead submission
-      reachGoal('lead_submit', {
+      trackGoal('lead_submit', {
         price: priceResult.finalPrice,
         service: formData.service,
         objectType: formData.objectType,

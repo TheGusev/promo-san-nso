@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { extractPhoneDigits } from "@/hooks/usePhoneMask";
 import { X, Loader2, WifiOff } from "lucide-react";
-import { reachGoal } from "@/lib/yandexMetrika";
+import { trackGoal } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
 import { getTrackingContext } from "@/lib/tracking";
 import { useToast } from "@/hooks/use-toast";
@@ -59,7 +59,7 @@ export default function PopupForm() {
         setOpen(true);
         setHasBeenShown(true);
         localStorage.setItem('popup_shown', 'true');
-        reachGoal('popup_open');
+        // popup_open removed from Metrika as noise — kept in DB only.
         logTrafficEvent('popup_open', { trigger: 'timer' });
       }
     }, 30000);
@@ -70,7 +70,6 @@ export default function PopupForm() {
         setOpen(true);
         setHasBeenShown(true);
         localStorage.setItem('popup_shown', 'true');
-        reachGoal('popup_open', { trigger: 'exit_intent' });
         logTrafficEvent('popup_open', { trigger: 'exit_intent' });
       }
     };
@@ -197,7 +196,7 @@ export default function PopupForm() {
     try {
       await submitWithRetry(leadData);
 
-      reachGoal('popup_submit', {
+      trackGoal('popup_submit', {
         source: 'popup',
         intent: tracking.intent,
         variant: variantId

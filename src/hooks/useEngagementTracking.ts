@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 import { logTrafficEvent } from './useTrafficLogging';
-import { reachGoal } from '@/lib/yandexMetrika';
 import { useABTest } from '@/contexts/ABTestContext';
 
 /**
@@ -37,11 +36,11 @@ export function useEngagementTracking() {
       const scrollPercent = Math.round((window.scrollY / scrollHeight) * 100);
       maxScrollDepth.current = Math.max(maxScrollDepth.current, scrollPercent);
 
-      // Log scroll milestones to DB and Yandex.Metrika
+      // Log scroll milestones to DB only (NOT to Yandex.Metrika — they were
+      // noise that distorted conversion rates). Kept here for internal analytics.
       [25, 50, 75, 100].forEach((milestone) => {
         if (scrollPercent >= milestone && !scrollMilestones.current[milestone]) {
           scrollMilestones.current[milestone] = true;
-          reachGoal(`scroll_${milestone}`);
           logTrafficEvent(`scroll_${milestone}`, { variant_id: variantId });
         }
       });

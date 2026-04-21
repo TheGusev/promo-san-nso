@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Phone, ChevronDown } from "lucide-react";
 import { Button } from "./ui/button";
 import { ThemeToggle } from "./ThemeToggle";
-import { reachGoal } from "@/lib/yandexMetrika";
+import { trackGoal } from "@/lib/analytics";
 import { logTrafficEvent } from "@/hooks/useTrafficLogging";
 
 const services = [
@@ -19,7 +19,7 @@ export default function Header() {
   const [isServicesOpen, setIsServicesOpen] = useState(false);
 
   const handlePhoneClick = () => {
-    reachGoal('phone_click');
+    trackGoal('phone_click');
     logTrafficEvent('phone_click');
   };
 
