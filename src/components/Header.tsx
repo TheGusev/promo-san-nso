@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 import { ThemeToggle } from "./ThemeToggle";
 import { trackGoal } from "@/lib/analytics";
 import { logTrafficEvent } from "@/hooks/useTrafficLogging";
+import { scrollToAnchor } from "@/lib/scrollToAnchor";
 
 const services = [
   { name: "Дезинфекция", href: "/usluga/dezinfeksiya" },
@@ -88,10 +89,7 @@ export default function Header() {
             size="sm" 
             className="bg-gradient-hero hover:opacity-90 text-xs sm:text-sm px-3 sm:px-4"
             onClick={() => {
-              const calculator = document.getElementById('calculator');
-              if (calculator) {
-                calculator.scrollIntoView({ behavior: 'smooth' });
-              } else {
+              if (!scrollToAnchor('calculator')) {
                 window.location.href = '/#calculator';
               }
             }}
