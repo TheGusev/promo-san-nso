@@ -16,6 +16,7 @@ import { getAllServices } from "@/data/services";
 import { getInsects, getRodents } from "@/data/pests";
 import { getResidentialObjects, getCommercialObjects, getIndustrialObjects } from "@/data/objects";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export function SiteHeader() {
   const [isOpen, setIsOpen] = useState(false);
