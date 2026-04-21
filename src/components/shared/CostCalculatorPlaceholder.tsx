@@ -1,4 +1,4 @@
-import Calculator from "@/components/Calculator";
+import SimpleCalculator from "@/components/SimpleCalculator";
 
 interface CostCalculatorPlaceholderProps {
   className?: string;
@@ -7,8 +7,7 @@ interface CostCalculatorPlaceholderProps {
 export function CostCalculatorPlaceholder({ className }: CostCalculatorPlaceholderProps) {
   return (
     <div id="calculator-section" className={className}>
-      {/* Существующий калькулятор из проекта */}
-      <Calculator />
+      <SimpleCalculator />
     </div>
   );
 }
