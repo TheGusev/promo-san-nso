@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, Phone, CheckCircle2, Loader2, WifiOff } from "lucide-react";
+import { ArrowLeft, Phone, CheckCircle2, Loader2, WifiOff } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -32,11 +32,11 @@ import {
   getAvailablePlaces,
   getPrice,
   getNumericPrice,
-  formatPriceLabel,
   getServiceForPest,
   type PlaceOption,
 } from "@/data/calculatorPricing";
 import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 type Step = 1 | 2 | 3;
 
@@ -99,34 +99,29 @@ export default function SimpleCalculator() {
     }
   }, [isOnline, toast]);
 
-  // Выбор вредителя в селекте — сбрасываем место (могло быть невалидное для нового вредителя)
+  // Шаг 1: выбран вредитель → автопереход на шаг 2 (или сразу 3, если место одно)
   const handleSelectPest = (slug: string) => {
     setPestSlug(slug);
     setPlaceKey(null);
+    const places = getAvailablePlaces(slug);
+    setTimeout(() => {
+      if (places.length === 1) {
+        setPlaceKey(places[0].key);
+        setStep(3);
+        trackGoal("calc_calculate", { pest: slug, place: places[0].key });
+      } else {
+        setStep(2);
+      }
+    }, 180);
   };
 
+  // Шаг 2: выбрано место → автопереход на шаг 3
   const handleSelectPlace = (key: string) => {
     setPlaceKey(key);
-  };
-
-  // «Далее» с шага 1 → если у вредителя только одно место, сразу на шаг 3
-  const handleNextFromStep1 = () => {
-    if (!pestSlug) return;
-    const places = getAvailablePlaces(pestSlug);
-    if (places.length === 1) {
-      setPlaceKey(places[0].key);
+    setTimeout(() => {
       setStep(3);
-      trackGoal("calc_calculate", { pest: pestSlug, place: places[0].key });
-    } else {
-      setStep(2);
-    }
-  };
-
-  // «Далее» с шага 2 → шаг 3
-  const handleNextFromStep2 = () => {
-    if (!pestSlug || !placeKey) return;
-    setStep(3);
-    trackGoal("calc_calculate", { pest: pestSlug, place: placeKey });
+      if (pestSlug) trackGoal("calc_calculate", { pest: pestSlug, place: key });
+    }, 180);
   };
 
   const handleBack = () => {
@@ -169,7 +164,7 @@ export default function SimpleCalculator() {
 
     const tracking = getTrackingContext();
     const leadData = {
-      name: "Клиент", // менеджер уточнит при звонке
+      name: "Клиент",
       phone: extractPhoneDigits(phone),
       email: "",
       object_type: selectedPlace.objectType,
@@ -184,7 +179,6 @@ export default function SimpleCalculator() {
       mvt_arm_key: variantId,
       first_landing_url: window.location.href,
       last_page_url: window.location.href,
-      // Дополнительный контекст для понимания заявки
       pest_slug: selectedPest.slug,
       place_key: selectedPlace.key,
     };
@@ -244,47 +238,48 @@ export default function SimpleCalculator() {
 
   return (
     <section className="py-12 md:py-16 bg-background">
-      <div className="container mx-auto px-2 md:px-4 max-w-3xl">
+      <div className="container mx-auto px-2 md:px-4 max-w-2xl">
         <div className="text-center mb-6 md:mb-8">
-          <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-2">
+          <h2 className="text-2xl md:text-4xl font-bold text-foreground">
             Рассчитать стоимость
           </h2>
-          <p className="text-sm md:text-base text-muted-foreground">
-            3 простых шага — узнайте цену и оставьте заявку
-          </p>
         </div>
 
-        <Card className="p-4 md:p-8 shadow-lg border-border/50">
-          {/* Прогресс */}
+        <Card className="p-4 md:p-6 shadow-md border-border/50">
+          {/* Верхняя панель: Назад + индикатор шагов */}
           {!isSubmitted && (
-            <div className="mb-6">
-              <div className="flex items-center justify-between mb-2">
-                <button
-                  type="button"
-                  onClick={handleBack}
-                  disabled={step === 1}
-                  className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition disabled:opacity-30 disabled:cursor-not-allowed"
-                  aria-label="Назад"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  Назад
-                </button>
-                <span className="text-sm font-medium text-muted-foreground">
-                  Шаг {step} / 3
-                </span>
+            <div className="flex items-center justify-between mb-5 min-h-8">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={handleBack}
+                disabled={step === 1}
+                className="h-8 px-2 text-muted-foreground hover:text-foreground disabled:opacity-0"
+                aria-label="Назад"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Назад
+              </Button>
+
+              <div className="flex items-center gap-1.5" aria-label={`Шаг ${step} из 3`}>
+                {[1, 2, 3].map((n) => (
+                  <span
+                    key={n}
+                    className={cn(
+                      "h-1.5 rounded-full transition-all",
+                      n === step ? "w-5 bg-primary" : "w-1.5 bg-muted"
+                    )}
+                  />
+                ))}
+              </div>
+
+              <div className="w-[68px] flex justify-end">
                 {!isOnline && (
                   <span className="inline-flex items-center gap-1 text-xs text-destructive">
                     <WifiOff className="w-3 h-3" /> Офлайн
                   </span>
                 )}
-              </div>
-              <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-primary"
-                  initial={false}
-                  animate={{ width: `${(step / 3) * 100}%` }}
-                  transition={{ duration: 0.3 }}
-                />
               </div>
             </div>
           )}
@@ -312,27 +307,32 @@ export default function SimpleCalculator() {
               </motion.div>
             )}
 
-            {/* ШАГ 1 — выбор вредителя (выпадающий список) */}
+            {/* ШАГ 1 — выбор вредителя */}
             {!isSubmitted && step === 1 && (
               <motion.div
                 key="step1"
-                initial={{ opacity: 0, x: 20 }}
+                initial={{ opacity: 0, x: 12 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.25 }}
+                exit={{ opacity: 0, x: -12 }}
+                transition={{ duration: 0.2 }}
               >
-                <h3 className="text-lg md:text-xl font-semibold text-foreground mb-4 text-center">
+                <h3 className="text-base md:text-lg font-medium text-foreground mb-3 text-center">
                   Кто вас беспокоит?
                 </h3>
 
                 <Select value={pestSlug ?? undefined} onValueChange={handleSelectPest}>
                   <SelectTrigger
-                    className="h-14 text-base"
+                    className="h-12 text-base"
                     aria-label="Выберите вредителя"
                   >
                     <SelectValue placeholder="Выберите вредителя" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent
+                    position="popper"
+                    side="bottom"
+                    sideOffset={8}
+                    avoidCollisions={false}
+                  >
                     {(["insects", "rodents", "other"] as const).map((cat) => {
                       const group = pests.filter((p) => p.category === cat);
                       if (group.length === 0) return null;
@@ -343,7 +343,7 @@ export default function SimpleCalculator() {
                             <SelectItem
                               key={pest.slug}
                               value={pest.slug}
-                              className="py-3 text-base"
+                              className="py-2.5 text-base"
                             >
                               {pest.name}
                             </SelectItem>
@@ -353,46 +353,40 @@ export default function SimpleCalculator() {
                     })}
                   </SelectContent>
                 </Select>
-
-                <Button
-                  type="button"
-                  size="lg"
-                  className="w-full h-14 text-base font-semibold mt-4"
-                  onClick={handleNextFromStep1}
-                  disabled={!pestSlug}
-                >
-                  Далее
-                  <ArrowRight className="w-5 h-5" />
-                </Button>
               </motion.div>
             )}
 
-            {/* ШАГ 2 — выбор места (выпадающий список) */}
+            {/* ШАГ 2 — выбор места */}
             {!isSubmitted && step === 2 && selectedPest && (
               <motion.div
                 key="step2"
-                initial={{ opacity: 0, x: 20 }}
+                initial={{ opacity: 0, x: 12 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.25 }}
+                exit={{ opacity: 0, x: -12 }}
+                transition={{ duration: 0.2 }}
               >
-                <h3 className="text-lg md:text-xl font-semibold text-foreground mb-1 text-center">
+                <h3 className="text-base md:text-lg font-medium text-foreground mb-1 text-center">
                   Где провести обработку?
                 </h3>
-                <p className="text-sm text-muted-foreground text-center mb-4">
-                  {selectedPest.name} · выберите объект
+                <p className="text-sm text-muted-foreground text-center mb-3">
+                  {selectedPest.name}
                 </p>
 
                 <Select value={placeKey ?? undefined} onValueChange={handleSelectPlace}>
-                  <SelectTrigger className="h-14 text-base" aria-label="Выберите объект">
+                  <SelectTrigger className="h-12 text-base" aria-label="Выберите объект">
                     <SelectValue placeholder="Выберите объект" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent
+                    position="popper"
+                    side="bottom"
+                    sideOffset={8}
+                    avoidCollisions={false}
+                  >
                     {availablePlaces.map((place) => (
                       <SelectItem
                         key={place.key}
                         value={place.key}
-                        className="py-3 text-base"
+                        className="py-2.5 text-base"
                       >
                         <span className="font-medium">{place.label}</span>
                         <span className="text-muted-foreground"> · {place.hint}</span>
@@ -400,29 +394,6 @@ export default function SimpleCalculator() {
                     ))}
                   </SelectContent>
                 </Select>
-
-                <div className="grid grid-cols-2 gap-3 mt-4">
-                  <Button
-                    type="button"
-                    size="lg"
-                    variant="outline"
-                    className="h-14 text-base"
-                    onClick={handleBack}
-                  >
-                    <ArrowLeft className="w-5 h-5" />
-                    Назад
-                  </Button>
-                  <Button
-                    type="button"
-                    size="lg"
-                    className="h-14 text-base font-semibold"
-                    onClick={handleNextFromStep2}
-                    disabled={!placeKey}
-                  >
-                    Далее
-                    <ArrowRight className="w-5 h-5" />
-                  </Button>
-                </div>
               </motion.div>
             )}
 
@@ -430,25 +401,23 @@ export default function SimpleCalculator() {
             {!isSubmitted && step === 3 && selectedPest && selectedPlace && priceValue && (
               <motion.form
                 key="step3"
-                initial={{ opacity: 0, x: 20 }}
+                initial={{ opacity: 0, x: 12 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.25 }}
+                exit={{ opacity: 0, x: -12 }}
+                transition={{ duration: 0.2 }}
                 onSubmit={handleSubmit}
               >
                 <div className="text-center mb-6">
                   <div className="text-sm text-muted-foreground mb-1">
                     {selectedPest.name} · {selectedPlace.label}
                   </div>
-                  <div className="text-4xl md:text-6xl font-bold text-primary mb-1 tabular-nums">
+                  <div className="text-4xl md:text-6xl font-bold text-primary mb-2 tabular-nums">
                     {typeof priceValue === "number" ? "" : "от "}
                     {animatedPrice.toLocaleString("ru-RU")} ₽
                   </div>
-                  {typeof priceValue !== "number" && (
-                    <p className="text-xs text-muted-foreground">
-                      Точную цену уточнит менеджер
-                    </p>
-                  )}
+                  <p className="text-xs text-muted-foreground">
+                    Итоговая стоимость определяется мастером после осмотра на месте
+                  </p>
                 </div>
 
                 <div className="space-y-4">
