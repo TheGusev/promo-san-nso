@@ -38,7 +38,9 @@ const Index = () => {
       <main id="main-content">
         <Hero />
         <Services />
-        <SimpleCalculator />
+        <section id="calculator" aria-label="Калькулятор стоимости">
+          <SimpleCalculator />
+        </section>
         <AboutSection />
         <Suspense fallback={<div className="h-96" />}>
           <MobileCollapsibleSection 
