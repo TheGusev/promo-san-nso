@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { ArrowRight, Shield } from "lucide-react";
 import { getCopy } from "@/config/copyMap";
@@ -12,6 +13,7 @@ const backgroundImages = [
 
 export default function Hero() {
   const { variantId, intent } = useABTest();
+  const navigate = useNavigate();
   const copy = getCopy(intent, variantId);
   const [activeIndex, setActiveIndex] = useState(0);
   
@@ -39,7 +41,7 @@ export default function Hero() {
     if (type === 'primary') {
       scrollToAnchor('calculator');
     } else {
-      scrollToAnchor('services');
+      navigate('/uslugi');
     }
   };
 
