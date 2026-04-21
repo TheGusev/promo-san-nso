@@ -75,11 +75,14 @@ export default function PestPage() {
             </div>
 
             <div className="flex items-center justify-center">
-              <div className="relative">
-                <div className="absolute -inset-4 rounded-full bg-destructive/10 blur-2xl" />
-                <div className="relative flex h-48 w-48 items-center justify-center rounded-full bg-gradient-to-br from-destructive/20 to-destructive/5 md:h-64 md:w-64">
-                  <Bug className="h-24 w-24 text-destructive/60 md:h-32 md:w-32" />
-                </div>
+              <div className="relative w-full max-w-md overflow-hidden rounded-2xl shadow-lg">
+                <div className="absolute inset-0 z-10 bg-gradient-to-t from-background/40 via-transparent to-transparent" />
+                <img
+                  src={pest.heroImage ?? "/placeholder.svg"}
+                  alt={`${pest.name} — фото`}
+                  loading="eager"
+                  className="h-64 w-full object-cover md:h-80"
+                />
               </div>
             </div>
           </div>
