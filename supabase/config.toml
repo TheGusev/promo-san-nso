@@ -20,6 +20,3 @@ verify_jwt = false
 
 [functions.submit-review]
 verify_jwt = false
-
-[functions.dev-genimg]
-verify_jwt = false
