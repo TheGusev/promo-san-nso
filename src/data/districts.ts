@@ -32,6 +32,7 @@ export const districts: District[] = [
     responseTime: "30-60 мин",
     order: 1,
     isPopular: true,
+    heroImage: "/images/districts/centralny-rayon.jpg",
   },
   {
     slug: "zheleznodorozhny-rayon",
@@ -45,6 +46,7 @@ export const districts: District[] = [
     responseTime: "30-60 мин",
     order: 2,
     isPopular: true,
+    heroImage: "/images/districts/zheleznodorozhny-rayon.jpg",
   },
   {
     slug: "zaeltsovsky-rayon",
@@ -58,6 +60,7 @@ export const districts: District[] = [
     responseTime: "40-70 мин",
     order: 3,
     isPopular: false,
+    heroImage: "/images/districts/zaeltsovsky-rayon.jpg",
   },
   {
     slug: "kalininsky-rayon",
@@ -71,6 +74,7 @@ export const districts: District[] = [
     responseTime: "40-70 мин",
     order: 4,
     isPopular: false,
+    heroImage: "/images/districts/kalininsky-rayon.jpg",
   },
   {
     slug: "kirovsky-rayon",
@@ -84,6 +88,7 @@ export const districts: District[] = [
     responseTime: "40-70 мин",
     order: 5,
     isPopular: false,
+    heroImage: "/images/districts/kirovsky-rayon.jpg",
   },
   {
     slug: "leninsky-rayon",
@@ -97,6 +102,7 @@ export const districts: District[] = [
     responseTime: "40-70 мин",
     order: 6,
     isPopular: true,
+    heroImage: "/images/districts/leninsky-rayon.jpg",
   },
   {
     slug: "oktyabrsky-rayon",
@@ -110,6 +116,7 @@ export const districts: District[] = [
     responseTime: "30-60 мин",
     order: 7,
     isPopular: true,
+    heroImage: "/images/districts/oktyabrsky-rayon.jpg",
   },
   {
     slug: "pervomaysky-rayon",
@@ -123,6 +130,7 @@ export const districts: District[] = [
     responseTime: "50-80 мин",
     order: 8,
     isPopular: false,
+    heroImage: "/images/districts/pervomaysky-rayon.jpg",
   },
   {
     slug: "sovetsky-rayon",
@@ -136,6 +144,7 @@ export const districts: District[] = [
     responseTime: "60-90 мин",
     order: 9,
     isPopular: true,
+    heroImage: "/images/districts/sovetsky-rayon.jpg",
   },
   {
     slug: "dzerzhinsky-rayon",
@@ -149,6 +158,7 @@ export const districts: District[] = [
     responseTime: "40-70 мин",
     order: 10,
     isPopular: false,
+    heroImage: "/images/districts/dzerzhinsky-rayon.jpg",
   },
   
   // Пригороды
@@ -164,6 +174,7 @@ export const districts: District[] = [
     responseTime: "60-90 мин",
     order: 11,
     isPopular: true,
+    heroImage: "/images/districts/berdsk.jpg",
   },
   {
     slug: "iskitim",
@@ -177,6 +188,7 @@ export const districts: District[] = [
     responseTime: "90-120 мин",
     order: 12,
     isPopular: false,
+    heroImage: "/images/districts/iskitim.jpg",
   },
   {
     slug: "ob",
@@ -190,6 +202,7 @@ export const districts: District[] = [
     responseTime: "60-90 мин",
     order: 13,
     isPopular: false,
+    heroImage: "/images/districts/ob.jpg",
   },
   {
     slug: "krasnoobsk",
@@ -203,6 +216,7 @@ export const districts: District[] = [
     responseTime: "50-80 мин",
     order: 14,
     isPopular: false,
+    heroImage: "/images/districts/krasnoobsk.jpg",
   },
   
   // Новосибирская область
@@ -218,6 +232,7 @@ export const districts: District[] = [
     responseTime: "по договорённости",
     order: 15,
     isPopular: true,
+    heroImage: "/images/districts/novosibirskaya-oblast.jpg",
   },
 ];
 
