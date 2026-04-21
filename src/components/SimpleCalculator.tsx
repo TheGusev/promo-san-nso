@@ -312,7 +312,7 @@ export default function SimpleCalculator() {
               </motion.div>
             )}
 
-            {/* ШАГ 1 — выбор вредителя */}
+            {/* ШАГ 1 — выбор вредителя (выпадающий список) */}
             {!isSubmitted && step === 1 && (
               <motion.div
                 key="step1"
@@ -322,30 +322,52 @@ export default function SimpleCalculator() {
                 transition={{ duration: 0.25 }}
               >
                 <h3 className="text-lg md:text-xl font-semibold text-foreground mb-4 text-center">
-                  Кто беспокоит?
+                  Кто вас беспокоит?
                 </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 md:gap-3">
-                  {pests.map((pest) => {
-                    const Icon = pestIcon(pest);
-                    return (
-                      <button
-                        key={pest.slug}
-                        type="button"
-                        onClick={() => handlePickPest(pest.slug)}
-                        className="group flex flex-col items-center justify-center gap-2 p-3 md:p-4 min-h-[88px] rounded-xl border border-border bg-card hover:border-primary hover:bg-primary/5 hover:shadow-md transition-all active:scale-95"
-                      >
-                        <Icon className="w-7 h-7 text-primary" />
-                        <span className="text-sm md:text-base font-medium text-foreground text-center leading-tight">
-                          {pest.name}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
+
+                <Select value={pestSlug ?? undefined} onValueChange={handleSelectPest}>
+                  <SelectTrigger
+                    className="h-14 text-base"
+                    aria-label="Выберите вредителя"
+                  >
+                    <SelectValue placeholder="Выберите вредителя" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(["insects", "rodents", "other"] as const).map((cat) => {
+                      const group = pests.filter((p) => p.category === cat);
+                      if (group.length === 0) return null;
+                      return (
+                        <SelectGroup key={cat}>
+                          <SelectLabel>{PEST_GROUP_LABELS[cat]}</SelectLabel>
+                          {group.map((pest) => (
+                            <SelectItem
+                              key={pest.slug}
+                              value={pest.slug}
+                              className="py-3 text-base"
+                            >
+                              {pest.name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+
+                <Button
+                  type="button"
+                  size="lg"
+                  className="w-full h-14 text-base font-semibold mt-4"
+                  onClick={handleNextFromStep1}
+                  disabled={!pestSlug}
+                >
+                  Далее
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
               </motion.div>
             )}
 
-            {/* ШАГ 2 — выбор места */}
+            {/* ШАГ 2 — выбор места (выпадающий список) */}
             {!isSubmitted && step === 2 && selectedPest && (
               <motion.div
                 key="step2"
@@ -355,26 +377,51 @@ export default function SimpleCalculator() {
                 transition={{ duration: 0.25 }}
               >
                 <h3 className="text-lg md:text-xl font-semibold text-foreground mb-1 text-center">
-                  Где проблема?
+                  Где провести обработку?
                 </h3>
                 <p className="text-sm text-muted-foreground text-center mb-4">
                   {selectedPest.name} · выберите объект
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
-                  {availablePlaces.map((place) => (
-                    <button
-                      key={place.key}
-                      type="button"
-                      onClick={() => handlePickPlace(place.key)}
-                      className="flex items-center justify-between gap-3 p-4 min-h-[64px] rounded-xl border border-border bg-card hover:border-primary hover:bg-primary/5 hover:shadow-md transition-all active:scale-[0.98] text-left"
-                    >
-                      <div>
-                        <div className="font-medium text-foreground">{place.label}</div>
-                        <div className="text-xs text-muted-foreground">{place.hint}</div>
-                      </div>
-                      <ArrowLeft className="w-5 h-5 text-primary rotate-180 shrink-0" />
-                    </button>
-                  ))}
+
+                <Select value={placeKey ?? undefined} onValueChange={handleSelectPlace}>
+                  <SelectTrigger className="h-14 text-base" aria-label="Выберите объект">
+                    <SelectValue placeholder="Выберите объект" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availablePlaces.map((place) => (
+                      <SelectItem
+                        key={place.key}
+                        value={place.key}
+                        className="py-3 text-base"
+                      >
+                        <span className="font-medium">{place.label}</span>
+                        <span className="text-muted-foreground"> · {place.hint}</span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <div className="grid grid-cols-2 gap-3 mt-4">
+                  <Button
+                    type="button"
+                    size="lg"
+                    variant="outline"
+                    className="h-14 text-base"
+                    onClick={handleBack}
+                  >
+                    <ArrowLeft className="w-5 h-5" />
+                    Назад
+                  </Button>
+                  <Button
+                    type="button"
+                    size="lg"
+                    className="h-14 text-base font-semibold"
+                    onClick={handleNextFromStep2}
+                    disabled={!placeKey}
+                  >
+                    Далее
+                    <ArrowRight className="w-5 h-5" />
+                  </Button>
                 </div>
               </motion.div>
             )}
