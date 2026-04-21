@@ -13,6 +13,7 @@ const backgroundImages = [
 
 export default function Hero() {
   const { variantId, intent } = useABTest();
+  const navigate = useNavigate();
   const copy = getCopy(intent, variantId);
   const [activeIndex, setActiveIndex] = useState(0);
   
