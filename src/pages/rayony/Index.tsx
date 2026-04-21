@@ -134,7 +134,7 @@ export default function RayonyIndex() {
               <div className="relative w-full max-w-md overflow-hidden rounded-2xl shadow-lg">
                 <div className="absolute inset-0 z-10 bg-gradient-to-t from-background/40 via-transparent to-transparent" />
                 <img
-                  src="/images/districts/_index.jpg"
+                  src="/placeholder.svg"
                   alt="Панорама Новосибирска — СЭС по районам"
                   loading="eager"
                   className="h-64 w-full object-cover md:h-80"
