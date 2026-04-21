@@ -1,10 +1,19 @@
 import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Phone, CheckCircle2, Loader2, WifiOff, Bug, Rat, Worm } from "lucide-react";
+import { ArrowLeft, ArrowRight, Phone, CheckCircle2, Loader2, WifiOff } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { extractPhoneDigits, isValidRussianPhone } from "@/hooks/usePhoneMask";
 import { useToast } from "@/hooks/use-toast";
