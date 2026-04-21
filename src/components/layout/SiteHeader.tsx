@@ -250,6 +250,11 @@ export function SiteHeader() {
           </NavigationMenuList>
         </NavigationMenu>
 
+        {/* Theme toggle (desktop + mobile) */}
+        <div className="ml-auto lg:ml-2 flex items-center">
+          <ThemeToggle />
+        </div>
+
         {/* Mobile menu */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild className="lg:hidden">
