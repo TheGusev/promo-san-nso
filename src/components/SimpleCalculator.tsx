@@ -99,24 +99,34 @@ export default function SimpleCalculator() {
     }
   }, [isOnline, toast]);
 
-  const handlePickPest = (slug: string) => {
+  // Выбор вредителя в селекте — сбрасываем место (могло быть невалидное для нового вредителя)
+  const handleSelectPest = (slug: string) => {
     setPestSlug(slug);
     setPlaceKey(null);
-    const places = getAvailablePlaces(slug);
-    // Если доступно только одно место — сразу прыгаем на шаг 3
+  };
+
+  const handleSelectPlace = (key: string) => {
+    setPlaceKey(key);
+  };
+
+  // «Далее» с шага 1 → если у вредителя только одно место, сразу на шаг 3
+  const handleNextFromStep1 = () => {
+    if (!pestSlug) return;
+    const places = getAvailablePlaces(pestSlug);
     if (places.length === 1) {
       setPlaceKey(places[0].key);
       setStep(3);
-      trackGoal("calc_calculate", { pest: slug, place: places[0].key });
+      trackGoal("calc_calculate", { pest: pestSlug, place: places[0].key });
     } else {
       setStep(2);
     }
   };
 
-  const handlePickPlace = (key: string) => {
-    setPlaceKey(key);
+  // «Далее» с шага 2 → шаг 3
+  const handleNextFromStep2 = () => {
+    if (!pestSlug || !placeKey) return;
     setStep(3);
-    trackGoal("calc_calculate", { pest: pestSlug, place: key });
+    trackGoal("calc_calculate", { pest: pestSlug, place: placeKey });
   };
 
   const handleBack = () => {
