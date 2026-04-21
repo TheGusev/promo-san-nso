@@ -6,7 +6,7 @@ interface CostCalculatorPlaceholderProps {
 
 export function CostCalculatorPlaceholder({ className }: CostCalculatorPlaceholderProps) {
   return (
-    <div id="calculator-section" className={className}>
+    <div id="calculator" className={className}>
       <SimpleCalculator />
     </div>
   );
