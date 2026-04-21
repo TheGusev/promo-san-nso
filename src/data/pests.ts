@@ -15,6 +15,7 @@ export interface Pest {
   relatedServices: string[]; // slugs услуг
   order: number;
   isPopular: boolean;
+  heroImage?: string; // путь к hero-фото вредителя
 }
 
 export const pests: Pest[] = [

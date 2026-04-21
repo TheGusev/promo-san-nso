@@ -15,6 +15,7 @@ export interface District {
   responseTime: string; // время выезда
   order: number;
   isPopular: boolean;
+  heroImage?: string; // путь к hero-фото района
 }
 
 export const districts: District[] = [
