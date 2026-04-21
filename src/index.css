@@ -105,6 +105,16 @@ All colors MUST be HSL.
     max-width: 100vw;
   }
 
+  html {
+    scroll-padding-top: 80px;
+  }
+
+  @media (max-width: 640px) {
+    html {
+      scroll-padding-top: 64px;
+    }
+  }
+
   * {
     @apply border-border;
   }

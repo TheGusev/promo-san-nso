@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import { ArrowRight, Shield } from "lucide-react";
 import { getCopy } from "@/config/copyMap";
 import { useABTest } from "@/contexts/ABTestContext";
+import { scrollToAnchor } from "@/lib/scrollToAnchor";
 
 const backgroundImages = [
   "/images/hero-bg-1.png",
@@ -36,9 +37,9 @@ export default function Hero() {
   const handleCTAClick = (type: 'primary' | 'secondary') => {
     // hero_cta_click removed from Metrika — pure scroll, not a conversion.
     if (type === 'primary') {
-      document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' });
+      scrollToAnchor('calculator');
     } else {
-      document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' });
+      scrollToAnchor('services');
     }
   };
 

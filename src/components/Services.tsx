@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import { Shield, Bug, Rat, Wind, Droplets, FileCheck } from "lucide-react";
 import { AnimatedSection } from "@/components/ui/animated-section";
 import { logTrafficEvent } from "@/hooks/useTrafficLogging";
+import { scrollToAnchor } from "@/lib/scrollToAnchor";
 
 const services = [
   {
@@ -106,7 +107,7 @@ export default function Services() {
                     variant="outline"
                     onClick={() => {
                       logTrafficEvent('service_click', { service: service.title });
-                      document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' });
+                      scrollToAnchor('calculator');
                     }}
                   >
                     Рассчитать стоимость

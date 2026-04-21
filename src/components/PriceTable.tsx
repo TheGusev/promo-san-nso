@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { AnimatedSection } from "@/components/ui/animated-section";
 import { trackGoal } from "@/lib/analytics";
+import { scrollToAnchor } from "@/lib/scrollToAnchor";
 
 const priceData = [
   {
@@ -61,10 +62,7 @@ export default function PriceTable() {
   };
 
   const scrollToCalculator = () => {
-    const calculator = document.getElementById('calculator');
-    if (calculator) {
-      calculator.scrollIntoView({ behavior: 'smooth' });
-    }
+    scrollToAnchor('calculator');
   };
 
   return (
