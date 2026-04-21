@@ -52,10 +52,12 @@ export function SiteHeader() {
       </div>
 
       {/* Main header */}
-      <div className="container flex h-14 items-center justify-between px-4">
+      <div className="container flex h-14 items-center justify-between px-3 sm:px-4 gap-2">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
-          <span className="text-xl font-bold text-primary">{SITE_CONFIG.companyName}</span>
+        <Link to="/" className="flex items-center gap-2 min-w-0">
+          <span className="truncate text-base sm:text-lg lg:text-xl font-bold text-primary leading-tight">
+            Санитарные Решения
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
