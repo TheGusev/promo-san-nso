@@ -32,7 +32,9 @@ const ALLOWED_EVENT_TYPES = [
   'scroll_50',
   'scroll_75',
   'scroll_100',
-  'engagement_summary'
+  'engagement_summary',
+  'landing_view',
+  'lead_submit'
 ];
 
 serve(async (req) => {
