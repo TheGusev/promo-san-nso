@@ -88,8 +88,16 @@ export default function LandingPage() {
       />
 
       {/* HERO + форма */}
-      <section className={`relative overflow-hidden bg-gradient-to-br ${landing.accentClass} py-8 md:py-14`}>
-        <div className="absolute inset-0 bg-background/85 backdrop-blur-[2px]" aria-hidden />
+      <section className="relative overflow-hidden py-8 md:py-14">
+        <img
+          src={HERO_BG[landing.slug]}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        {/* Mobile: ровный затемняющий слой; Desktop: градиент слева, чтобы фото просвечивало справа */}
+        <div className="absolute inset-0 bg-background/85 backdrop-blur-[2px] lg:hidden" aria-hidden />
+        <div className="absolute inset-0 hidden lg:block bg-gradient-to-r from-background/95 via-background/80 to-background/30" aria-hidden />
         <div className="container relative px-4">
           <Breadcrumbs items={[{ label: "Услуги", href: "/uslugi" }, { label: landing.h1 }]} />
 
