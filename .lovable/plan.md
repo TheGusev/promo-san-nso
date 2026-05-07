@@ -1,57 +1,57 @@
-# Резервный канал отправки лидов через PHP-прокси на гордэз.рф
-
 ## Цель
-Если `supabase.functions.invoke('handle-lead')` не отвечает (заблокирован у клиента в РФ, таймаут, CDN-сбой) — лид всё равно уходит в Telegram через PHP на Beget.
 
-## Архитектура
+После каждого пуша в `main` GitHub сам собирает `dist/` и заливает его на Beget в `gordezrf/public_html/`. Никакой ручной распаковки ZIP.
 
-```text
-форма → supabase handle-lead ──ok──► Telegram
-                │
-                └─fail/timeout 6s──► fetch гордэз.рф/api/lead.php → Telegram
-                                          │
-                                          └─fail──► offlineQueue (localStorage)
+## Как будет работать
+
+```
+git push → GitHub Actions:
+  1. npm ci
+  2. npm run build  → dist/
+  3. FTP upload dist/* → gordezrf/public_html/
+     (с сохранением /api/lead.php и lead.log)
 ```
 
-## Что меняется в коде
+Через ~2 минуты после пуша сайт на гордэз.рф обновлён.
 
-### 1. Новая утилита `src/lib/leadSender.ts`
-Единая функция `sendLead(leadData)`:
-- Пробует `supabase.functions.invoke('handle-lead', body)` с таймаутом 6 сек (через `AbortController`).
-- При ошибке/таймауте — `fetch('https://гордэз.рф/api/lead.php', { method:'POST', body: JSON.stringify(leadData) })` с таймаутом 6 сек.
-- При полной неудаче — `queueLead(leadData)` (уже есть).
-- Возвращает `{ ok: true, channel: 'supabase'|'php'|'queued' }`.
+## Что я создам в коде
 
-### 2. Заменить прямые вызовы во всех 6 формах на `sendLead`:
-- `src/components/Calculator.tsx`
-- `src/components/SimpleCalculator.tsx`
-- `src/components/lp/LandingLeadForm.tsx`
-- `src/components/HeroService.tsx`
-- `src/components/PopupForm.tsx`
-- `src/lib/offlineQueue.ts` (processQueue → тоже через sendLead)
+**`.github/workflows/deploy.yml`** — workflow GitHub Actions:
+- Триггер: `push` в ветку `main` (+ кнопка ручного запуска `workflow_dispatch`)
+- Node 20, `npm ci`, `npm run build`
+- Загрузка через `SamKirkland/FTP-Deploy-Action@v4.3.5`:
+  - `local-dir: ./dist/`
+  - `server-dir: /gordezrf/public_html/`
+  - `protocol: ftp` (Beget по умолчанию; если SFTP — поменяем одну строку)
+  - `exclude: ['**/api/**', '**/lead.log', '**/.htaccess']` — НЕ трогаем PHP-резерв и логи
+  - `dangerous-clean-slate: false` — старые файлы не удаляются, только перезаписываются
 
-### 3. PHP-файл (нужно загрузить на Beget вручную)
-Лежит в репо как `public-php/lead.php` — пользователь сам кладёт его в корень `гордэз.рф` через FTP/панель Beget. Содержит:
-- CORS заголовки (`Access-Control-Allow-Origin: *`)
-- Приём JSON, базовая валидация имени/телефона
-- Honeypot-проверка
-- Отправка в Telegram через `file_get_contents('https://api.telegram.org/bot<TOKEN>/sendMessage', ...)` — токен и chat_id хардкодятся в PHP-файле (Beget блокирует .env)
-- Лог в `lead.log` рядом
+**`.github/workflows/README.md`** — короткая инструкция: где смотреть статус, как перезапустить вручную.
 
-### 4. Метрика канала
-В Telegram-сообщение добавим метку `📡 канал: php-fallback` чтобы вы видели когда сработал резерв.
+## Что нужно от вас (один раз, 5 минут)
 
-## Что НЕ меняется
-- Edge function `handle-lead` — остаётся основным каналом.
-- Структура данных лида — та же.
-- БД и RLS — без изменений (PHP в БД не пишет, только TG).
+В Beget → «Сайты» → у `гордэз.рф` посмотрите блок **FTP-доступ**. Там 3 значения:
+- сервер (например `ftp.beget.com` или `xxxx.beget.tech`)
+- логин (обычно `xxxxxx_gordezrf` или просто логин аккаунта)
+- пароль
 
-## Риски
-- PHP-канал не сохранит лид в БД — только в Telegram + лог-файл на Beget. Это сознательный компромисс ради надёжности.
-- Дубликаты возможны если supabase ответил с задержкой >6с. Решается дедупом по телефону+времени на стороне TG (визуально).
+Затем в GitHub-репозитории: **Settings → Secrets and variables → Actions → New repository secret**, добавьте 3 секрета:
+- `FTP_SERVER`
+- `FTP_USERNAME`
+- `FTP_PASSWORD`
 
-## После аппрува
-1. Создаю `src/lib/leadSender.ts`.
-2. Правлю 6 форм + offlineQueue.
-3. Кладу `public-php/lead.php` с инструкцией в README.
-4. Прошу вас залить `lead.php` на Beget в корень `гордэз.рф` и проверить `https://гордэз.рф/api/lead.php` (должен вернуть `{"ok":false,"error":"method"}` на GET).
+Я в workflow буду их читать как `${{ secrets.FTP_SERVER }}` и т.д. — в логах они не светятся.
+
+## Безопасность и нюансы
+
+- `/api/lead.php` и `lead.log` в `exclude` — деплой их не перетрёт и не удалит.
+- Если Beget окажется на SFTP (порт 22) — в `deploy.yml` меняется `protocol: sftp` и `port: 22`, остальное то же.
+- Первый запуск загрузит весь `dist/` (~несколько МБ), последующие — только изменённые файлы (action ведёт `.ftp-deploy-sync-state.json` на сервере).
+- Если что-то пойдёт не так — Actions покажет красный крестик с логом, сайт продолжит работать на старой версии.
+
+## После того как нажмёте «одобрить»
+
+1. Я создам `.github/workflows/deploy.yml` и README.
+2. Лавабл синкнёт в GitHub.
+3. Вы добавите 3 секрета в GitHub.
+4. Делаете любой пуш (или жмёте «Run workflow» вручную) → проверяем логи → сайт обновлён.
