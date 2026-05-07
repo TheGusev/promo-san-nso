@@ -224,7 +224,7 @@ export function SiteHeader() {
                   <li>
                     <NavigationMenuLink asChild>
                       <Link to="/lp/klopy" className="block rounded-md p-3 hover:bg-accent transition-colors">
-                        <div className="text-sm font-medium">🪲 Клопы — за один выезд</div>
+                        <div className="text-sm font-medium">Клопы — за один выезд</div>
                         <p className="text-xs text-muted-foreground">от 2 000 ₽, гарантия 12 мес.</p>
                       </Link>
                     </NavigationMenuLink>
@@ -232,7 +232,7 @@ export function SiteHeader() {
                   <li>
                     <NavigationMenuLink asChild>
                       <Link to="/lp/tarakany" className="block rounded-md p-3 hover:bg-accent transition-colors">
-                        <div className="text-sm font-medium">🪳 Тараканы — травля под ключ</div>
+                        <div className="text-sm font-medium">Тараканы — травля под ключ</div>
                         <p className="text-xs text-muted-foreground">от 2 000 ₽, документы для СЭС</p>
                       </Link>
                     </NavigationMenuLink>
@@ -240,7 +240,7 @@ export function SiteHeader() {
                   <li>
                     <NavigationMenuLink asChild>
                       <Link to="/lp/uchastok" className="block rounded-md p-3 hover:bg-accent transition-colors">
-                        <div className="text-sm font-medium">🌳 Участок от клещей</div>
+                        <div className="text-sm font-medium">Участок от клещей</div>
                         <p className="text-xs text-muted-foreground">от 2 500 ₽, защита до 6 нед.</p>
                       </Link>
                     </NavigationMenuLink>
@@ -299,10 +299,10 @@ export function SiteHeader() {
             </SheetTrigger>
           <SheetContent side="right" className="w-full sm:w-80">
             <div className="flex flex-col gap-4 mt-8">
-              <MobileNavSection title="🔥 Срочный вызов" defaultOpen>
-                <SheetClose asChild><Link to="/lp/klopy" className="block py-2 text-sm hover:text-primary transition-colors">🪲 Клопы — за один выезд</Link></SheetClose>
-                <SheetClose asChild><Link to="/lp/tarakany" className="block py-2 text-sm hover:text-primary transition-colors">🪳 Тараканы — под ключ</Link></SheetClose>
-                <SheetClose asChild><Link to="/lp/uchastok" className="block py-2 text-sm hover:text-primary transition-colors">🌳 Участок от клещей</Link></SheetClose>
+              <MobileNavSection title="Срочный вызов" defaultOpen>
+                <SheetClose asChild><Link to="/lp/klopy" className="block py-2 text-sm hover:text-primary transition-colors">Клопы — за один выезд</Link></SheetClose>
+                <SheetClose asChild><Link to="/lp/tarakany" className="block py-2 text-sm hover:text-primary transition-colors">Тараканы — под ключ</Link></SheetClose>
+                <SheetClose asChild><Link to="/lp/uchastok" className="block py-2 text-sm hover:text-primary transition-colors">Участок от клещей</Link></SheetClose>
               </MobileNavSection>
 
               <MobileNavSection title="Услуги" defaultOpen>
