@@ -1,29 +1,28 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Bug, Trees } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { LANDINGS } from "@/data/landingContent";
-import { scrollToAnchor } from "@/lib/scrollToAnchor";
+import klopyImg from "@/assets/lp/lp-klopy.jpg";
+import tarakanyImg from "@/assets/lp/lp-tarakany.jpg";
+import uchastokImg from "@/assets/lp/lp-uchastok.jpg";
 
 const ITEMS = [
   {
     slug: "klopy" as const,
     title: "Клопы в квартире",
     subtitle: "Травля за один выезд",
-    Icon: Bug,
-    iconBg: "bg-red-500/15 text-red-500",
+    image: klopyImg,
   },
   {
     slug: "tarakany" as const,
     title: "Тараканы",
     subtitle: "Гарантия до 12 мес.",
-    Icon: Bug,
-    iconBg: "bg-amber-500/15 text-amber-500",
+    image: tarakanyImg,
   },
   {
     slug: "uchastok" as const,
     title: "Клещи на участке",
     subtitle: "Дача, коттедж, база",
-    Icon: Trees,
-    iconBg: "bg-green-600/15 text-green-600",
+    image: uchastokImg,
   },
 ];
 
@@ -40,45 +39,37 @@ export function ProblemPicker() {
           </p>
         </div>
 
-        <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 grid-cols-1 lg:grid-cols-3 max-w-5xl mx-auto">
           {ITEMS.map((item) => {
             const lp = LANDINGS[item.slug];
-            const Icon = item.Icon;
             return (
               <Link
                 key={item.slug}
                 to={`/lp/${item.slug}`}
-                className="group relative flex flex-col rounded-xl border bg-card p-4 sm:p-5 hover:border-primary hover:shadow-elevated transition-all"
+                className="group relative flex flex-col justify-end overflow-hidden rounded-xl border bg-card shadow-card hover:border-primary hover:shadow-elevated transition-all min-h-[220px] md:min-h-[260px]"
               >
-                <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${item.iconBg} mb-3`}>
-                  <Icon className="h-6 w-6" />
-                </div>
-                <h3 className="font-semibold text-base sm:text-lg leading-tight">{item.title}</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground mt-1">{item.subtitle}</p>
-                <div className="mt-3 flex items-center justify-between text-sm">
-                  <span className="font-medium text-primary">от {lp.priceFrom.toLocaleString("ru-RU")} ₽</span>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  loading="lazy"
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/60 to-background/10" aria-hidden />
+                <div className="relative z-10 p-4 sm:p-5">
+                  <h3 className="font-semibold text-lg sm:text-xl leading-tight text-foreground">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-1">{item.subtitle}</p>
+                  <div className="mt-3 flex items-center justify-between text-sm">
+                    <span className="font-medium text-primary">
+                      от {lp.priceFrom.toLocaleString("ru-RU")} ₽
+                    </span>
+                    <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                  </div>
                 </div>
               </Link>
             );
           })}
-
-          {/* Другое — скролл к калькулятору */}
-          <button
-            onClick={() => scrollToAnchor("calculator")}
-            className="group relative flex flex-col rounded-xl border-2 border-dashed bg-card p-4 sm:p-5 hover:border-primary hover:bg-accent transition-all text-left"
-          >
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary mb-3">
-              <ArrowRight className="h-6 w-6" />
-            </div>
-            <h3 className="font-semibold text-base sm:text-lg leading-tight">Другое</h3>
-            <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-              Мыши, муравьи, дезинфекция, СЭС
-            </p>
-            <div className="mt-3 text-sm font-medium text-primary">
-              Открыть калькулятор →
-            </div>
-          </button>
         </div>
       </div>
     </section>
