@@ -95,22 +95,19 @@ export default function LandingPage() {
           aria-hidden="true"
           className="absolute inset-0 h-full w-full object-cover"
         />
-        {/* Mobile: ровный затемняющий слой; Desktop: градиент слева, чтобы фото просвечивало справа */}
-        <div className="absolute inset-0 bg-background/85 backdrop-blur-[2px] lg:hidden" aria-hidden />
-        <div className="absolute inset-0 hidden lg:block bg-gradient-to-r from-background/95 via-background/80 to-background/30" aria-hidden />
         <div className="container relative px-4">
           <Breadcrumbs items={[{ label: "Услуги", href: "/uslugi" }, { label: landing.h1 }]} />
 
           <div className="mt-6 grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-center">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+              <div className="inline-flex items-center gap-2 rounded-full bg-background/85 backdrop-blur-sm px-3 py-1 text-xs font-medium text-primary border border-primary/30">
                 <Shield className="h-3.5 w-3.5" />
                 Гарантия до {landing.guaranteeMonths} мес.
               </div>
-              <h1 className="mt-4 text-3xl md:text-5xl font-bold tracking-tight">
+              <h1 className="mt-4 text-3xl md:text-5xl font-bold tracking-tight text-foreground [text-shadow:_0_2px_12px_rgba(0,0,0,0.7)]">
                 {landing.h1}
               </h1>
-              <p className="mt-4 text-lg text-muted-foreground">
+              <p className="mt-4 text-lg text-foreground/90 [text-shadow:_0_1px_8px_rgba(0,0,0,0.7)]">
                 {landing.heroSubtitle}
               </p>
 
@@ -123,8 +120,8 @@ export default function LandingPage() {
                 </Button>
               </div>
 
-              <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
-                <div className="flex items-center gap-2"><Clock className="h-4 w-4 text-primary" /> Выезд за 1–2 ч</div>
+              <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm bg-background/75 backdrop-blur-sm rounded-lg p-3 border">
+                <div className="flex items-center gap-2"><Clock className="h-4 w-4 text-primary" /> Выезд в течение часа</div>
                 <div className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-primary" /> Договор и чек</div>
                 <div className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary" /> Без запаха</div>
               </div>
@@ -199,7 +196,7 @@ export default function LandingPage() {
           <div className="mx-auto grid gap-4 max-w-4xl sm:grid-cols-2 lg:grid-cols-4">
             {[
               { n: 1, t: "Заявка", d: "Звонок или форма за 30 секунд" },
-              { n: 2, t: "Выезд", d: "В день обращения, 1–2 часа" },
+              { n: 2, t: "Выезд", d: "В день обращения, в течение часа" },
               { n: 3, t: "Обработка", d: "30–90 минут профессиональным оборудованием" },
               { n: 4, t: "Гарантия", d: `До ${landing.guaranteeMonths} мес. с бесплатным повтором` },
             ].map((s) => (
