@@ -58,6 +58,26 @@
     <priority>0.3</priority>
   </url>
 
+  <!-- Целевые лендинги -->
+  <url>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/lp/klopy</loc>
+    <lastmod>2026-05-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/lp/tarakany</loc>
+    <lastmod>2026-05-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://xn--c1acj0ak3f.xn--p1ai/lp/uchastok</loc>
+    <lastmod>2026-05-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
   <!-- Услуги (6) -->
   <url>
     <loc>https://xn--c1acj0ak3f.xn--p1ai/usluga/dezinfeksiya</loc>
