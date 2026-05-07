@@ -61,6 +61,12 @@ for (const [p, prio, fr] of [
 ]) out += u(p, TODAY, fr, prio) + '\n';
 out += u('/privacy', '2026-01-01', 'yearly', '0.3') + '\n\n';
 
+out += '  <!-- Целевые лендинги -->\n';
+for (const slug of ['klopy', 'tarakany', 'uchastok']) {
+  out += u(`/lp/${slug}`, TODAY, 'weekly', '0.95') + '\n';
+}
+out += '\n';
+
 out += `  <!-- Услуги (${serviceSlugs.length}) -->\n`;
 for (const s of serviceSlugs) out += u(`/usluga/${s}`, TODAY, 'weekly', '0.9') + '\n';
 out += '\n';
