@@ -6,7 +6,7 @@ import { PhoneInput } from "@/components/ui/phone-input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
 import { SITE_CONFIG } from "@/data/siteConfig";
-import { supabase } from "@/integrations/supabase/client";
+import { sendLead } from "@/lib/leadSender";
 import { isValidRussianPhone, extractPhoneDigits } from "@/hooks/usePhoneMask";
 import { trackGoal } from "@/lib/analytics";
 import { logTrafficEvent } from "@/hooks/useTrafficLogging";
@@ -68,16 +68,13 @@ export function HeroService({
     try {
       const cleanPhone = `+7${extractPhoneDigits(formData.phone).slice(-10)}`;
       
-      const { error } = await supabase.functions.invoke("handle-lead", {
-        body: {
-          name: formData.name.trim(),
-          phone: cleanPhone,
-          service: serviceSlug,
-          source: "hero_service_form",
-        },
+      const result = await sendLead({
+        name: formData.name.trim(),
+        phone: cleanPhone,
+        service: serviceSlug,
+        source: "hero_service_form",
       });
-
-      if (error) throw error;
+      if (!result.ok) throw new Error("send_failed");
 
       trackGoal("hero_form_submit");
       logTrafficEvent("hero_form_submit");

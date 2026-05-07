@@ -25,7 +25,7 @@ import { getTrackingContext } from "@/lib/tracking";
 import { trackGoal } from "@/lib/analytics";
 import { logTrafficEvent } from "@/hooks/useTrafficLogging";
 import { queueLead, processQueue } from "@/lib/offlineQueue";
-import { supabase } from "@/integrations/supabase/client";
+import { sendLead } from "@/lib/leadSender";
 import { SITE_CONFIG } from "@/data/siteConfig";
 import { getAllPests } from "@/data/pests";
 import {
@@ -195,10 +195,8 @@ export default function SimpleCalculator() {
 
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.functions.invoke("handle-lead", {
-        body: leadData,
-      });
-      if (error) throw error;
+      const result = await sendLead(leadData);
+      if (!result.ok) throw new Error("send_failed");
 
       trackGoal("lead_submit", {
         price: getNumericPrice(priceValue),

@@ -19,7 +19,7 @@ import {
   CollapsibleTrigger,
 } from "./ui/collapsible";
 import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
-import { supabase } from "@/integrations/supabase/client";
+import { sendLead } from "@/lib/leadSender";
 import { useToast } from "@/hooks/use-toast";
 import { getTrackingContext } from "@/lib/tracking";
 import { useABTest } from "@/contexts/ABTestContext";
@@ -351,31 +351,16 @@ export default function Calculator() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const submitWithRetry = async (leadData: Record<string, unknown>, maxRetries = 3, timeout = 8000) => {
+  const submitWithRetry = async (leadData: Record<string, unknown>, maxRetries = 3) => {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       setRetryCount(attempt);
-      
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), timeout);
-
       try {
-        const { error, data: response } = await supabase.functions.invoke('handle-lead', {
-          body: leadData,
-        });
-        
-        clearTimeout(timeoutId);
-        
-        if (error) throw error;
-        return { success: true, data: response };
+        const result = await sendLead(leadData);
+        if (!result.ok) throw new Error('send_failed');
+        return { success: true, channel: result.channel };
       } catch (err) {
-        clearTimeout(timeoutId);
         console.log(`[Calculator] Attempt ${attempt}/${maxRetries} failed:`, err);
-        
-        if (attempt === maxRetries) {
-          throw err;
-        }
-        
-        // Exponential backoff
+        if (attempt === maxRetries) throw err;
         await new Promise(r => setTimeout(r, attempt * 1000));
       }
     }
