@@ -121,7 +121,7 @@ export const LANDINGS: Record<LandingSlug, LandingContent> = {
     ],
     relatedPestSlug: "klopy",
     relatedPestLabel: "Подробно про клопов: биология, признаки, как распознать",
-    emoji: "🪲",
+    emoji: "",
     accentClass: "from-red-500/20 to-red-700/30",
   },
   tarakany: {
@@ -200,7 +200,7 @@ export const LANDINGS: Record<LandingSlug, LandingContent> = {
     ],
     relatedPestSlug: "tarakany",
     relatedPestLabel: "Подробно про тараканов: виды, опасность, признаки заражения",
-    emoji: "🪳",
+    emoji: "",
     accentClass: "from-amber-600/20 to-amber-800/30",
   },
   uchastok: {
@@ -279,7 +279,7 @@ export const LANDINGS: Record<LandingSlug, LandingContent> = {
     ],
     relatedPestSlug: "kleshchi",
     relatedPestLabel: "Подробно про клещей: чем опасны, как защитить участок",
-    emoji: "🌳",
+    emoji: "",
     accentClass: "from-green-600/20 to-green-800/30",
   },
 };
