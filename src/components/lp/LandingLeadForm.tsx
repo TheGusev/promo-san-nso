@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { extractPhoneDigits } from "@/hooks/usePhoneMask";
 import { trackGoal } from "@/lib/analytics";
-import { supabase } from "@/integrations/supabase/client";
+import { sendLead } from "@/lib/leadSender";
 import { getTrackingContext } from "@/lib/tracking";
 import { useToast } from "@/hooks/use-toast";
 import { useABTest } from "@/contexts/ABTestContext";
@@ -74,8 +74,8 @@ export function LandingLeadForm({ source, ctaLabel = "Получить расч�
 
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.functions.invoke("handle-lead", { body: leadData });
-      if (error) throw error;
+      const result = await sendLead(leadData);
+      if (!result.ok) throw new Error("send_failed");
 
       trackGoal("hero_form_submit", { source, intent: tracking.intent, variant: variantId });
       logTrafficEvent("lead_submit", { source, variant_id: variantId });

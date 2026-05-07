@@ -8,7 +8,7 @@ import { PhoneInput } from "@/components/ui/phone-input";
 import { extractPhoneDigits } from "@/hooks/usePhoneMask";
 import { X, Loader2, WifiOff } from "lucide-react";
 import { trackGoal } from "@/lib/analytics";
-import { supabase } from "@/integrations/supabase/client";
+import { sendLead } from "@/lib/leadSender";
 import { getTrackingContext } from "@/lib/tracking";
 import { useToast } from "@/hooks/use-toast";
 import { useABTest } from "@/contexts/ABTestContext";
@@ -88,30 +88,16 @@ export default function PopupForm() {
     localStorage.setItem('popup_dismissed', 'true');
   };
 
-  const submitWithRetry = async (leadData: any, maxRetries = 3, timeout = 8000) => {
+  const submitWithRetry = async (leadData: any, maxRetries = 3) => {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       setRetryCount(attempt);
-      
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), timeout);
-
       try {
-        const { error, data: response } = await supabase.functions.invoke('handle-lead', {
-          body: leadData,
-        });
-        
-        clearTimeout(timeoutId);
-        
-        if (error) throw error;
-        return { success: true, data: response };
+        const result = await sendLead(leadData);
+        if (!result.ok) throw new Error('send_failed');
+        return { success: true, channel: result.channel };
       } catch (err: any) {
-        clearTimeout(timeoutId);
         console.log(`[PopupForm] Attempt ${attempt}/${maxRetries} failed:`, err);
-        
-        if (attempt === maxRetries) {
-          throw err;
-        }
-        
+        if (attempt === maxRetries) throw err;
         await new Promise(r => setTimeout(r, attempt * 1000));
       }
     }

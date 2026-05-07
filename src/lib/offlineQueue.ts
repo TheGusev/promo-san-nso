@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { sendLead } from "@/lib/leadSender";
 
 interface QueuedLead {
   data: any;
@@ -45,12 +45,8 @@ export const processQueue = async (): Promise<{ success: number; failed: number 
 
   for (const item of queue) {
     try {
-      const { error } = await supabase.functions.invoke('handle-lead', {
-        body: item.data
-      });
-
-      if (error) throw error;
-      
+      const result = await sendLead(item.data);
+      if (!result.ok) throw new Error('send_failed');
       successCount++;
       console.log('[Offline Queue] Successfully submitted queued lead');
     } catch (error) {
