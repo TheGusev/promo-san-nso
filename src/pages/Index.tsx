@@ -2,6 +2,7 @@ import { useEffect, lazy, Suspense } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import Hero from "@/components/Hero";
 import Services from "@/components/Services";
+import { ProblemPicker } from "@/components/ProblemPicker";
 import SimpleCalculator from "@/components/SimpleCalculator";
 import AboutSection from "@/components/AboutSection";
 import FloatingContact from "@/components/FloatingContact";
@@ -37,6 +38,7 @@ const Index = () => {
       <SiteHeader />
       <main id="main-content">
         <Hero />
+        <ProblemPicker />
         <Services />
         <section id="calculator" aria-label="Калькулятор стоимости">
           <SimpleCalculator />

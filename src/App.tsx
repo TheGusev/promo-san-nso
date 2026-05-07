@@ -26,6 +26,7 @@ import ArticlePage from "./pages/blog/ArticlePage";
 import FAQPage from "./pages/faq/Index";
 import ComboPage from "./pages/programmatic/ComboPage";
 import SanpinIndex from "./pages/sanpin/Index";
+import LandingPage from "./pages/lp/LandingPage";
 
 // Админка
 import AdminLogin from "./pages/admin/Login";
@@ -76,6 +77,9 @@ const App = () => (
               
               {/* СанПиН и нормативные документы */}
               <Route path="/sanpin" element={<SanpinIndex />} />
+
+              {/* Целевые посадочные лендинги (klopy / tarakany / uchastok) */}
+              <Route path="/lp/:lpSlug" element={<LandingPage />} />
               
               {/* Programmatic-страницы (комбинации услуга × вредитель × объект × район) */}
               <Route path="/:serviceSlug/:comboSlug" element={<ComboPage />} />
