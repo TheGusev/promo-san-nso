@@ -34,9 +34,6 @@ export function ProblemPicker() {
           <h2 id="problem-picker-title" className="text-2xl md:text-3xl font-bold">
             С какой проблемой вы столкнулись?
           </h2>
-          <p className="text-sm text-muted-foreground mt-2">
-            Выберите — откроется страница с ценой, гарантией и заявкой
-          </p>
         </div>
 
         <div className="grid gap-4 grid-cols-1 lg:grid-cols-3 max-w-5xl mx-auto">
