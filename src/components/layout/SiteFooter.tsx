@@ -59,11 +59,14 @@ export function SiteFooter() {
             </ul>
           </div>
 
-          {/* Популярные запросы */}
+          {/* Срочный вызов */}
           <div>
-            <h3 className="mb-4 text-lg font-semibold">Популярные запросы</h3>
+            <h3 className="mb-4 text-lg font-semibold">🔥 Срочный вызов</h3>
             <ul className="space-y-2 text-sm">
-              {popularPests.map((pest) => (
+              <li><Link to="/lp/klopy" className="text-muted-foreground hover:text-primary transition-colors">🪲 Уничтожение клопов</Link></li>
+              <li><Link to="/lp/tarakany" className="text-muted-foreground hover:text-primary transition-colors">🪳 Травля тараканов</Link></li>
+              <li><Link to="/lp/uchastok" className="text-muted-foreground hover:text-primary transition-colors">🌳 Обработка участка</Link></li>
+              {popularPests.slice(0, 3).map((pest) => (
                 <li key={pest.slug}>
                   <Link
                     to={`/vreditel/${pest.slug}`}
