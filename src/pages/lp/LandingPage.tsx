@@ -22,6 +22,15 @@ import {
   getServiceSchema, getFaqSchema, getBreadcrumbSchema, getLocalBusinessSchema,
 } from "@/lib/schema";
 import { getServiceBySlug } from "@/data/services";
+import heroKlopy from "@/assets/lp/hero-klopy.jpg";
+import heroTarakany from "@/assets/lp/hero-tarakany.jpg";
+import heroUchastok from "@/assets/lp/hero-uchastok.jpg";
+
+const HERO_BG: Record<LandingSlug, string> = {
+  klopy: heroKlopy,
+  tarakany: heroTarakany,
+  uchastok: heroUchastok,
+};
 
 export default function LandingPage() {
   const { lpSlug } = useParams<{ lpSlug: string }>();
