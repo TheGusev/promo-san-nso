@@ -63,9 +63,22 @@ export default function PestPage() {
                     {SITE_CONFIG.phone}
                   </a>
                 </Button>
-                <Button size="lg" variant="outline">
-                  Заказать обработку
-                </Button>
+                {(() => {
+                  const lpMap: Record<string, string> = {
+                    klopy: "/lp/klopy",
+                    tarakany: "/lp/tarakany",
+                    kleshchi: "/lp/uchastok",
+                    komary: "/lp/uchastok",
+                  };
+                  const lpHref = lpMap[pest.slug];
+                  return lpHref ? (
+                    <Button size="lg" variant="outline" asChild>
+                      <Link to={lpHref}>Срочный вызов — от 2 000 ₽</Link>
+                    </Button>
+                  ) : (
+                    <Button size="lg" variant="outline">Заказать обработку</Button>
+                  );
+                })()}
               </div>
 
               <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
