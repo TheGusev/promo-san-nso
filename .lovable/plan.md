@@ -1,57 +1,48 @@
 ## Цель
+Поднять баллы аудита owndev.ru: GEO 47→~95, CRO 11→~85, SEO 70→~95, Директ 50→~90, AI 58→~95.
 
-После каждого пуша в `main` GitHub сам собирает `dist/` и заливает его на Beget в `gordezrf/public_html/`. Никакой ручной распаковки ZIP.
+## Корневая причина
+Сайт — SPA, аудит-боты не выполняют JS и видят пустой `index.html`. Это объясняет почти все нули в отчёте (телефоны, формы, цены, H1, семантика — всё есть в JSX, но бот их не видит). Главная мера — пререндеринг ключевых страниц в статический HTML на этапе сборки.
 
-## Как будет работать
+## Шаги
 
-```
-git push → GitHub Actions:
-  1. npm ci
-  2. npm run build  → dist/
-  3. FTP upload dist/* → gordezrf/public_html/
-     (с сохранением /api/lead.php и lead.log)
-```
+### 1. Пререндеринг (закрывает ~70% ошибок)
+- Подключить `vite-plugin-prerender` + `puppeteer` в `vite.config.ts`.
+- Пререндерить роуты: `/`, `/uslugi`, все `/usluga/:slug`, `/vrediteli`, `/obekty`, `/rayony`, `/blog`, `/faq`, `/sanpin`, `/privacy`.
+- Обновить `.github/workflows/deploy.yml` — установить Chromium перед `npm run build`.
 
-Через ~2 минуты после пуша сайт на гордэз.рф обновлён.
+### 2. `/llms.txt` (GEO +20, AI +10)
+Создать `public/llms.txt` по стандарту llmstxt.org: описание, услуги с ценами, гарантии, контакты, FAQ — plain text для LLM.
 
-## Что я создам в коде
+### 3. CRO-блоки доверия (CRO +60)
+- Видимый блок реквизитов в `Footer`: ИНН/ОГРН, юр.адрес, email, телефон, гарантии.
+- В Hero: видимый телефон, email, мини-форма «Перезвоните мне» (имя+телефон), кнопки Telegram/MAX/WhatsApp/обратный звонок.
+- Прайс-таблица в `Services` с явными цифрами в HTML.
 
-**`.github/workflows/deploy.yml`** — workflow GitHub Actions:
-- Триггер: `push` в ветку `main` (+ кнопка ручного запуска `workflow_dispatch`)
-- Node 20, `npm ci`, `npm run build`
-- Загрузка через `SamKirkland/FTP-Deploy-Action@v4.3.5`:
-  - `local-dir: ./dist/`
-  - `server-dir: /gordezrf/public_html/`
-  - `protocol: ftp` (Beget по умолчанию; если SFTP — поменяем одну строку)
-  - `exclude: ['**/api/**', '**/lead.log', '**/.htaccess']` — НЕ трогаем PHP-резерв и логи
-  - `dangerous-clean-slate: false` — старые файлы не удаляются, только перезаписываются
+### 4. Контент-минимум и цитируемость (SEO +17, GEO +15, AI +10)
+- Расширить текст главной до ≥600 слов в `AboutSection`.
+- Добавить короткие самостоятельные блоки 2–3 предложения (для цитирования LLM): цены, сроки выезда, гарантии, безопасность.
+- Добавить таблицы и маркированные списки (структура контента).
 
-**`.github/workflows/README.md`** — короткая инструкция: где смотреть статус, как перезапустить вручную.
+### 5. E-E-A-T + актуальность (GEO +5, AI +5)
+- Видимая дата обновления в footer и шаблонах статей.
+- Автор «ООО Санитарные Решения» в `meta` и Schema.org `author`.
+- `datePublished`/`dateModified` в JSON-LD статей.
 
-## Что нужно от вас (один раз, 5 минут)
+### 6. Яндекс.Директ (Директ +50)
+- Конкретизировать H1 на programmatic-страницах (услуга+вредитель+район).
+- Краткий заголовок ≤35 символов в `<meta name="ya:title">` и Schema.org `alternateName`.
+- Связный вводный абзац на главной (когерентность).
 
-В Beget → «Сайты» → у `гордэз.рф` посмотрите блок **FTP-доступ**. Там 3 значения:
-- сервер (например `ftp.beget.com` или `xxxx.beget.tech`)
-- логин (обычно `xxxxxx_gordezrf` или просто логин аккаунта)
-- пароль
+### 7. Технические мелочи (SEO +3)
+- `font-display: swap`, `loading="lazy"` + `decoding="async"` для всех некритичных изображений.
+- HSTS + gzip — добавить `.htaccess` в `public/` (Beget — Apache).
 
-Затем в GitHub-репозитории: **Settings → Secrets and variables → Actions → New repository secret**, добавьте 3 секрета:
-- `FTP_SERVER`
-- `FTP_USERNAME`
-- `FTP_PASSWORD`
+## Технические детали
+- Пререндер: после `vite build` Puppeteer открывает каждый маршрут, ждёт `document.title`, сохраняет HTML в `dist/<route>/index.html`. Клиентский React продолжит «оживлять» страницу.
+- На Beget Apache отдаст статичные HTML напрямую; SPA-фолбэк для неизвестных URL — через `.htaccess`.
+- Не трогаем калькулятор, лид-пайплайн, MVT, Telegram-роутинг, политику FZ-152.
 
-Я в workflow буду их читать как `${{ secrets.FTP_SERVER }}` и т.д. — в логах они не светятся.
-
-## Безопасность и нюансы
-
-- `/api/lead.php` и `lead.log` в `exclude` — деплой их не перетрёт и не удалит.
-- Если Beget окажется на SFTP (порт 22) — в `deploy.yml` меняется `protocol: sftp` и `port: 22`, остальное то же.
-- Первый запуск загрузит весь `dist/` (~несколько МБ), последующие — только изменённые файлы (action ведёт `.ftp-deploy-sync-state.json` на сервере).
-- Если что-то пойдёт не так — Actions покажет красный крестик с логом, сайт продолжит работать на старой версии.
-
-## После того как нажмёте «одобрить»
-
-1. Я создам `.github/workflows/deploy.yml` и README.
-2. Лавабл синкнёт в GitHub.
-3. Вы добавите 3 секрета в GitHub.
-4. Делаете любой пуш (или жмёте «Run workflow» вручную) → проверяем логи → сайт обновлён.
+## Файлы
+**Создать:** `public/llms.txt`, `public/.htaccess`
+**Обновить:** `vite.config.ts`, `package.json`, `.github/workflows/deploy.yml`, `index.html`, `src/components/Hero.tsx`, `src/components/AboutSection.tsx`, `src/components/Footer.tsx`, `src/components/Services.tsx`, `src/components/FAQ.tsx`, шаблоны программных страниц.
