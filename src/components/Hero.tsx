@@ -46,7 +46,7 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative overflow-hidden py-12 md:py-20 lg:py-32 text-primary-foreground min-h-[400px] md:min-h-[500px]">
+    <section className="relative overflow-hidden py-10 md:py-20 lg:py-32 text-primary-foreground min-h-[560px] md:min-h-[500px]">
       {/* Background images with crossfade */}
       {backgroundImages.map((src, index) => (
         <div
@@ -59,63 +59,73 @@ export default function Hero() {
           aria-hidden="true"
         />
       ))}
-      
-      {/* Dark overlay for text readability */}
-      <div className="absolute inset-0 bg-black/55" aria-hidden="true" />
-      
-      
+
+      {/* Gradient overlay: light at top so the specialist photo breathes, dark at bottom for text contrast */}
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/20 md:bg-black/55 md:bg-none" aria-hidden="true" />
+
       <div className="container relative px-4">
         <div className="mx-auto max-w-4xl text-center">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
-            <Shield className="h-4 w-4" />
-            <span className="text-sm font-medium">Сертифицированные услуги</span>
+          <div className="mb-5 md:mb-6 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 backdrop-blur-md border border-white/15">
+            <Shield className="h-3.5 w-3.5" />
+            <span className="text-[10px] md:text-sm font-bold md:font-medium uppercase md:normal-case tracking-widest md:tracking-normal">Сертифицированные услуги</span>
           </div>
-          
-          <h1 className="mb-6 text-4xl font-bold tracking-tight lg:text-6xl">
+
+          <h1 className="mb-4 md:mb-6 text-[30px] leading-[1.15] md:text-5xl lg:text-6xl font-bold tracking-tight">
             {copy.title}
             {copy.highlight && (
               <>
                 <br />
-                <span className="text-white/90 underline decoration-secondary decoration-4 underline-offset-4">{copy.highlight}</span>
+                <span className="relative inline-block mt-1">
+                  <span className="relative z-10 bg-gradient-to-r from-secondary to-secondary/80 bg-clip-text text-transparent md:text-white/90 md:bg-none">
+                    {copy.highlight}
+                  </span>
+                  <span className="hidden md:block absolute -bottom-1 left-0 w-full h-1 bg-secondary rounded-full" aria-hidden="true" />
+                </span>
               </>
             )}
           </h1>
-          
-          <p className="mb-8 text-lg lg:text-xl text-primary-foreground/90">
+
+          <p className="mb-6 md:mb-8 text-sm md:text-lg lg:text-xl text-slate-300 md:text-primary-foreground/90 max-w-[90%] mx-auto">
             {copy.subtitle}
           </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              className="bg-white text-primary hover:bg-white/90 font-semibold shadow-elevated group"
+
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+            <Button
+              size="lg"
+              className="w-full sm:w-auto rounded-2xl py-4 bg-primary text-primary-foreground hover:bg-primary/90 font-bold shadow-lg shadow-primary/30 group"
               onClick={() => handleCTAClick('primary')}
             >
               Рассчитать стоимость
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Button>
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="border-white/30 bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm"
+            <Button
+              size="lg"
+              variant="outline"
+              className="w-full sm:w-auto rounded-2xl py-4 border-white/20 bg-white/5 text-white hover:bg-white/10 font-semibold backdrop-blur-md"
               onClick={() => handleCTAClick('secondary')}
             >
               Все услуги
             </Button>
           </div>
 
-          <div className="mt-12 flex flex-wrap justify-center gap-8 text-sm">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20">✓</div>
-              <span>Выезд в день обращения</span>
+          <div className="mt-8 md:mt-12 grid grid-cols-1 md:flex md:flex-wrap md:justify-center gap-2.5 md:gap-8 text-sm max-w-xs md:max-w-none mx-auto text-left md:text-center">
+            <div className="flex items-center gap-3 md:gap-2">
+              <div className="flex h-5 w-5 md:h-8 md:w-8 shrink-0 items-center justify-center rounded-full bg-secondary/20 md:bg-white/20">
+                <Check className="h-3 w-3 md:h-4 md:w-4 text-secondary md:text-white" strokeWidth={3} />
+              </div>
+              <span className="text-[13px] md:text-sm font-medium text-white/90">Выезд в день обращения</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20">✓</div>
-              <span>Гарантия результата</span>
+            <div className="flex items-center gap-3 md:gap-2">
+              <div className="flex h-5 w-5 md:h-8 md:w-8 shrink-0 items-center justify-center rounded-full bg-secondary/20 md:bg-white/20">
+                <Check className="h-3 w-3 md:h-4 md:w-4 text-secondary md:text-white" strokeWidth={3} />
+              </div>
+              <span className="text-[13px] md:text-sm font-medium text-white/90">Гарантия результата</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20">✓</div>
-              <span>Полный пакет документов</span>
+            <div className="flex items-center gap-3 md:gap-2">
+              <div className="flex h-5 w-5 md:h-8 md:w-8 shrink-0 items-center justify-center rounded-full bg-secondary/20 md:bg-white/20">
+                <Check className="h-3 w-3 md:h-4 md:w-4 text-secondary md:text-white" strokeWidth={3} />
+              </div>
+              <span className="text-[13px] md:text-sm font-medium text-white/90">Полный пакет документов</span>
             </div>
           </div>
         </div>
