@@ -1,48 +1,53 @@
-## Цель
-Поднять баллы аудита owndev.ru: GEO 47→~95, CRO 11→~85, SEO 70→~95, Директ 50→~90, AI 58→~95.
+## Что меняем
 
-## Корневая причина
-Сайт — SPA, аудит-боты не выполняют JS и видят пустой `index.html`. Это объясняет почти все нули в отчёте (телефоны, формы, цены, H1, семантика — всё есть в JSX, но бот их не видит). Главная мера — пререндеринг ключевых страниц в статический HTML на этапе сборки.
+Только мобильный вид Hero (`src/components/Hero.tsx`). Десктоп оставляем как есть. Кнопки, ссылки, аналитика, A/B-копия (`copy.title` / `copy.highlight` / `copy.subtitle`) — без изменений.
 
-## Шаги
+## Цели
 
-### 1. Пререндеринг (закрывает ~70% ошибок)
-- Подключить `vite-plugin-prerender` + `puppeteer` в `vite.config.ts`.
-- Пререндерить роуты: `/`, `/uslugi`, все `/usluga/:slug`, `/vrediteli`, `/obekty`, `/rayony`, `/blog`, `/faq`, `/sanpin`, `/privacy`.
-- Обновить `.github/workflows/deploy.yml` — установить Chromium перед `npm run build`.
+- Фон-фото специалиста перестаёт «теряться» за текстом.
+- H1 укладывается в 2 строки, а не в 4.
+- Чек-листы превращаются в аккуратный вертикальный список с зелёными иконками-кружками.
+- Композиция компактнее, выглядит «продающе» и премиально.
 
-### 2. `/llms.txt` (GEO +20, AI +10)
-Создать `public/llms.txt` по стандарту llmstxt.org: описание, услуги с ценами, гарантии, контакты, FAQ — plain text для LLM.
+## Изменения по блокам
 
-### 3. CRO-блоки доверия (CRO +60)
-- Видимый блок реквизитов в `Footer`: ИНН/ОГРН, юр.адрес, email, телефон, гарантии.
-- В Hero: видимый телефон, email, мини-форма «Перезвоните мне» (имя+телефон), кнопки Telegram/MAX/WhatsApp/обратный звонок.
-- Прайс-таблица в `Services` с явными цифрами в HTML.
+**Оверлей фона**
+- Убрать сплошной `bg-black/55`.
+- Поставить градиент `from-slate-950 via-slate-950/60 to-slate-950/20` снизу вверх, чтобы верх фото был светлее и читался специалист, а низ — тёмный для контраста текста.
 
-### 4. Контент-минимум и цитируемость (SEO +17, GEO +15, AI +10)
-- Расширить текст главной до ≥600 слов в `AboutSection`.
-- Добавить короткие самостоятельные блоки 2–3 предложения (для цитирования LLM): цены, сроки выезда, гарантии, безопасность.
-- Добавить таблицы и маркированные списки (структура контента).
+**Бейдж «Сертифицированные услуги»**
+- Чуть мельче на мобильном: `text-[10px] uppercase tracking-widest font-bold`, padding `px-3 py-1.5`, белая иконка щита.
 
-### 5. E-E-A-T + актуальность (GEO +5, AI +5)
-- Видимая дата обновления в footer и шаблонах статей.
-- Автор «ООО Санитарные Решения» в `meta` и Schema.org `author`.
-- `datePublished`/`dateModified` в JSON-LD статей.
+**H1**
+- Мобильный размер `text-[30px] leading-[1.15]` (вместо `text-4xl`), десктоп `lg:text-6xl` сохранить.
+- Подсветка highlight — зелёным градиентом (`from-secondary to-secondary/70`) с тонким подчеркиванием, без жирных полос на 4 строки.
+- Принудительный `<br/>` между основной фразой и highlight, без лишних переносов.
 
-### 6. Яндекс.Директ (Директ +50)
-- Конкретизировать H1 на programmatic-страницах (услуга+вредитель+район).
-- Краткий заголовок ≤35 символов в `<meta name="ya:title">` и Schema.org `alternateName`.
-- Связный вводный абзац на главной (когерентность).
+**Подзаголовок**
+- `text-sm md:text-lg`, `max-w-[90%]`, цвет `text-slate-300`. Мобильный отступ `mb-6` вместо `mb-8`.
 
-### 7. Технические мелочи (SEO +3)
-- `font-display: swap`, `loading="lazy"` + `decoding="async"` для всех некритичных изображений.
-- HSTS + gzip — добавить `.htaccess` в `public/` (Beget — Apache).
+**Trust-список**
+- Перевести из горизонтального `flex-wrap` в вертикальный `grid gap-2.5` на мобильном, `md:flex md:flex-wrap` на десктопе.
+- Каждый пункт: круглая `w-5 h-5 rounded-full bg-secondary/20` + галочка Check из lucide цвета `text-secondary`, текст `text-[13px] font-medium text-white/90`.
+- Поставить ПОД кнопками (как в выбранном прототипе), не поверх травы.
+
+**Кнопки**
+- Сохранить обе и обработчики.
+- Мобильно: `w-full`, `rounded-2xl`, `py-4`. Primary — `bg-primary` с тенью `shadow-lg shadow-primary/30`. Secondary — `bg-white/5 border-white/20 backdrop-blur-sm`.
+- На `sm:` остаётся `flex-row` как сейчас.
+
+**Высота секции и отступы**
+- Мобильно: `py-10`, `min-h-[560px]` (чтобы фон дышал, фото не обрезалось).
+- Десктоп без изменений (`md:py-20 lg:py-32`).
+
+**Что не трогаем**
+- Ротация фоновых изображений и preload.
+- Логика `handleCTAClick`, `scrollToAnchor`, A/B-копия, `intent`.
+- FloatingContact и хедер.
 
 ## Технические детали
-- Пререндер: после `vite build` Puppeteer открывает каждый маршрут, ждёт `document.title`, сохраняет HTML в `dist/<route>/index.html`. Клиентский React продолжит «оживлять» страницу.
-- На Beget Apache отдаст статичные HTML напрямую; SPA-фолбэк для неизвестных URL — через `.htaccess`.
-- Не трогаем калькулятор, лид-пайплайн, MVT, Telegram-роутинг, политику FZ-152.
 
-## Файлы
-**Создать:** `public/llms.txt`, `public/.htaccess`
-**Обновить:** `vite.config.ts`, `package.json`, `.github/workflows/deploy.yml`, `index.html`, `src/components/Hero.tsx`, `src/components/AboutSection.tsx`, `src/components/Footer.tsx`, `src/components/Services.tsx`, `src/components/FAQ.tsx`, шаблоны программных страниц.
+- Использовать токены дизайн-системы: `bg-primary`, `text-secondary`, `bg-secondary/20`. Никаких хардкод-цветов вне темы.
+- Заменить inline `<div className="...✓">` на `<Check className="h-3 w-3 text-secondary" strokeWidth={3}/>` из `lucide-react`.
+- Сохранить `prefers-reduced-motion` ветку.
+- Один файл: `src/components/Hero.tsx`.
