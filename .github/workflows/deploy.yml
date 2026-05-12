@@ -38,5 +38,4 @@ jobs:
           exclude: |
             **/api/**
             **/lead.log
-            **/.htaccess
             **/.well-known/**
