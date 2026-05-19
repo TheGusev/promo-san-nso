@@ -241,7 +241,7 @@ export function SiteHeader() {
                     <NavigationMenuLink asChild>
                       <Link to="/lp/uchastok" className="block rounded-md p-3 hover:bg-accent transition-colors">
                         <div className="text-sm font-medium">Участок от клещей</div>
-                        <p className="text-xs text-muted-foreground">от 2 500 ₽, защита до 6 нед.</p>
+                        <p className="text-xs text-muted-foreground">от 2 000 ₽, защита до 6 нед.</p>
                       </Link>
                     </NavigationMenuLink>
                   </li>
