@@ -10,7 +10,7 @@ const services = [
     icon: Shield,
     title: "Дезинфекция",
     description: "Уничтожение вирусов, бактерий и грибков. Обработка помещений профессиональными препаратами.",
-    price: "от 1500₽",
+    price: "от 1200₽",
     features: ["Холодный/горячий туман", "Безопасные препараты", "Гарантия результата"],
     bgImage: "/images/services/dezinfeksiya.png"
   },
@@ -18,7 +18,7 @@ const services = [
     icon: Bug,
     title: "Дезинсекция",
     description: "Уничтожение клопов, тараканов, муравьёв и других насекомых. Современные методы обработки.",
-    price: "от 1500₽",
+    price: "от 1200₽",
     features: ["Эффект до 6 месяцев", "Без запаха", "Безопасно для людей"],
     bgImage: "/images/services/dezinseksiya.png"
   },
@@ -26,7 +26,7 @@ const services = [
     icon: Rat,
     title: "Дератизация",
     description: "Профессиональное уничтожение грызунов. Барьерная защита и регулярное обслуживание.",
-    price: "от 1800₽",
+    price: "от 1450₽",
     features: ["Комплексная защита", "Барьерная обработка", "Долгосрочный эффект"],
     bgImage: "/images/services/deratizatsiya.png"
   },
@@ -34,7 +34,7 @@ const services = [
     icon: Wind,
     title: "Озонирование",
     description: "Глубокая очистка воздуха и поверхностей. Устранение неприятных запахов и аллергенов.",
-    price: "от 1500₽",
+    price: "от 1200₽",
     features: ["Экологично", "Без химии", "Удаление запахов"],
     bgImage: "/images/services/ozonirovanie.png"
   },
@@ -42,7 +42,7 @@ const services = [
     icon: Droplets,
     title: "Дезодорация",
     description: "Устранение сложных запахов: дым, гарь, плесень, животные. Профессиональное оборудование.",
-    price: "от 1500₽",
+    price: "от 1200₽",
     features: ["Устойчивый результат", "Любые запахи", "Быстрый эффект"],
     bgImage: "/images/services/dezodoratsiya.png"
   },
@@ -50,7 +50,7 @@ const services = [
     icon: FileCheck,
     title: "Сертификация",
     description: "Подготовка к проверкам СЭС. Полный пакет документов для Роспотребнадзора.",
-    price: "от 3000₽",
+    price: "от 2400₽",
     features: ["Все документы", "Акты и протоколы", "Консультации"],
     bgImage: "/images/services/sertifikatsiya.png"
   }
