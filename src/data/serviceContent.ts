@@ -109,13 +109,13 @@ export const serviceContents: Record<string, ServiceContent> = {
     ],
 
     prices: [
-      { type: "1-комнатная квартира", priceRange: "1 800 – 2 500 ₽" },
-      { type: "2-комнатная квартира", priceRange: "2 200 – 3 200 ₽" },
-      { type: "3-комнатная квартира", priceRange: "2 800 – 4 000 ₽" },
-      { type: "Частный дом (до 150 м²)", priceRange: "3 500 – 6 000 ₽" },
-      { type: "Офис, магазин", priceRange: "от 25 ₽/м²", note: "минимум 2 000 ₽" },
-      { type: "Ресторан, кафе", priceRange: "от 30 ₽/м²", note: "с документами для СЭС" },
-      { type: "Склад, производство", priceRange: "от 15 ₽/м²", note: "договор обслуживания" },
+      { type: "1-комнатная квартира", priceRange: "1 200 – 2 000 ₽" },
+      { type: "2-комнатная квартира", priceRange: "1 450 – 2 000 ₽" },
+      { type: "3-комнатная квартира", priceRange: "1 700 – 2 000 ₽" },
+      { type: "Частный дом (до 150 м²)", priceRange: "2 000 – 4 800 ₽" },
+      { type: "Офис, магазин", priceRange: "от 16 ₽/м²", note: "минимум 1 600 ₽" },
+      { type: "Ресторан, кафе", priceRange: "от 24 ₽/м²", note: "с документами для СЭС" },
+      { type: "Склад, производство", priceRange: "от 12 ₽/м²", note: "договор обслуживания" },
     ],
 
     priceFactors: [
@@ -225,12 +225,12 @@ export const serviceContents: Record<string, ServiceContent> = {
     ],
 
     prices: [
-      { type: "Квартира", priceRange: "2 000 – 3 500 ₽" },
-      { type: "Частный дом", priceRange: "3 000 – 6 000 ₽" },
-      { type: "Подвал многоквартирного дома", priceRange: "от 3 000 ₽" },
-      { type: "Склад (до 500 м²)", priceRange: "5 000 – 10 000 ₽" },
-      { type: "Производство, цех", priceRange: "от 20 ₽/м²", note: "договор обслуживания" },
-      { type: "Ежемесячное обслуживание", priceRange: "от 3 000 ₽/мес", note: "для юрлиц" },
+      { type: "Квартира", priceRange: "1 450 – 2 000 ₽" },
+      { type: "Частный дом", priceRange: "2 000 – 4 800 ₽" },
+      { type: "Подвал многоквартирного дома", priceRange: "от 2 400 ₽" },
+      { type: "Склад (до 500 м²)", priceRange: "4 000 – 8 000 ₽" },
+      { type: "Производство, цех", priceRange: "от 16 ₽/м²", note: "договор обслуживания" },
+      { type: "Ежемесячное обслуживание", priceRange: "от 2 400 ₽/мес", note: "для юрлиц" },
     ],
 
     priceFactors: [
@@ -337,13 +337,13 @@ export const serviceContents: Record<string, ServiceContent> = {
     ],
 
     prices: [
-      { type: "1-комнатная квартира", priceRange: "2 500 – 4 000 ₽" },
-      { type: "2-комнатная квартира", priceRange: "3 500 – 5 500 ₽" },
-      { type: "Дезинфекция после смерти", priceRange: "от 8 000 ₽", note: "включая дезодорацию" },
-      { type: "Удаление плесени", priceRange: "от 3 000 ₽", note: "зависит от площади поражения" },
-      { type: "Офис, магазин", priceRange: "от 30 ₽/м²" },
-      { type: "Медучреждение", priceRange: "от 40 ₽/м²", note: "с документами" },
-      { type: "Автомобиль", priceRange: "1 500 – 3 000 ₽" },
+      { type: "1-комнатная квартира", priceRange: "2 000 – 3 200 ₽" },
+      { type: "2-комнатная квартира", priceRange: "2 000 – 4 400 ₽" },
+      { type: "Дезинфекция после смерти", priceRange: "от 6 400 ₽", note: "включая дезодорацию" },
+      { type: "Удаление плесени", priceRange: "от 2 400 ₽", note: "зависит от площади поражения" },
+      { type: "Офис, магазин", priceRange: "от 24 ₽/м²" },
+      { type: "Медучреждение", priceRange: "от 32 ₽/м²", note: "с документами" },
+      { type: "Автомобиль", priceRange: "1 200 – 2 400 ₽" },
     ],
 
     priceFactors: [
@@ -449,13 +449,13 @@ export const serviceContents: Record<string, ServiceContent> = {
     ],
 
     prices: [
-      { type: "1-комнатная квартира", priceRange: "2 000 – 3 000 ₽" },
-      { type: "2-комнатная квартира", priceRange: "2 500 – 4 000 ₽" },
-      { type: "3-комнатная квартира", priceRange: "3 500 – 5 000 ₽" },
-      { type: "Частный дом", priceRange: "от 4 000 ₽", note: "зависит от площади" },
-      { type: "Автомобиль (легковой)", priceRange: "1 500 – 2 500 ₽" },
-      { type: "Микроавтобус, фургон", priceRange: "2 500 – 4 000 ₽" },
-      { type: "Гостиничный номер", priceRange: "1 500 – 2 500 ₽" },
+      { type: "1-комнатная квартира", priceRange: "1 600 – 2 000 ₽" },
+      { type: "2-комнатная квартира", priceRange: "2 000 – 3 200 ₽" },
+      { type: "3-комнатная квартира", priceRange: "2 000 – 4 000 ₽" },
+      { type: "Частный дом", priceRange: "от 3 200 ₽", note: "зависит от площади" },
+      { type: "Автомобиль (легковой)", priceRange: "1 200 – 2 000 ₽" },
+      { type: "Микроавтобус, фургон", priceRange: "2 000 – 3 200 ₽" },
+      { type: "Гостиничный номер", priceRange: "1 200 – 2 000 ₽" },
     ],
 
     priceFactors: [
@@ -556,12 +556,12 @@ export const serviceContents: Record<string, ServiceContent> = {
     ],
 
     prices: [
-      { type: "1-комнатная квартира", priceRange: "3 000 – 5 000 ₽" },
-      { type: "Дезодорация после смерти", priceRange: "от 10 000 ₽", note: "с санитарной уборкой" },
-      { type: "Запах от животных", priceRange: "от 4 000 ₽" },
-      { type: "Удаление запаха гари", priceRange: "от 5 000 ₽" },
-      { type: "Автомобиль", priceRange: "2 500 – 5 000 ₽" },
-      { type: "Холодильная камера", priceRange: "от 3 000 ₽" },
+      { type: "1-комнатная квартира", priceRange: "2 400 – 4 000 ₽" },
+      { type: "Дезодорация после смерти", priceRange: "от 8 000 ₽", note: "с санитарной уборкой" },
+      { type: "Запах от животных", priceRange: "от 3 200 ₽" },
+      { type: "Удаление запаха гари", priceRange: "от 4 000 ₽" },
+      { type: "Автомобиль", priceRange: "2 000 – 4 000 ₽" },
+      { type: "Холодильная камера", priceRange: "от 2 400 ₽" },
     ],
 
     priceFactors: [
@@ -656,10 +656,10 @@ export const serviceContents: Record<string, ServiceContent> = {
     ],
 
     prices: [
-      { type: "Акт дезинсекции (разовый)", priceRange: "от 2 000 ₽", note: "+ стоимость обработки" },
-      { type: "Договор на год (кафе, магазин)", priceRange: "от 3 000 ₽/мес" },
-      { type: "Договор на год (производство)", priceRange: "от 5 000 ₽/мес" },
-      { type: "Журнал учёта (ведение)", priceRange: "от 500 ₽/мес" },
+      { type: "Акт дезинсекции (разовый)", priceRange: "от 1 600 ₽", note: "+ стоимость обработки" },
+      { type: "Договор на год (кафе, магазин)", priceRange: "от 2 400 ₽/мес" },
+      { type: "Договор на год (производство)", priceRange: "от 4 000 ₽/мес" },
+      { type: "Журнал учёта (ведение)", priceRange: "от 400 ₽/мес" },
       { type: "Консультация по СанПиН", priceRange: "бесплатно", note: "для клиентов" },
     ],
 

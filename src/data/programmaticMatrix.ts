@@ -100,7 +100,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "обработка от клопов квартира центр Новосибирска",
       "вывести клопов Центральный район цена"
     ],
-    priceFrom: 2500,
+    priceFrom: 2000,
     guaranteeDays: 180,
   },
   {
@@ -118,7 +118,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "обработка квартиры от клопов Ленинский",
       "вызвать СЭС от клопов Ленинский район"
     ],
-    priceFrom: 2500,
+    priceFrom: 2000,
     guaranteeDays: 180,
   },
   {
@@ -136,7 +136,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "дезинсекция квартиры от клопов Октябрьский",
       "СЭС от клопов Октябрьский район цена"
     ],
-    priceFrom: 2500,
+    priceFrom: 2000,
     guaranteeDays: 180,
   },
   
@@ -154,7 +154,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "обработка квартиры от клопов СЭС",
       "вывести клопов из квартиры профессионально"
     ],
-    priceFrom: 2500,
+    priceFrom: 2000,
     guaranteeDays: 180,
   },
   
@@ -174,7 +174,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "обработка от тараканов квартира центр",
       "вывести тараканов СЭС Центральный район"
     ],
-    priceFrom: 2000,
+    priceFrom: 1600,
     guaranteeDays: 90,
   },
   {
@@ -190,7 +190,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "обработка квартиры от тараканов СЭС",
       "вывести тараканов профессионально Новосибирск"
     ],
-    priceFrom: 2000,
+    priceFrom: 1600,
     guaranteeDays: 90,
   },
   
@@ -210,7 +210,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "СЭС для ресторанов Центральный район",
       "дезинсекция общепита от тараканов"
     ],
-    priceFrom: 4000,
+    priceFrom: 3200,
     guaranteeDays: 60,
   },
   {
@@ -226,7 +226,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "СЭС для ресторанов Новосибирск",
       "дезинсекция кафе от тараканов"
     ],
-    priceFrom: 4000,
+    priceFrom: 3200,
     guaranteeDays: 60,
   },
   
@@ -244,7 +244,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "травить блох в квартире СЭС",
       "вывести блох из квартиры профессионально"
     ],
-    priceFrom: 2500,
+    priceFrom: 2000,
     guaranteeDays: 90,
   },
   
@@ -262,7 +262,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "обработка от муравьёв СЭС Новосибирск",
       "вывести муравьёв из квартиры"
     ],
-    priceFrom: 2000,
+    priceFrom: 1600,
     guaranteeDays: 90,
   },
   
@@ -280,7 +280,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "обработка дома от муравьёв",
       "вывести садовых муравьёв с участка"
     ],
-    priceFrom: 3500,
+    priceFrom: 2800,
     guaranteeDays: 90,
   },
   
@@ -300,7 +300,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "травить крыс на складе профессионально",
       "борьба с крысами на складе"
     ],
-    priceFrom: 5000,
+    priceFrom: 4000,
     guaranteeDays: 90,
   },
   {
@@ -318,7 +318,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "травить крыс на складе Ленинский район",
       "СЭС от крыс склад Ленинский"
     ],
-    priceFrom: 5000,
+    priceFrom: 4000,
     guaranteeDays: 90,
   },
   
@@ -336,7 +336,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "дератизация частного дома от мышей",
       "вывести мышей из дома профессионально"
     ],
-    priceFrom: 3500,
+    priceFrom: 2800,
     guaranteeDays: 120,
   },
   {
@@ -354,7 +354,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "дератизация дома Академгородок",
       "борьба с мышами Советский район Новосибирск"
     ],
-    priceFrom: 3500,
+    priceFrom: 2800,
     guaranteeDays: 120,
   },
   
@@ -372,7 +372,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "дератизация квартиры от мышей",
       "мыши в квартире что делать Новосибирск"
     ],
-    priceFrom: 2500,
+    priceFrom: 2000,
     guaranteeDays: 90,
   },
   
@@ -390,7 +390,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "дезинфекция квартиры после ремонта",
       "санитарная обработка квартиры СЭС"
     ],
-    priceFrom: 3000,
+    priceFrom: 2400,
     guaranteeDays: 30,
   },
   {
@@ -406,7 +406,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "дезинфекция после ремонта Центральный район",
       "санитарная обработка квартиры центр"
     ],
-    priceFrom: 3000,
+    priceFrom: 2400,
     guaranteeDays: 30,
   },
   
@@ -422,7 +422,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "дезинфекция офисных помещений",
       "обеззараживание офиса после болезни"
     ],
-    priceFrom: 4000,
+    priceFrom: 3200,
     guaranteeDays: 30,
   },
   
@@ -438,7 +438,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "дезинфекция кухни ресторана",
       "обеззараживание общепита СанПиН"
     ],
-    priceFrom: 5000,
+    priceFrom: 4000,
     guaranteeDays: 30,
   },
   
@@ -458,7 +458,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "вызвать СЭС в квартиру Центральный район",
       "уничтожение насекомых в квартире центр"
     ],
-    priceFrom: 2500,
+    priceFrom: 2000,
     guaranteeDays: 90,
   },
   {
@@ -474,7 +474,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "СЭС в квартиру Ленинский район",
       "уничтожение насекомых Ленинский район"
     ],
-    priceFrom: 2500,
+    priceFrom: 2000,
     guaranteeDays: 90,
   },
   
@@ -492,7 +492,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "СЭС от крыс и мышей Бердск",
       "обработка дома от грызунов Бердск цена"
     ],
-    priceFrom: 4000,
+    priceFrom: 3200,
     guaranteeDays: 120,
   },
   
@@ -511,7 +511,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "травить клещей на даче Новосибирск",
       "опрыскивание от клещей участок"
     ],
-    priceFrom: 3000,
+    priceFrom: 2400,
     guaranteeDays: 60,
   },
   {
@@ -529,7 +529,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "травить клещей на участке Академгородок",
       "обработка от клещей дача Советский район"
     ],
-    priceFrom: 3000,
+    priceFrom: 2400,
     guaranteeDays: 60,
   },
   {
@@ -547,7 +547,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "травить клещей Обское море",
       "обработка от клещей Бердск цена"
     ],
-    priceFrom: 3000,
+    priceFrom: 2400,
     guaranteeDays: 60,
   },
   
@@ -564,7 +564,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "удаление запахов озоном квартира",
       "озонирование после ремонта квартира"
     ],
-    priceFrom: 2500,
+    priceFrom: 2000,
     guaranteeDays: 30,
   },
   {
@@ -578,7 +578,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "удаление запахов в машине озоном",
       "озонирование авто после курения"
     ],
-    priceFrom: 1500,
+    priceFrom: 1200,
     guaranteeDays: 30,
   },
   
@@ -595,7 +595,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "убрать запах в квартире профессионально",
       "удаление трупного запаха квартира"
     ],
-    priceFrom: 4000,
+    priceFrom: 3200,
     guaranteeDays: 30,
   },
   {
@@ -609,7 +609,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "убрать запах в доме после пожара",
       "удаление запаха плесени в доме"
     ],
-    priceFrom: 5000,
+    priceFrom: 4000,
     guaranteeDays: 30,
   },
 ];
