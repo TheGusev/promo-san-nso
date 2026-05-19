@@ -37,52 +37,53 @@ export type PriceValue = number | { from: number };
 type PriceMatrix = Record<string, Partial<Record<PlaceKey, PriceValue>>>;
 
 // Группа "Дезинсекция" (квартирная) — клопы, тараканы, блохи, муравьи, моль, кожеед
+// Цены снижены на 20% (2026-05), округление до 50 ₽. Hard cap 2000 ₽ для жилья.
 const DISINSECTION_RESIDENTIAL: Partial<Record<PlaceKey, PriceValue>> = {
-  "apt-1": 1500,
-  "apt-2": 1800,
-  "apt-3": 2100,
-  "apt-4": 2500,
-  "house": 2500,
-  "commercial": { from: 2500 },
+  "apt-1": 1200,
+  "apt-2": 1450,
+  "apt-3": 1700,
+  "apt-4": 2000,
+  "house": 2000,
+  "commercial": { from: 2000 },
 };
 
 // Дератизация — крысы, мыши
 const DERATIZATION_RESIDENTIAL: Partial<Record<PlaceKey, PriceValue>> = {
-  "apt-1": 1800,
-  "apt-2": 2000,
-  "apt-3": 2300,
-  "apt-4": 2500,
-  "house": 2500,
-  "plot": 2500,
-  "commercial": { from: 2500 },
+  "apt-1": 1450,
+  "apt-2": 1600,
+  "apt-3": 1850,
+  "apt-4": 2000,
+  "house": 2000,
+  "plot": 2000,
+  "commercial": { from: 2000 },
 };
 
 export const PRICING: PriceMatrix = {
   // Насекомые (дезинсекция)
   klopy: { ...DISINSECTION_RESIDENTIAL },
   tarakany: { ...DISINSECTION_RESIDENTIAL },
-  blohi: { ...DISINSECTION_RESIDENTIAL, plot: 2500 },
-  muravi: { ...DISINSECTION_RESIDENTIAL, plot: 2500 },
+  blohi: { ...DISINSECTION_RESIDENTIAL, plot: 2000 },
+  muravi: { ...DISINSECTION_RESIDENTIAL, plot: 2000 },
   moli: { ...DISINSECTION_RESIDENTIAL },
   kozheed: { ...DISINSECTION_RESIDENTIAL },
 
   // Осы — только дом/участок/коммерция (удаление гнезда)
   osy: {
-    house: 2000,
-    plot: 2000,
-    commercial: 2000,
+    house: 1600,
+    plot: 1600,
+    commercial: 1600,
   },
 
   // Комары / клещи — только участок
-  komary: { plot: 2500 },
-  kleshchi: { plot: 2500 },
+  komary: { plot: 2000 },
+  kleshchi: { plot: 2000 },
 
   // Грызуны
   krysy: { ...DERATIZATION_RESIDENTIAL },
   myshi: { ...DERATIZATION_RESIDENTIAL },
 
   // Кроты — только участок
-  kroty: { plot: 2500 },
+  kroty: { plot: 2000 },
 };
 
 /** Возвращает только те места, где есть цена для выбранного вредителя. */

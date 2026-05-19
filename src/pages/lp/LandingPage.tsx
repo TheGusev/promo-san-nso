@@ -88,26 +88,27 @@ export default function LandingPage() {
       />
 
       {/* HERO + форма */}
-      <section className="relative overflow-hidden py-8 md:py-14">
+      <section className="relative overflow-hidden py-8 md:py-14 bg-slate-950">
         <img
           src={HERO_BG[landing.slug]}
           alt=""
           aria-hidden="true"
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover opacity-60"
         />
-        <div className="container relative px-4">
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-slate-950/70 to-slate-950/85" />
+        <div className="container relative px-4 text-white">
           <Breadcrumbs items={[{ label: "Услуги", href: "/uslugi" }, { label: landing.h1 }]} />
 
           <div className="mt-6 grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-center">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full bg-background/85 backdrop-blur-sm px-3 py-1 text-xs font-medium text-primary border border-primary/30">
-                <Shield className="h-3.5 w-3.5" />
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-md px-3 py-1 text-xs font-medium text-white border border-white/20">
+                <Shield className="h-3.5 w-3.5 text-secondary" />
                 Гарантия до {landing.guaranteeMonths} мес.
               </div>
-              <h1 className="mt-4 text-3xl md:text-5xl font-bold tracking-tight text-foreground [text-shadow:_0_2px_12px_rgba(0,0,0,0.7)]">
+              <h1 className="mt-4 text-3xl md:text-5xl font-bold tracking-tight text-white">
                 {landing.h1}
               </h1>
-              <p className="mt-4 text-lg text-foreground/90 [text-shadow:_0_1px_8px_rgba(0,0,0,0.7)]">
+              <p className="mt-4 text-lg text-white/85">
                 {landing.heroSubtitle}
               </p>
 
@@ -120,18 +121,18 @@ export default function LandingPage() {
                 </Button>
               </div>
 
-              <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm bg-background/75 backdrop-blur-sm rounded-lg p-3 border">
-                <div className="flex items-center gap-2"><Clock className="h-4 w-4 text-primary" /> Выезд в течение часа</div>
-                <div className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-primary" /> Договор и чек</div>
-                <div className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary" /> Без запаха</div>
+              <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm bg-white/10 backdrop-blur-md rounded-lg p-3 border border-white/15">
+                <div className="flex items-center gap-2"><Clock className="h-4 w-4 text-secondary" /> Выезд в течение часа</div>
+                <div className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-secondary" /> Договор и чек</div>
+                <div className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-secondary" /> Без запаха</div>
               </div>
             </div>
 
             <div>
-              <div className="rounded-xl bg-card border shadow-elevated p-5">
+              <div className="rounded-xl bg-card border shadow-elevated p-5 text-foreground">
                 <div className="text-center mb-4">
                   <div className="text-sm text-muted-foreground">Цена</div>
-                  <div className="text-3xl font-bold text-primary">от {landing.priceFrom.toLocaleString("ru-RU")} ₽</div>
+                  <div className="text-3xl font-bold text-primary">{landing.priceFrom.toLocaleString("ru-RU")} ₽</div>
                   <div className="text-xs text-muted-foreground">{landing.priceLabel}</div>
                 </div>
                 <LandingLeadForm source={source} compact />
