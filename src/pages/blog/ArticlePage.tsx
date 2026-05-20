@@ -132,26 +132,28 @@ export default function ArticlePage() {
             {/* Основной контент */}
             <article className="prose prose-lg dark:prose-invert max-w-none">
               {/* Оглавление (мобильное) */}
-              <div className="lg:hidden mb-8 p-4 bg-muted/50 rounded-lg">
-                <h2 className="text-lg font-semibold mb-3">Содержание</h2>
+              <div className="lg:hidden mb-8 rounded-xl border border-border/60 bg-card/60 p-4 backdrop-blur-md not-prose">
+                <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Содержание</h2>
                 <nav>
-                  <ul className="space-y-2 list-none pl-0">
+                  <ul className="space-y-1.5 list-none pl-0 m-0">
                     {tableOfContents.map((item, index) => (
                       <li key={item.id}>
                         <a
                           href={`#${item.id}`}
-                          className="text-sm text-muted-foreground hover:text-primary transition-colors no-underline"
+                          className="flex items-baseline gap-2 text-sm text-foreground/80 hover:text-primary transition-colors no-underline"
                         >
-                          {index + 1}. {item.title}
+                          <span className="text-xs font-mono text-primary">0{index + 1}</span>
+                          {item.title}
                         </a>
                       </li>
                     ))}
                     <li>
                       <a
                         href="#faq"
-                        className="text-sm text-muted-foreground hover:text-primary transition-colors no-underline"
+                        className="flex items-baseline gap-2 text-sm text-foreground/80 hover:text-primary transition-colors no-underline"
                       >
-                        {tableOfContents.length + 1}. Частые вопросы
+                        <span className="text-xs font-mono text-primary">0{tableOfContents.length + 1}</span>
+                        Частые вопросы
                       </a>
                     </li>
                   </ul>
