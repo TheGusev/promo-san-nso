@@ -70,22 +70,36 @@ export default function ArticlePage() {
       />
 
       {/* Hero */}
-      <section className="bg-gradient-to-b from-primary/5 to-background py-8 md:py-12">
-        <div className="container px-4">
-          <Breadcrumbs
-            items={[
-              { label: "Блог", href: "/blog" },
-              { label: categoryInfo.name, href: `/blog?category=${topic.category}` },
-              { label: topic.title },
-            ]}
-          />
+      <section className="relative overflow-hidden bg-gradient-to-b from-slate-950 via-slate-900 to-background py-8 md:py-14">
+        <div className="absolute -top-32 -left-20 h-72 w-72 rounded-full bg-primary/20 blur-3xl" aria-hidden />
+        <div className="absolute -bottom-20 -right-10 h-72 w-72 rounded-full bg-secondary/15 blur-3xl" aria-hidden />
+
+        <div className="container relative px-4">
+          <div className="[&_*]:!text-white/75">
+            <Breadcrumbs
+              items={[
+                { label: "Блог", href: "/blog" },
+                { label: categoryInfo.name, href: `/blog?category=${topic.category}` },
+                { label: topic.title },
+              ]}
+            />
+          </div>
 
           <div className="mt-6 max-w-4xl">
-            <div className="flex flex-wrap items-center gap-3 mb-4">
-              <Badge variant="secondary" className="text-sm">
-                {categoryInfo.name}
-              </Badge>
-              <span className="flex items-center gap-1 text-sm text-muted-foreground">
+            <Badge className="border-primary/40 bg-primary/15 text-primary hover:bg-primary/20">
+              {categoryInfo.name}
+            </Badge>
+
+            <h1 className="mt-4 text-3xl font-bold tracking-tight text-white md:text-4xl lg:text-5xl">
+              {topic.title}
+            </h1>
+
+            <p className="mt-4 max-w-2xl text-base text-white/70 md:text-lg">
+              {topic.description}
+            </p>
+
+            <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-white/60">
+              <span className="flex items-center gap-1.5">
                 <Calendar className="h-4 w-4" />
                 {new Date(topic.publishDate).toLocaleDateString("ru-RU", {
                   day: "numeric",
@@ -93,24 +107,15 @@ export default function ArticlePage() {
                   year: "numeric",
                 })}
               </span>
-              <span className="flex items-center gap-1 text-sm text-muted-foreground">
+              <span className="flex items-center gap-1.5">
                 <Clock className="h-4 w-4" />
                 {topic.readTime} мин. чтения
               </span>
             </div>
 
-            <h1 className="text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">
-              {topic.title}
-            </h1>
-
-            <p className="mt-4 text-lg text-muted-foreground">
-              {topic.description}
-            </p>
-
-            {/* Ключевые слова */}
             <div className="mt-4 flex flex-wrap gap-2">
               {topic.keywords.slice(0, 4).map((keyword) => (
-                <Badge key={keyword} variant="outline" className="text-xs">
+                <Badge key={keyword} variant="outline" className="border-white/20 bg-white/5 text-xs text-white/80">
                   <Tag className="h-3 w-3 mr-1" />
                   {keyword}
                 </Badge>
