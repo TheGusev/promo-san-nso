@@ -60,8 +60,8 @@ export default function Hero() {
         />
       ))}
 
-      {/* Gradient overlay: light at top so the specialist photo breathes, dark at bottom for text contrast */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/20 md:bg-black/55 md:bg-none" aria-hidden="true" />
+      {/* Gradient overlay: lighter so photos remain visible, with text-shadow for legibility */}
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/40 to-transparent md:bg-black/30 md:bg-none" aria-hidden="true" />
 
       <div className="container relative px-4">
         <div className="mx-auto max-w-4xl text-center">
@@ -70,7 +70,7 @@ export default function Hero() {
             <span className="text-[10px] md:text-sm font-bold md:font-medium uppercase md:normal-case tracking-widest md:tracking-normal">Сертифицированные услуги</span>
           </div>
 
-          <h1 className="mb-4 md:mb-6 text-[30px] leading-[1.15] md:text-5xl lg:text-6xl font-bold tracking-tight">
+          <h1 className="mb-4 md:mb-6 text-[30px] leading-[1.15] md:text-5xl lg:text-6xl font-bold tracking-tight [text-shadow:0_2px_14px_rgba(0,0,0,0.65)]">
             {copy.title}
             {copy.highlight && (
               <>
