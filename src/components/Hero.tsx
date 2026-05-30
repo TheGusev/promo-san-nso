@@ -70,7 +70,7 @@ export default function Hero() {
             <span className="text-[10px] md:text-sm font-bold md:font-medium uppercase md:normal-case tracking-widest md:tracking-normal">Сертифицированные услуги</span>
           </div>
 
-          <h1 className="mb-4 md:mb-6 text-[30px] leading-[1.15] md:text-5xl lg:text-6xl font-bold tracking-tight">
+          <h1 className="mb-4 md:mb-6 text-[30px] leading-[1.15] md:text-5xl lg:text-6xl font-bold tracking-tight [text-shadow:0_2px_14px_rgba(0,0,0,0.65)]">
             {copy.title}
             {copy.highlight && (
               <>
