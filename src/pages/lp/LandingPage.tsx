@@ -93,9 +93,14 @@ export default function LandingPage() {
           src={HERO_BG[landing.slug]}
           alt=""
           aria-hidden="true"
-          className="absolute inset-0 h-full w-full object-cover opacity-60"
+          className="absolute inset-0 h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-slate-950/70 to-slate-950/85" />
+        {/* Desktop: directional overlay — dark left for text, photo breathes on the right */}
+        <div className="absolute inset-0 hidden md:block bg-gradient-to-r from-slate-950/85 via-slate-950/55 to-slate-950/15" />
+        {/* Mobile: softer top-down so photo is visible while text stays readable */}
+        <div className="absolute inset-0 md:hidden bg-gradient-to-b from-slate-950/80 via-slate-950/55 to-slate-950/30" />
+        {/* Subtle bottom fade for CTA legibility */}
+        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-slate-950/60 to-transparent" />
         <div className="container relative px-4 text-white">
           <Breadcrumbs items={[{ label: "Услуги", href: "/uslugi" }, { label: landing.h1 }]} />
 
@@ -105,10 +110,10 @@ export default function LandingPage() {
                 <Shield className="h-3.5 w-3.5 text-secondary" />
                 Гарантия до {landing.guaranteeMonths} мес.
               </div>
-              <h1 className="mt-4 text-3xl md:text-5xl font-bold tracking-tight text-white">
+              <h1 className="mt-4 text-3xl md:text-5xl font-bold tracking-tight text-white [text-shadow:0_2px_16px_rgba(0,0,0,0.7)]">
                 {landing.h1}
               </h1>
-              <p className="mt-4 text-lg text-white/85">
+              <p className="mt-4 text-lg text-white/90 [text-shadow:0_1px_8px_rgba(0,0,0,0.6)]">
                 {landing.heroSubtitle}
               </p>
 
