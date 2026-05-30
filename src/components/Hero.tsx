@@ -60,8 +60,8 @@ export default function Hero() {
         />
       ))}
 
-      {/* Gradient overlay: light at top so the specialist photo breathes, dark at bottom for text contrast */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/20 md:bg-black/55 md:bg-none" aria-hidden="true" />
+      {/* Gradient overlay: lighter so photos remain visible, with text-shadow for legibility */}
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/40 to-transparent md:bg-black/30 md:bg-none" aria-hidden="true" />
 
       <div className="container relative px-4">
         <div className="mx-auto max-w-4xl text-center">
