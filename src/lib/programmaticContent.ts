@@ -1,6 +1,14 @@
 // Генератор контента для programmatic-страниц
 
-import { MatrixEntry } from "@/data/programmaticMatrix";
+import {
+  MatrixEntry,
+  getObjectAccusative,
+  getObjectGenitive,
+  getObjectLocative,
+  getObjectNominative,
+  getServiceAccusative,
+  getServiceGenitive,
+} from "@/data/programmaticMatrix";
 import { SITE_CONFIG } from "@/data/siteConfig";
 import { getDistrictBySlug } from "@/data/districts";
 
@@ -11,30 +19,53 @@ const getDistrictLocative = (entry: MatrixEntry): string => {
   return district?.nameLocative || entry.districtName || SITE_CONFIG.regionPrepositional;
 };
 
+// Родительный множественного для "владельцев X"
+const OBJECT_GENITIVE_PLURAL: Record<string, string> = {
+  "квартира": "квартир",
+  "частный дом": "частных домов",
+  "ресторан": "ресторанов",
+  "офис": "офисов",
+  "склад": "складов",
+  "участок": "участков",
+  "автомобиль": "автомобилей",
+  "дача": "дач",
+  "общежитие": "общежитий",
+  "гостиница": "гостиниц",
+  "кафе": "кафе",
+  "магазин": "магазинов",
+};
+
+const getObjectGenitivePlural = (entry: MatrixEntry): string =>
+  OBJECT_GENITIVE_PLURAL[entry.objectName.toLowerCase()] || getObjectGenitive(entry);
+
 // Генерация H1
 export const generateH1 = (entry: MatrixEntry): string => {
   const districtLocative = getDistrictLocative(entry);
-  
+  const objLoc = getObjectLocative(entry);
+  const objAcc = getObjectAccusative(entry);
+  const svc = entry.serviceName;
+  const svcLower = svc.toLowerCase();
+
   const templates = {
     withPestAndDistrict: [
-      `${entry.pestName} в ${entry.objectName}е: профессиональная ${entry.serviceName.toLowerCase()} в ${districtLocative}`,
-      `Уничтожение ${getPestGenitive(entry.pestName)} в ${entry.objectName}е — ${entry.districtName}`,
-      `${entry.serviceName} от ${getPestGenitive(entry.pestName)} в ${entry.objectName}е (${entry.districtName})`,
+      `${entry.pestName} в ${objLoc}: профессиональная ${svcLower} в ${districtLocative}`,
+      `Уничтожение ${getPestGenitive(entry.pestName)} в ${objLoc} — ${entry.districtName}`,
+      `${svc} от ${getPestGenitive(entry.pestName)} в ${objLoc} (${entry.districtName})`,
     ],
     withPestNoDistrict: [
-      `${entry.pestName} в ${entry.objectName}е: ${entry.serviceName.toLowerCase()} в ${SITE_CONFIG.regionPrepositional}`,
-      `Уничтожение ${getPestGenitive(entry.pestName)} в ${entry.objectName}е — СЭС ${SITE_CONFIG.companyName}`,
-      `${entry.serviceName} от ${getPestGenitive(entry.pestName)}: обработка ${entry.objectName}ы`,
+      `${entry.pestName} в ${objLoc}: ${svcLower} в ${SITE_CONFIG.regionPrepositional}`,
+      `Уничтожение ${getPestGenitive(entry.pestName)} в ${objLoc} — СЭС «${SITE_CONFIG.companyName}»`,
+      `${svc} от ${getPestGenitive(entry.pestName)}: обработка ${getObjectGenitive(entry)}`,
     ],
     noPestWithDistrict: [
-      `${entry.serviceName} ${entry.objectName}ы в ${districtLocative} — СЭС ${SITE_CONFIG.companyName}`,
-      `Обработка ${entry.objectName}ы: ${entry.serviceName.toLowerCase()} в ${districtLocative}`,
-      `СЭС ${entry.districtName}: ${entry.serviceName.toLowerCase()} ${entry.objectName}ы`,
+      `${svc} ${getObjectGenitive(entry)} в ${districtLocative} — СЭС «${SITE_CONFIG.companyName}»`,
+      `Обработка ${getObjectGenitive(entry)}: ${svcLower} в ${districtLocative}`,
+      `СЭС ${entry.districtName}: ${svcLower} ${getObjectGenitive(entry)}`,
     ],
     noPestNoDistrict: [
-      `${entry.serviceName} ${entry.objectName}ы в ${SITE_CONFIG.regionPrepositional} — профессиональная обработка`,
-      `${entry.serviceName} ${entry.objectName}ы: вызов СЭС в ${SITE_CONFIG.regionPrepositional}`,
-      `Профессиональная ${entry.serviceName.toLowerCase()} ${entry.objectName}ы — ${SITE_CONFIG.companyName}`,
+      `${svc} ${getObjectGenitive(entry)} в ${SITE_CONFIG.regionPrepositional} — профессиональная обработка`,
+      `${svc} ${getObjectGenitive(entry)}: вызов СЭС в ${SITE_CONFIG.regionPrepositional}`,
+      `Профессиональная ${svcLower} ${getObjectGenitive(entry)} — ${SITE_CONFIG.companyName}`,
     ],
   };
 
@@ -49,49 +80,56 @@ export const generateH1 = (entry: MatrixEntry): string => {
     templateList = templates.noPestNoDistrict;
   }
 
-  // Выбираем случайный шаблон на основе hash от mainKeyword для консистентности
   const hash = entry.mainKeyword.split("").reduce((a, b) => a + b.charCodeAt(0), 0);
   return templateList[hash % templateList.length];
+  // suppress unused warnings
+  void objAcc;
 };
 
 // Генерация вступления
 export const generateIntro = (entry: MatrixEntry): string => {
   const districtLocative = getDistrictLocative(entry);
-  const location = entry.districtSlug 
-    ? `в ${districtLocative} (${SITE_CONFIG.region})` 
+  const location = entry.districtSlug
+    ? `в ${districtLocative} (${SITE_CONFIG.region})`
     : `в ${SITE_CONFIG.regionPrepositional} и области`;
-    
-  const pestMention = entry.pestName 
-    ? `${entry.pestName} — одна из самых частых проблем` 
+
+  const pestMention = entry.pestName
+    ? `${entry.pestName} — одна из самых частых проблем`
     : "Насекомые и грызуны";
 
+  const svcLower = entry.serviceName.toLowerCase();
+  const objGen = getObjectGenitive(entry);
+
   if (entry.pestSlug) {
-    return `${pestMention} для владельцев ${getObjectGenitive(entry.objectName)} ${location}. Мы — СЭС «${SITE_CONFIG.companyName}» — специализируемся на профессиональном уничтожении вредителей с 2015 года. ${entry.secondaryKeywords[0] ? `Наши клиенты часто ищут: «${entry.secondaryKeywords[0]}» — и находят решение у нас.` : ""}\n\nПрофессиональная ${entry.serviceName.toLowerCase()} ${entry.objectName}ы позволяет избавиться от ${getPestGenitive(entry.pestName)} за одну обработку с гарантией результата. Мы используем сертифицированные препараты и современное оборудование.`;
+    return `${pestMention} для владельцев ${getObjectGenitivePlural(entry)} ${location}. Мы — СЭС «${SITE_CONFIG.companyName}» — специализируемся на профессиональном уничтожении вредителей с 2015 года. ${entry.secondaryKeywords[0] ? `Наши клиенты часто ищут: «${entry.secondaryKeywords[0]}» — и находят решение у нас.` : ""}\n\nПрофессиональная ${svcLower} ${objGen} позволяет избавиться от ${getPestGenitive(entry.pestName)} за одну обработку с гарантией результата. Мы используем сертифицированные препараты и современное оборудование.`;
   }
 
-  return `Профессиональная ${entry.serviceName.toLowerCase()} ${entry.objectName}ы ${location} — это комплексная обработка от насекомых и других вредителей. СЭС «${SITE_CONFIG.companyName}» работает с 2015 года и гарантирует результат.\n\nМы используем сертифицированные препараты, безопасные для людей и домашних животных. ${entry.secondaryKeywords[0] ? `Клиенты часто обращаются к нам с запросом «${entry.secondaryKeywords[0]}» — мы решаем эту задачу профессионально.` : ""}`;
+  return `Профессиональная ${svcLower} ${objGen} ${location} — это комплексная обработка от насекомых и других вредителей. СЭС «${SITE_CONFIG.companyName}» работает с 2015 года и гарантирует результат.\n\nМы используем сертифицированные препараты, безопасные для людей и домашних животных. ${entry.secondaryKeywords[0] ? `Клиенты часто обращаются к нам с запросом «${entry.secondaryKeywords[0]}» — мы решаем эту задачу профессионально.` : ""}`;
 };
 
 // Генерация блока "Ситуация"
 export const generateSituation = (entry: MatrixEntry): string => {
+  const objLoc = getObjectLocative(entry);
+  const svcLower = entry.serviceName.toLowerCase();
+
   if (!entry.pestSlug) {
-    return `${getObjectNominative(entry.objectName)} требует регулярной санитарной обработки для поддержания гигиены и соответствия нормам СанПиН. Даже при отсутствии видимых вредителей профилактическая ${entry.serviceName.toLowerCase()} защитит помещение от потенциального заражения.`;
+    return `${getObjectNominative(entry)} требует регулярной санитарной обработки для поддержания гигиены и соответствия нормам СанПиН. Даже при отсутствии видимых вредителей профилактическая ${svcLower} защитит помещение от потенциального заражения.`;
   }
 
   const situations: Record<string, (entry: MatrixEntry) => string> = {
-    klopy: (e) => `Постельные клопы в ${e.objectName}е — это не только дискомфорт от укусов, но и серьёзный риск для здоровья. ${e.districtSlug ? `В ${e.districtName}е клопы часто распространяются через старый жилфонд и вентиляцию.` : "Клопы быстро размножаются и могут заразить соседние помещения."}\n\nУкусы клопов вызывают аллергические реакции, бессонницу, нервные расстройства. Самостоятельная борьба неэффективна — насекомые прячутся в труднодоступных местах и быстро вырабатывают устойчивость к бытовым средствам.`,
-    
-    tarakany: (e) => `Тараканы в ${e.objectName}е — переносчики более 40 видов опасных заболеваний, включая дизентерию, сальмонеллёз, гельминтозы. ${e.districtSlug ? `В ${e.districtName}е тараканы активно мигрируют между помещениями через коммуникации.` : "Одна самка таракана за год производит до 800 потомков."}\n\nДля ${e.objectSlug === "restoran" ? "ресторанов и кафе появление тараканов грозит штрафами Роспотребнадзора до 1 млн рублей и закрытием заведения" : "жилых помещений тараканы создают антисанитарные условия и портят продукты"}.`,
-    
-    krysy: (e) => `Крысы на ${e.objectSlug === "sklad" ? "складе" : e.objectName}е — это не только порча имущества и продуктов, но и опасные заболевания: лептоспироз, чума, туляремия, бешенство. ${e.districtSlug ? `В ${e.districtName}е крысы обитают вблизи пищевых производств и складов.` : ""}\n\nКрысы повреждают электропроводку (риск пожара), портят упаковку и товары, загрязняют помещения экскрементами. Самостоятельная борьба малоэффективна — нужна профессиональная дератизация.`,
-    
-    myshi: (e) => `Мыши в ${e.objectName}е активизируются в холодный сезон, проникая в помещения в поисках тепла и пищи. ${e.districtSlug ? `В ${e.districtName}е это особенно актуально для частного сектора и первых этажей многоэтажек.` : ""}\n\nПомимо порчи продуктов и имущества, мыши переносят опасные заболевания и аллергены. Грызуны размножаются очень быстро — одна пара за год может дать до 2000 потомков.`,
-    
-    blohi: (e) => `Блохи в ${e.objectName}е появляются от домашних животных, из подвалов или от соседей. Укусы блох болезненны и вызывают сильный зуд, а сами насекомые переносят опасные заболевания.\n\nОсобенно опасны блохи для детей и людей с аллергией. Без профессиональной обработки вывести блох практически невозможно — они откладывают яйца в щелях, коврах, мягкой мебели.`,
-    
-    muravi: (e) => `Муравьи в ${e.objectName}е — это колония с тысячами особей и маткой, которая прячется в труднодоступном месте. ${e.districtSlug ? `В ${e.districtName}е муравьи часто проникают из соседних помещений или с улицы.` : ""}\n\nМуравьи портят продукты, могут повреждать электроприборы, разносят бактерии. Обычные средства уничтожают только рабочих особей, но колония быстро восстанавливается.`,
-    
-    kleshchi: (e) => `Клещи на ${e.objectSlug === "uchastok" ? "участке" : e.objectName}е — серьёзная угроза здоровью. ${e.districtSlug ? `${e.districtName} входит в зону повышенной активности клещей.` : "Новосибирская область — эндемичный регион по клещевому энцефалиту."}\n\nКлещи переносят энцефалит, боррелиоз и другие опасные заболевания. Пик активности — май-июнь, но обработка рекомендуется с апреля для максимальной защиты.`,
+    klopy: (e) => `Постельные клопы в ${getObjectLocative(e)} — это не только дискомфорт от укусов, но и серьёзный риск для здоровья. ${e.districtSlug ? `В ${getDistrictLocative(e)} клопы часто распространяются через старый жилфонд и вентиляцию.` : "Клопы быстро размножаются и могут заразить соседние помещения."}\n\nУкусы клопов вызывают аллергические реакции, бессонницу, нервные расстройства. Самостоятельная борьба неэффективна — насекомые прячутся в труднодоступных местах и быстро вырабатывают устойчивость к бытовым средствам.`,
+
+    tarakany: (e) => `Тараканы в ${getObjectLocative(e)} — переносчики более 40 видов опасных заболеваний, включая дизентерию, сальмонеллёз, гельминтозы. ${e.districtSlug ? `В ${getDistrictLocative(e)} тараканы активно мигрируют между помещениями через коммуникации.` : "Одна самка таракана за год производит до 800 потомков."}\n\nДля ${e.objectSlug === "restoran" ? "ресторанов и кафе появление тараканов грозит штрафами Роспотребнадзора до 1 млн рублей и закрытием заведения" : "жилых помещений тараканы создают антисанитарные условия и портят продукты"}.`,
+
+    krysy: (e) => `Крысы ${e.objectSlug === "sklad" || e.objectSlug === "uchastok" ? "на" : "в"} ${e.objectSlug === "sklad" ? "складе" : e.objectSlug === "uchastok" ? "участке" : getObjectLocative(e)} — это не только порча имущества и продуктов, но и опасные заболевания: лептоспироз, чума, туляремия, бешенство. ${e.districtSlug ? `В ${getDistrictLocative(e)} крысы обитают вблизи пищевых производств и складов.` : ""}\n\nКрысы повреждают электропроводку (риск пожара), портят упаковку и товары, загрязняют помещения экскрементами. Самостоятельная борьба малоэффективна — нужна профессиональная дератизация.`,
+
+    myshi: (e) => `Мыши в ${getObjectLocative(e)} активизируются в холодный сезон, проникая в помещения в поисках тепла и пищи. ${e.districtSlug ? `В ${getDistrictLocative(e)} это особенно актуально для частного сектора и первых этажей многоэтажек.` : ""}\n\nПомимо порчи продуктов и имущества, мыши переносят опасные заболевания и аллергены. Грызуны размножаются очень быстро — одна пара за год может дать до 2000 потомков.`,
+
+    blohi: (e) => `Блохи в ${getObjectLocative(e)} появляются от домашних животных, из подвалов или от соседей. Укусы блох болезненны и вызывают сильный зуд, а сами насекомые переносят опасные заболевания.\n\nОсобенно опасны блохи для детей и людей с аллергией. Без профессиональной обработки вывести блох практически невозможно — они откладывают яйца в щелях, коврах, мягкой мебели.`,
+
+    muravi: (e) => `Муравьи в ${getObjectLocative(e)} — это колония с тысячами особей и маткой, которая прячется в труднодоступном месте. ${e.districtSlug ? `В ${getDistrictLocative(e)} муравьи часто проникают из соседних помещений или с улицы.` : ""}\n\nМуравьи портят продукты, могут повреждать электроприборы, разносят бактерии. Обычные средства уничтожают только рабочих особей, но колония быстро восстанавливается.`,
+
+    kleshchi: (e) => `Клещи ${e.objectSlug === "uchastok" ? "на участке" : `в ${getObjectLocative(e)}`} — серьёзная угроза здоровью. ${e.districtSlug ? `${e.districtName} входит в зону повышенной активности клещей.` : "Новосибирская область — эндемичный регион по клещевому энцефалиту."}\n\nКлещи переносят энцефалит, боррелиоз и другие опасные заболевания. Пик активности — май-июнь, но обработка рекомендуется с апреля для максимальной защиты.`,
   };
 
   const generator = situations[entry.pestSlug!];
@@ -99,18 +137,20 @@ export const generateSituation = (entry: MatrixEntry): string => {
     return generator(entry);
   }
 
-  return `${entry.pestName} в ${entry.objectName}е создают антисанитарные условия и угрожают здоровью людей. Профессиональная ${entry.serviceName.toLowerCase()} — единственный надёжный способ избавиться от вредителей с гарантией результата.`;
+  return `${entry.pestName} в ${objLoc} создают антисанитарные условия и угрожают здоровью людей. Профессиональная ${svcLower} — единственный надёжный способ избавиться от вредителей с гарантией результата.`;
 };
 
 // Генерация блока "Как проходит обработка"
 export const generateTreatmentSteps = (entry: MatrixEntry): { step: number; title: string; description: string }[] => {
   const pestSpecific = entry.pestSlug ? ` от ${getPestGenitive(entry.pestName)}` : "";
-  
+  const objAcc = getObjectAccusative(entry);
+  const svcAcc = getServiceAccusative(entry);
+
   return [
     {
       step: 1,
       title: "Осмотр и диагностика",
-      description: `Специалист осматривает ${entry.objectName}у, определяет ${entry.pestSlug ? `места скопления ${getPestGenitive(entry.pestName)}` : "тип и степень заражения"}, оценивает площадь обработки. На основе осмотра подбирается оптимальный метод и препараты.`,
+      description: `Специалист осматривает ${objAcc}, определяет ${entry.pestSlug ? `места скопления ${getPestGenitive(entry.pestName)}` : "тип и степень заражения"}, оценивает площадь обработки. На основе осмотра подбирается оптимальный метод и препараты.`,
     },
     {
       step: 2,
@@ -120,12 +160,12 @@ export const generateTreatmentSteps = (entry: MatrixEntry): { step: number; titl
     {
       step: 3,
       title: "Основная обработка",
-      description: `Проводим ${entry.serviceName.toLowerCase()}у${pestSpecific} методом холодного или горячего тумана. Обрабатываем все поверхности, щели, труднодоступные места. Используем сертифицированные препараты IV класса опасности.`,
+      description: `Проводим ${svcAcc}${pestSpecific} методом холодного или горячего тумана. Обрабатываем все поверхности, щели, труднодоступные места. Используем сертифицированные препараты IV класса опасности.`,
     },
     {
       step: 4,
       title: "Барьерная защита",
-      description: `После основной обработки наносим барьерные препараты длительного действия. Они защитят ${entry.objectName}у от повторного заражения и уничтожат особей, которые могли выжить или вылупиться позже.`,
+      description: `После основной обработки наносим барьерные препараты длительного действия. Они защитят ${objAcc} от повторного заражения и уничтожат особей, которые могли выжить или вылупиться позже.`,
     },
     {
       step: 5,
@@ -137,22 +177,22 @@ export const generateTreatmentSteps = (entry: MatrixEntry): { step: number; titl
 
 // Генерация блока "Цены и сроки"
 export const generatePricing = (entry: MatrixEntry): { text: string; factors: string[] } => {
-  const priceFrom = entry.priceFrom || 2500;
+  const priceFrom = entry.priceFrom || 1500;
   const objectPrices: Record<string, string> = {
     kvartira: `от ${priceFrom}₽ за однокомнатную квартиру`,
-    dom: `от ${Math.round(priceFrom * 1.5)}₽ за дом до 100 м²`,
-    restoran: `от ${Math.round(priceFrom * 2)}₽ за помещение до 50 м²`,
-    ofis: `от ${Math.round(priceFrom * 1.2)}₽ за офис до 50 м²`,
-    sklad: `от ${Math.round(priceFrom * 2)}₽ за склад до 200 м²`,
-    uchastok: `от ${priceFrom}₽ за 6 соток`,
-    avtomobil: `от ${Math.round(priceFrom * 0.6)}₽ за легковой автомобиль`,
+    dom: `от ${priceFrom}₽ за дом до 100 м²`,
+    restoran: `от ${priceFrom}₽ за помещение до 50 м²`,
+    ofis: `от ${priceFrom}₽ за офис до 50 м²`,
+    sklad: `от ${priceFrom}₽ за склад до 200 м²`,
+    uchastok: `от ${priceFrom}₽ за участок до 6 соток`,
+    avtomobil: `от ${priceFrom}₽ за легковой автомобиль`,
   };
 
   const price = objectPrices[entry.objectSlug] || `от ${priceFrom}₽`;
   const districtLocative = getDistrictLocative(entry);
 
   return {
-    text: `Стоимость ${entry.serviceName.toLowerCase()}и ${entry.objectName}ы${entry.pestSlug ? ` от ${getPestGenitive(entry.pestName)}` : ""} ${entry.districtSlug ? `в ${districtLocative}` : `в ${SITE_CONFIG.regionPrepositional}`}: **${price}**. Выезд бесплатный. Точную стоимость назовём после осмотра — она зависит от площади, степени заражения и выбранного метода обработки.`,
+    text: `Стоимость ${getServiceGenitive(entry)} ${getObjectGenitive(entry)}${entry.pestSlug ? ` от ${getPestGenitive(entry.pestName)}` : ""} ${entry.districtSlug ? `в ${districtLocative}` : `в ${SITE_CONFIG.regionPrepositional}`}: **${price}**. Выезд бесплатный. Точную стоимость назовём после осмотра — она зависит от площади, степени заражения и выбранного метода обработки.`,
     factors: [
       "Площадь помещения (м²)",
       entry.pestSlug ? `Степень заражения ${getPestGenitive(entry.pestName).toLowerCase()}` : "Тип обработки",
@@ -167,22 +207,21 @@ export const generatePricing = (entry: MatrixEntry): { text: string; factors: st
 export const generateGuarantee = (entry: MatrixEntry): string => {
   const days = entry.guaranteeDays || 90;
   const months = Math.round(days / 30);
-  
-  return `На ${entry.serviceName.toLowerCase()}у ${entry.objectName}ы${entry.pestSlug ? ` от ${getPestGenitive(entry.pestName)}` : ""} предоставляем гарантию **${months} ${getMonthWord(months)}**. Если в течение гарантийного срока ${entry.pestSlug ? entry.pestName.toLowerCase() : "вредители"} появятся снова — проведём повторную обработку бесплатно.\n\nГарантия действует при соблюдении рекомендаций специалиста по уборке и профилактике. Выдаём акт выполненных работ и договор.`;
+
+  return `На ${getServiceAccusative(entry)} ${getObjectGenitive(entry)}${entry.pestSlug ? ` от ${getPestGenitive(entry.pestName)}` : ""} предоставляем гарантию **${months} ${getMonthWord(months)}**. Если в течение гарантийного срока ${entry.pestSlug ? entry.pestName!.toLowerCase() : "вредители"} появятся снова — проведём повторную обработку бесплатно.\n\nГарантия действует при соблюдении рекомендаций специалиста по уборке и профилактике. Выдаём акт выполненных работ и договор.`;
 };
 
 // Генерация FAQ
 export const generateFAQ = (entry: MatrixEntry): { question: string; answer: string }[] => {
-  const location = entry.districtSlug ? entry.districtName : SITE_CONFIG.region;
   const pestMention = entry.pestName ? entry.pestName.toLowerCase() : "насекомых";
   const districtLocative = getDistrictLocative(entry);
-  
+
   const faq: { question: string; answer: string }[] = [];
 
   // Цена
   faq.push({
-    question: `Сколько стоит ${entry.serviceName.toLowerCase()} ${entry.objectName}ы ${entry.districtSlug ? `в ${districtLocative}` : `в ${SITE_CONFIG.regionPrepositional}`}?`,
-    answer: `Стоимость зависит от площади и степени заражения. Минимальная цена — от ${entry.priceFrom || 2500}₽. Выезд бесплатный. Точную стоимость назовём после осмотра или по телефону после уточнения деталей.`,
+    question: `Сколько стоит ${entry.serviceName.toLowerCase()} ${getObjectGenitive(entry)} ${entry.districtSlug ? `в ${districtLocative}` : `в ${SITE_CONFIG.regionPrepositional}`}?`,
+    answer: `Стоимость зависит от площади и степени заражения. Минимальная цена — от ${entry.priceFrom || 1500}₽. Выезд бесплатный. Точную стоимость назовём после осмотра или по телефону после уточнения деталей.`,
   });
 
   // Безопасность
@@ -193,21 +232,21 @@ export const generateFAQ = (entry: MatrixEntry): { question: string; answer: str
 
   // Время
   faq.push({
-    question: `Как быстро приедете ${entry.districtSlug ? `в ${entry.districtName}` : "по вызову"}?`,
-    answer: entry.districtSlug 
+    question: `Как быстро приедете ${entry.districtSlug ? `в ${districtLocative}` : "по вызову"}?`,
+    answer: entry.districtSlug
       ? `Время выезда в ${entry.districtName} — от 30 до 90 минут в зависимости от загруженности. Для срочных случаев есть экстренный выезд. Работаем ежедневно, включая выходные.`
       : `Стандартное время выезда — от 30 минут до 2 часов. Есть экстренный выезд при срочной необходимости. Работаем ежедневно, включая выходные.`,
   });
 
   // Гарантия
   faq.push({
-    question: `Что входит в гарантию на ${entry.serviceName.toLowerCase()}у?`,
+    question: `Что входит в гарантию на ${getServiceAccusative(entry)}?`,
     answer: `Гарантия ${entry.guaranteeDays ? Math.round(entry.guaranteeDays / 30) : 3} месяца. Если ${pestMention} появятся снова — приедем бесплатно и проведём повторную обработку. Выдаём договор и акт выполненных работ.`,
   });
 
   // Подготовка
   faq.push({
-    question: `Как подготовить ${entry.objectName}у к обработке?`,
+    question: `Как подготовить ${getObjectAccusative(entry)} к обработке?`,
     answer: `Уберите продукты питания и посуду, отодвиньте мебель от стен для доступа к плинтусам, выведите людей и домашних животных. После обработки — проветрите 2-4 часа и проведите влажную уборку открытых поверхностей.`,
   });
 
@@ -241,32 +280,6 @@ function getPestGenitive(pestName?: string): string {
     "Мыши": "мышей",
   };
   return pestName ? (genitive[pestName] || pestName.toLowerCase()) : "вредителей";
-}
-
-function getObjectGenitive(objectName: string): string {
-  const genitive: Record<string, string> = {
-    "квартира": "квартир",
-    "частный дом": "частных домов",
-    "ресторан": "ресторанов",
-    "офис": "офисов",
-    "склад": "складов",
-    "участок": "участков",
-    "автомобиль": "автомобилей",
-  };
-  return genitive[objectName] || objectName;
-}
-
-function getObjectNominative(objectName: string): string {
-  const nominative: Record<string, string> = {
-    "квартира": "Квартира",
-    "частный дом": "Частный дом",
-    "ресторан": "Ресторан",
-    "офис": "Офис",
-    "склад": "Склад",
-    "участок": "Участок",
-    "автомобиль": "Автомобиль",
-  };
-  return nominative[objectName] || objectName;
 }
 
 function getMonthWord(months: number): string {
