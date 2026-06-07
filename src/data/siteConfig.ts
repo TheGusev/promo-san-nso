@@ -40,7 +40,7 @@ export const SITE_CONFIG = {
   region: "Новосибирск",
   regionGenitive: "Новосибирска",
   regionPrepositional: "Новосибирске",
-  regionFull: "Новосибирск и Новосибирская область",
+  regionFull: "Новосибирску и Новосибирской области",
   
   // Юридические данные
   inn: "5410169338",
