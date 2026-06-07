@@ -44,41 +44,64 @@ export const generateComboSlug = (entry: MatrixEntry): string => {
   return parts.join("-");
 };
 
-// Helper-функции для падежей
-const GENITIVE_MAP: Record<string, string> = {
-  'квартира': 'квартиры',
-  'частный дом': 'частного дома',
-  'склад': 'склада',
-  'ресторан': 'ресторана',
-  'офис': 'офиса',
-  'участок': 'участка',
-  'дача': 'дачи',
-  'общежитие': 'общежития',
-  'гостиница': 'гостиницы',
-  'кафе': 'кафе',
-  'магазин': 'магазина',
-  'производство': 'производства',
-  'детский сад': 'детского сада',
-  'школа': 'школы',
-  'больница': 'больницы',
+// Helper-функции для падежей объектов и услуг
+type CaseForm = {
+  nominative: string;
+  genitive: string;
+  accusative: string;
+  dative: string;
+  locative: string; // предложный (в …е/у)
 };
 
-const ACCUSATIVE_MAP: Record<string, string> = {
-  'Дезинсекция': 'дезинсекцию',
-  'Дератизация': 'дератизацию',
-  'Дезинфекция': 'дезинфекцию',
-  'Озонирование': 'озонирование',
-  'Дезодорация': 'дезодорацию',
+const OBJECT_CASES: Record<string, CaseForm> = {
+  'квартира':    { nominative: 'квартира',    genitive: 'квартиры',     accusative: 'квартиру',   dative: 'квартире',     locative: 'квартире' },
+  'частный дом': { nominative: 'частный дом', genitive: 'частного дома',accusative: 'частный дом',dative: 'частному дому',locative: 'частном доме' },
+  'дом':         { nominative: 'дом',         genitive: 'дома',         accusative: 'дом',        dative: 'дому',         locative: 'доме' },
+  'склад':       { nominative: 'склад',       genitive: 'склада',       accusative: 'склад',      dative: 'складу',       locative: 'складе' },
+  'ресторан':    { nominative: 'ресторан',    genitive: 'ресторана',    accusative: 'ресторан',   dative: 'ресторану',    locative: 'ресторане' },
+  'офис':        { nominative: 'офис',        genitive: 'офиса',        accusative: 'офис',       dative: 'офису',        locative: 'офисе' },
+  'участок':     { nominative: 'участок',     genitive: 'участка',      accusative: 'участок',    dative: 'участку',      locative: 'участке' },
+  'автомобиль':  { nominative: 'автомобиль',  genitive: 'автомобиля',   accusative: 'автомобиль', dative: 'автомобилю',   locative: 'автомобиле' },
+  'дача':        { nominative: 'дача',        genitive: 'дачи',         accusative: 'дачу',       dative: 'даче',         locative: 'даче' },
+  'общежитие':   { nominative: 'общежитие',   genitive: 'общежития',    accusative: 'общежитие',  dative: 'общежитию',    locative: 'общежитии' },
+  'гостиница':   { nominative: 'гостиница',   genitive: 'гостиницы',    accusative: 'гостиницу',  dative: 'гостинице',    locative: 'гостинице' },
+  'кафе':        { nominative: 'кафе',        genitive: 'кафе',         accusative: 'кафе',       dative: 'кафе',         locative: 'кафе' },
+  'магазин':     { nominative: 'магазин',     genitive: 'магазина',     accusative: 'магазин',    dative: 'магазину',     locative: 'магазине' },
 };
 
-export const getObjectGenitive = (entry: MatrixEntry): string => {
+type ServiceForm = {
+  nominative: string;
+  accusative: string;
+  genitive: string;
+  dative: string;
+};
+
+const SERVICE_CASES: Record<string, ServiceForm> = {
+  'Дезинсекция':  { nominative: 'Дезинсекция',  accusative: 'дезинсекцию',  genitive: 'дезинсекции',  dative: 'дезинсекции' },
+  'Дератизация':  { nominative: 'Дератизация',  accusative: 'дератизацию',  genitive: 'дератизации',  dative: 'дератизации' },
+  'Дезинфекция':  { nominative: 'Дезинфекция',  accusative: 'дезинфекцию',  genitive: 'дезинфекции',  dative: 'дезинфекции' },
+  'Озонирование': { nominative: 'Озонирование', accusative: 'озонирование', genitive: 'озонирования', dative: 'озонированию' },
+  'Дезодорация':  { nominative: 'Дезодорация',  accusative: 'дезодорацию',  genitive: 'дезодорации',  dative: 'дезодорации' },
+};
+
+const getObjectForm = (entry: MatrixEntry): CaseForm => {
   const obj = entry.objectName.toLowerCase();
-  return GENITIVE_MAP[obj] || entry.objectName;
+  return OBJECT_CASES[obj] || { nominative: entry.objectName, genitive: entry.objectName, accusative: entry.objectName, dative: entry.objectName, locative: entry.objectName };
 };
 
-export const getServiceAccusative = (entry: MatrixEntry): string => {
-  return ACCUSATIVE_MAP[entry.serviceName] || entry.serviceName.toLowerCase();
+const getServiceForm = (entry: MatrixEntry): ServiceForm => {
+  return SERVICE_CASES[entry.serviceName] || { nominative: entry.serviceName, accusative: entry.serviceName.toLowerCase(), genitive: entry.serviceName.toLowerCase(), dative: entry.serviceName.toLowerCase() };
 };
+
+export const getObjectNominative = (entry: MatrixEntry): string => getObjectForm(entry).nominative;
+export const getObjectGenitive   = (entry: MatrixEntry): string => getObjectForm(entry).genitive;
+export const getObjectAccusative = (entry: MatrixEntry): string => getObjectForm(entry).accusative;
+export const getObjectDative     = (entry: MatrixEntry): string => getObjectForm(entry).dative;
+export const getObjectLocative   = (entry: MatrixEntry): string => getObjectForm(entry).locative;
+
+export const getServiceAccusative = (entry: MatrixEntry): string => getServiceForm(entry).accusative;
+export const getServiceGenitive   = (entry: MatrixEntry): string => getServiceForm(entry).genitive;
+export const getServiceDative     = (entry: MatrixEntry): string => getServiceForm(entry).dative;
 
 // Примеры записей матрицы (расширяемо)
 export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
