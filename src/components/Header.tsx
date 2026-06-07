@@ -27,12 +27,12 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" role="banner">
       <div className="container flex h-16 items-center justify-between px-4">
-        <Link to="/" className="flex items-center gap-2" aria-label="СанРешения — главная страница">
+        <Link to="/" className="flex items-center gap-2" aria-label="Санитарные Решения — главная страница">
           <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-gradient-hero">
             <span className="text-base sm:text-xl font-bold text-primary-foreground">СР</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-xs sm:text-sm font-semibold leading-none">СанРешения</span>
+            <span className="text-xs sm:text-sm font-semibold leading-none">Санитарные Решения</span>
             <span className="text-[10px] sm:text-xs text-muted-foreground">Дезинфекция • Новосибирск</span>
           </div>
         </Link>
@@ -77,13 +77,13 @@ export default function Header() {
         <div className="flex items-center gap-3">
           <ThemeToggle />
           <a 
-            href="tel:+73833122330" 
+            href="tel:+79069989888" 
             className="hidden sm:flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors"
             onClick={handlePhoneClick}
-            aria-label="Позвонить: +7 (383) 312-23-30"
+            aria-label="Позвонить: +7 (906) 998-98-88"
           >
             <Phone className="h-4 w-4" />
-            <span>+7 (383) 312-23-30</span>
+            <span>+7 (906) 998-98-88</span>
           </a>
           <Button 
             size="sm" 

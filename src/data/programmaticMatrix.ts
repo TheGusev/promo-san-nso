@@ -44,41 +44,64 @@ export const generateComboSlug = (entry: MatrixEntry): string => {
   return parts.join("-");
 };
 
-// Helper-функции для падежей
-const GENITIVE_MAP: Record<string, string> = {
-  'квартира': 'квартиры',
-  'частный дом': 'частного дома',
-  'склад': 'склада',
-  'ресторан': 'ресторана',
-  'офис': 'офиса',
-  'участок': 'участка',
-  'дача': 'дачи',
-  'общежитие': 'общежития',
-  'гостиница': 'гостиницы',
-  'кафе': 'кафе',
-  'магазин': 'магазина',
-  'производство': 'производства',
-  'детский сад': 'детского сада',
-  'школа': 'школы',
-  'больница': 'больницы',
+// Helper-функции для падежей объектов и услуг
+type CaseForm = {
+  nominative: string;
+  genitive: string;
+  accusative: string;
+  dative: string;
+  locative: string; // предложный (в …е/у)
 };
 
-const ACCUSATIVE_MAP: Record<string, string> = {
-  'Дезинсекция': 'дезинсекцию',
-  'Дератизация': 'дератизацию',
-  'Дезинфекция': 'дезинфекцию',
-  'Озонирование': 'озонирование',
-  'Дезодорация': 'дезодорацию',
+const OBJECT_CASES: Record<string, CaseForm> = {
+  'квартира':    { nominative: 'квартира',    genitive: 'квартиры',     accusative: 'квартиру',   dative: 'квартире',     locative: 'квартире' },
+  'частный дом': { nominative: 'частный дом', genitive: 'частного дома',accusative: 'частный дом',dative: 'частному дому',locative: 'частном доме' },
+  'дом':         { nominative: 'дом',         genitive: 'дома',         accusative: 'дом',        dative: 'дому',         locative: 'доме' },
+  'склад':       { nominative: 'склад',       genitive: 'склада',       accusative: 'склад',      dative: 'складу',       locative: 'складе' },
+  'ресторан':    { nominative: 'ресторан',    genitive: 'ресторана',    accusative: 'ресторан',   dative: 'ресторану',    locative: 'ресторане' },
+  'офис':        { nominative: 'офис',        genitive: 'офиса',        accusative: 'офис',       dative: 'офису',        locative: 'офисе' },
+  'участок':     { nominative: 'участок',     genitive: 'участка',      accusative: 'участок',    dative: 'участку',      locative: 'участке' },
+  'автомобиль':  { nominative: 'автомобиль',  genitive: 'автомобиля',   accusative: 'автомобиль', dative: 'автомобилю',   locative: 'автомобиле' },
+  'дача':        { nominative: 'дача',        genitive: 'дачи',         accusative: 'дачу',       dative: 'даче',         locative: 'даче' },
+  'общежитие':   { nominative: 'общежитие',   genitive: 'общежития',    accusative: 'общежитие',  dative: 'общежитию',    locative: 'общежитии' },
+  'гостиница':   { nominative: 'гостиница',   genitive: 'гостиницы',    accusative: 'гостиницу',  dative: 'гостинице',    locative: 'гостинице' },
+  'кафе':        { nominative: 'кафе',        genitive: 'кафе',         accusative: 'кафе',       dative: 'кафе',         locative: 'кафе' },
+  'магазин':     { nominative: 'магазин',     genitive: 'магазина',     accusative: 'магазин',    dative: 'магазину',     locative: 'магазине' },
 };
 
-export const getObjectGenitive = (entry: MatrixEntry): string => {
+type ServiceForm = {
+  nominative: string;
+  accusative: string;
+  genitive: string;
+  dative: string;
+};
+
+const SERVICE_CASES: Record<string, ServiceForm> = {
+  'Дезинсекция':  { nominative: 'Дезинсекция',  accusative: 'дезинсекцию',  genitive: 'дезинсекции',  dative: 'дезинсекции' },
+  'Дератизация':  { nominative: 'Дератизация',  accusative: 'дератизацию',  genitive: 'дератизации',  dative: 'дератизации' },
+  'Дезинфекция':  { nominative: 'Дезинфекция',  accusative: 'дезинфекцию',  genitive: 'дезинфекции',  dative: 'дезинфекции' },
+  'Озонирование': { nominative: 'Озонирование', accusative: 'озонирование', genitive: 'озонирования', dative: 'озонированию' },
+  'Дезодорация':  { nominative: 'Дезодорация',  accusative: 'дезодорацию',  genitive: 'дезодорации',  dative: 'дезодорации' },
+};
+
+const getObjectForm = (entry: MatrixEntry): CaseForm => {
   const obj = entry.objectName.toLowerCase();
-  return GENITIVE_MAP[obj] || entry.objectName;
+  return OBJECT_CASES[obj] || { nominative: entry.objectName, genitive: entry.objectName, accusative: entry.objectName, dative: entry.objectName, locative: entry.objectName };
 };
 
-export const getServiceAccusative = (entry: MatrixEntry): string => {
-  return ACCUSATIVE_MAP[entry.serviceName] || entry.serviceName.toLowerCase();
+const getServiceForm = (entry: MatrixEntry): ServiceForm => {
+  return SERVICE_CASES[entry.serviceName] || { nominative: entry.serviceName, accusative: entry.serviceName.toLowerCase(), genitive: entry.serviceName.toLowerCase(), dative: entry.serviceName.toLowerCase() };
 };
+
+export const getObjectNominative = (entry: MatrixEntry): string => getObjectForm(entry).nominative;
+export const getObjectGenitive   = (entry: MatrixEntry): string => getObjectForm(entry).genitive;
+export const getObjectAccusative = (entry: MatrixEntry): string => getObjectForm(entry).accusative;
+export const getObjectDative     = (entry: MatrixEntry): string => getObjectForm(entry).dative;
+export const getObjectLocative   = (entry: MatrixEntry): string => getObjectForm(entry).locative;
+
+export const getServiceAccusative = (entry: MatrixEntry): string => getServiceForm(entry).accusative;
+export const getServiceGenitive   = (entry: MatrixEntry): string => getServiceForm(entry).genitive;
+export const getServiceDative     = (entry: MatrixEntry): string => getServiceForm(entry).dative;
 
 // Примеры записей матрицы (расширяемо)
 export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
@@ -100,7 +123,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "обработка от клопов квартира центр Новосибирска",
       "вывести клопов Центральный район цена"
     ],
-    priceFrom: 2000,
+    priceFrom: 1500,
     guaranteeDays: 180,
   },
   {
@@ -118,7 +141,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "обработка квартиры от клопов Ленинский",
       "вызвать СЭС от клопов Ленинский район"
     ],
-    priceFrom: 2000,
+    priceFrom: 1500,
     guaranteeDays: 180,
   },
   {
@@ -136,7 +159,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "дезинсекция квартиры от клопов Октябрьский",
       "СЭС от клопов Октябрьский район цена"
     ],
-    priceFrom: 2000,
+    priceFrom: 1500,
     guaranteeDays: 180,
   },
   
@@ -154,7 +177,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "обработка квартиры от клопов СЭС",
       "вывести клопов из квартиры профессионально"
     ],
-    priceFrom: 2000,
+    priceFrom: 1500,
     guaranteeDays: 180,
   },
   
@@ -174,7 +197,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "обработка от тараканов квартира центр",
       "вывести тараканов СЭС Центральный район"
     ],
-    priceFrom: 1600,
+    priceFrom: 1500,
     guaranteeDays: 90,
   },
   {
@@ -190,7 +213,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "обработка квартиры от тараканов СЭС",
       "вывести тараканов профессионально Новосибирск"
     ],
-    priceFrom: 1600,
+    priceFrom: 1500,
     guaranteeDays: 90,
   },
   
@@ -210,7 +233,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "СЭС для ресторанов Центральный район",
       "дезинсекция общепита от тараканов"
     ],
-    priceFrom: 3200,
+    priceFrom: 2000,
     guaranteeDays: 60,
   },
   {
@@ -226,7 +249,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "СЭС для ресторанов Новосибирск",
       "дезинсекция кафе от тараканов"
     ],
-    priceFrom: 3200,
+    priceFrom: 2000,
     guaranteeDays: 60,
   },
   
@@ -244,7 +267,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "травить блох в квартире СЭС",
       "вывести блох из квартиры профессионально"
     ],
-    priceFrom: 2000,
+    priceFrom: 1500,
     guaranteeDays: 90,
   },
   
@@ -262,7 +285,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "обработка от муравьёв СЭС Новосибирск",
       "вывести муравьёв из квартиры"
     ],
-    priceFrom: 1600,
+    priceFrom: 1500,
     guaranteeDays: 90,
   },
   
@@ -280,7 +303,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "обработка дома от муравьёв",
       "вывести садовых муравьёв с участка"
     ],
-    priceFrom: 2800,
+    priceFrom: 2000,
     guaranteeDays: 90,
   },
   
@@ -300,7 +323,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "травить крыс на складе профессионально",
       "борьба с крысами на складе"
     ],
-    priceFrom: 4000,
+    priceFrom: 2400,
     guaranteeDays: 90,
   },
   {
@@ -318,7 +341,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "травить крыс на складе Ленинский район",
       "СЭС от крыс склад Ленинский"
     ],
-    priceFrom: 4000,
+    priceFrom: 2400,
     guaranteeDays: 90,
   },
   
@@ -336,7 +359,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "дератизация частного дома от мышей",
       "вывести мышей из дома профессионально"
     ],
-    priceFrom: 2800,
+    priceFrom: 2000,
     guaranteeDays: 120,
   },
   {
@@ -354,7 +377,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "дератизация дома Академгородок",
       "борьба с мышами Советский район Новосибирск"
     ],
-    priceFrom: 2800,
+    priceFrom: 2000,
     guaranteeDays: 120,
   },
   
@@ -372,7 +395,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "дератизация квартиры от мышей",
       "мыши в квартире что делать Новосибирск"
     ],
-    priceFrom: 2000,
+    priceFrom: 1500,
     guaranteeDays: 90,
   },
   
@@ -390,7 +413,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "дезинфекция квартиры после ремонта",
       "санитарная обработка квартиры СЭС"
     ],
-    priceFrom: 2400,
+    priceFrom: 1500,
     guaranteeDays: 30,
   },
   {
@@ -406,7 +429,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "дезинфекция после ремонта Центральный район",
       "санитарная обработка квартиры центр"
     ],
-    priceFrom: 2400,
+    priceFrom: 1500,
     guaranteeDays: 30,
   },
   
@@ -422,7 +445,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "дезинфекция офисных помещений",
       "обеззараживание офиса после болезни"
     ],
-    priceFrom: 3200,
+    priceFrom: 1800,
     guaranteeDays: 30,
   },
   
@@ -438,7 +461,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "дезинфекция кухни ресторана",
       "обеззараживание общепита СанПиН"
     ],
-    priceFrom: 4000,
+    priceFrom: 2000,
     guaranteeDays: 30,
   },
   
@@ -458,7 +481,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "вызвать СЭС в квартиру Центральный район",
       "уничтожение насекомых в квартире центр"
     ],
-    priceFrom: 2000,
+    priceFrom: 1500,
     guaranteeDays: 90,
   },
   {
@@ -474,7 +497,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "СЭС в квартиру Ленинский район",
       "уничтожение насекомых Ленинский район"
     ],
-    priceFrom: 2000,
+    priceFrom: 1500,
     guaranteeDays: 90,
   },
   
@@ -492,7 +515,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "СЭС от крыс и мышей Бердск",
       "обработка дома от грызунов Бердск цена"
     ],
-    priceFrom: 3200,
+    priceFrom: 2000,
     guaranteeDays: 120,
   },
   
@@ -511,7 +534,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "травить клещей на даче Новосибирск",
       "опрыскивание от клещей участок"
     ],
-    priceFrom: 2400,
+    priceFrom: 2000,
     guaranteeDays: 60,
   },
   {
@@ -529,7 +552,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "травить клещей на участке Академгородок",
       "обработка от клещей дача Советский район"
     ],
-    priceFrom: 2400,
+    priceFrom: 2000,
     guaranteeDays: 60,
   },
   {
@@ -547,7 +570,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "травить клещей Обское море",
       "обработка от клещей Бердск цена"
     ],
-    priceFrom: 2400,
+    priceFrom: 2000,
     guaranteeDays: 60,
   },
   
@@ -564,7 +587,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "удаление запахов озоном квартира",
       "озонирование после ремонта квартира"
     ],
-    priceFrom: 2000,
+    priceFrom: 1500,
     guaranteeDays: 30,
   },
   {
@@ -595,7 +618,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "убрать запах в квартире профессионально",
       "удаление трупного запаха квартира"
     ],
-    priceFrom: 3200,
+    priceFrom: 1500,
     guaranteeDays: 30,
   },
   {
@@ -609,7 +632,7 @@ export const PROGRAMMATIC_MATRIX: MatrixEntry[] = [
       "убрать запах в доме после пожара",
       "удаление запаха плесени в доме"
     ],
-    priceFrom: 4000,
+    priceFrom: 2000,
     guaranteeDays: 30,
   },
 ];

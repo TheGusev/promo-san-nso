@@ -22,7 +22,7 @@ export default function Footer() {
                 <span className="text-xl font-bold text-primary-foreground">СР</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-semibold leading-none">СанРешения</span>
+                <span className="text-sm font-semibold leading-none">Санитарные Решения</span>
                 <span className="text-xs text-muted-foreground">Дезинфекция • Новосибирск</span>
               </div>
             </div>
@@ -57,8 +57,8 @@ export default function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2">
                 <Phone className="h-4 w-4 text-primary mt-0.5" />
-                <a href="tel:+73833122330" className="hover:text-primary transition-colors">
-                  +7 (383) 312-23-30
+                <a href="tel:+79069989888" className="hover:text-primary transition-colors">
+                  +7 (906) 998-98-88
                 </a>
               </li>
               <li className="flex items-start gap-2">

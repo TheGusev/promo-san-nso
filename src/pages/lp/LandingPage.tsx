@@ -301,7 +301,7 @@ export default function LandingPage() {
             >
               <span className="flex items-center gap-3">
                 <ArrowRight className="h-5 w-5 text-primary" />
-                <span className="text-sm font-medium">Все услуги СанРешения</span>
+                <span className="text-sm font-medium">Все услуги Санитарные Решения</span>
               </span>
               <ChevronRight className="h-5 w-5 text-muted-foreground" />
             </Link>
