@@ -93,7 +93,7 @@ export default function BlogIndex() {
           <h1 className="mt-3 text-3xl font-bold tracking-tight text-white md:text-5xl lg:text-6xl">
             Блог{" "}
             <span className="bg-gradient-to-r from-primary via-cyan-300 to-secondary bg-clip-text text-transparent">
-              СанРешения
+              Санитарные Решения
             </span>
           </h1>
           <p className="mt-3 max-w-xl text-base text-white/70 md:text-lg">

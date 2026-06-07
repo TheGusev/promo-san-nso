@@ -379,12 +379,12 @@ export default function Articles() {
       "dateModified": parseRussianDate(article.date),
       "author": {
         "@type": "Organization",
-        "name": "СанРешения",
+        "name": "Санитарные Решения",
         "@id": `${baseUrl}/#organization`
       },
       "publisher": {
         "@type": "Organization",
-        "name": "СанРешения",
+        "name": "Санитарные Решения",
         "logo": {
           "@type": "ImageObject",
           "url": `${baseUrl}/og-image.jpg`

@@ -8,7 +8,7 @@ const NotFound = () => {
 
   useEffect(() => {
     console.error("404 Error: User attempted to access non-existent route:", location.pathname);
-    document.title = "404 — Страница не найдена | СанРешения";
+    document.title = "404 — Страница не найдена | Санитарные Решения";
 
     let meta = document.querySelector('meta[name="robots"]') as HTMLMetaElement;
     if (!meta) {

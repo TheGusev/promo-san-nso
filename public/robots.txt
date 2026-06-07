@@ -1,4 +1,4 @@
-# Robots.txt для СанРешения
+# Robots.txt для Санитарные Решения
 # https://xn--c1acj0ak3f.xn--p1ai (гордэз.рф)
 
 User-agent: *
