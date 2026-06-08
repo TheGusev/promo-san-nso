@@ -124,15 +124,22 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "LocalBusiness",
+      "@type": ["LocalBusiness", "PestControlService", "HomeAndConstructionBusiness"],
       "@id": "https://xn--c1acj0ak3f.xn--p1ai/#business",
       "name": "Санитарные Решения",
       "alternateName": "ООО Санитарные Решения",
+      "slogan": "Дезинфекция и СЭС в Новосибирске под ключ",
       "description": "Профессиональная дезинфекция, дезинсекция и дератизация в Новосибирске и Новосибирской области. Уничтожение тараканов, клопов, крыс, мышей, вирусов и бактерий. Работаем с 2020 года.",
+      "knowsAbout": ["Дезинфекция", "Дезинсекция", "Дератизация", "СанПиН", "СЭС", "Уничтожение тараканов", "Уничтожение клопов", "Уничтожение крыс", "Озонирование", "Дезодорация"],
       "url": "https://xn--c1acj0ak3f.xn--p1ai",
       "telephone": "+7 (906) 998-98-88",
       "email": "west-centro@mail.ru",
-      "image": "https://xn--c1acj0ak3f.xn--p1ai/images/hero-bg-1.png",
+      "image": [
+        "https://xn--c1acj0ak3f.xn--p1ai/images/hero-bg-1.webp",
+        "https://xn--c1acj0ak3f.xn--p1ai/images/hero-bg-1.png",
+        "https://xn--c1acj0ak3f.xn--p1ai/images/hero-bg-2.webp"
+      ],
+      "hasMap": "https://2gis.ru/novosibirsk/firm/70000001076294299",
       "priceRange": "₽₽",
       "currenciesAccepted": "RUB",
       "paymentAccepted": "Cash, Credit Card, Bank Transfer",
@@ -159,27 +166,21 @@
           "@type": "AdministrativeArea",
           "name": "Новосибирская область"
         },
-        {
-          "@type": "City",
-          "name": "Бердск"
-        },
-        {
-          "@type": "City",
-          "name": "Искитим"
-        },
-        {
-          "@type": "City",
-          "name": "Академгородок"
-        },
-        {
-          "@type": "City",
-          "name": "Кольцово"
-        },
-        {
-          "@type": "City",
-          "name": "Краснообск"
-        }
+        { "@type": "City", "name": "Бердск" },
+        { "@type": "City", "name": "Искитим" },
+        { "@type": "City", "name": "Академгородок" },
+        { "@type": "City", "name": "Кольцово" },
+        { "@type": "City", "name": "Краснообск" }
       ],
+      "serviceArea": {
+        "@type": "GeoCircle",
+        "geoMidpoint": {
+          "@type": "GeoCoordinates",
+          "latitude": 55.0302,
+          "longitude": 82.9274
+        },
+        "geoRadius": "50000"
+      },
       "hasOfferCatalog": {
         "@type": "OfferCatalog",
         "name": "Санитарные услуги в Новосибирске",
