@@ -76,11 +76,24 @@ export default function PopupForm() {
 
     document.addEventListener('mouseleave', handleMouseLeave);
 
+    // Внешний триггер (например, кнопка «Обратный звонок» в FloatingContact)
+    const handleExternalOpen = () => {
+      if (!isLoading) {
+        setOpen(true);
+        setHasBeenShown(true);
+        localStorage.setItem('popup_shown', 'true');
+        logTrafficEvent('popup_open', { trigger: 'callback_button' });
+      }
+    };
+    window.addEventListener('open-popup-form', handleExternalOpen);
+
     return () => {
       clearTimeout(timer);
       document.removeEventListener('mouseleave', handleMouseLeave);
+      window.removeEventListener('open-popup-form', handleExternalOpen);
     };
   }, [hasBeenShown, open, isLoading]);
+
 
   const handleClose = () => {
     setOpen(false);
