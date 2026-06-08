@@ -1,10 +1,15 @@
 import { useEffect, lazy, Suspense } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import Hero from "@/components/Hero";
+import TrustBar from "@/components/TrustBar";
+import KeyFacts from "@/components/KeyFacts";
 import Services from "@/components/Services";
 import { ProblemPicker } from "@/components/ProblemPicker";
 import SimpleCalculator from "@/components/SimpleCalculator";
+import PriceTeaser from "@/components/PriceTeaser";
 import AboutSection from "@/components/AboutSection";
+import ClientsBar from "@/components/ClientsBar";
+import QuickAnswers from "@/components/QuickAnswers";
 import FloatingContact from "@/components/FloatingContact";
 import PopupForm from "@/components/PopupForm";
 import { MobileCollapsibleSection } from "@/components/MobileCollapsibleSection";
@@ -38,12 +43,17 @@ const Index = () => {
       <SiteHeader />
       <main id="main-content">
         <Hero />
+        <TrustBar />
+        <KeyFacts />
         <ProblemPicker />
         <Services />
+        <PriceTeaser />
         <section id="calculator" aria-label="Калькулятор стоимости">
           <SimpleCalculator />
         </section>
+        <QuickAnswers />
         <AboutSection />
+        <ClientsBar />
         <Suspense fallback={<div className="h-96" />}>
           <MobileCollapsibleSection 
             title="Отзывы наших клиентов" 
@@ -75,3 +85,4 @@ const Index = () => {
 };
 
 export default Index;
+

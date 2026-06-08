@@ -7,8 +7,8 @@ import { useABTest } from "@/contexts/ABTestContext";
 import { scrollToAnchor } from "@/lib/scrollToAnchor";
 
 const backgroundImages = [
-  "/images/hero-bg-1.png",
-  "/images/hero-bg-2.png"
+  { webp: "/images/hero-bg-1.webp", png: "/images/hero-bg-1.png" },
+  { webp: "/images/hero-bg-2.webp", png: "/images/hero-bg-2.png" },
 ];
 
 export default function Hero() {
@@ -19,9 +19,9 @@ export default function Hero() {
   
   // Preload images for smooth transitions
   useEffect(() => {
-    backgroundImages.forEach((src) => {
+    backgroundImages.forEach(({ webp }) => {
       const img = new Image();
-      img.src = src;
+      img.src = webp;
     });
   }, []);
 
@@ -46,22 +46,27 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative overflow-hidden py-10 md:py-20 lg:py-32 text-primary-foreground min-h-[560px] md:min-h-[500px]">
-      {/* Background images with crossfade */}
-      {backgroundImages.map((src, index) => (
-        <div
-          key={src}
-          className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 will-change-[opacity]"
-          style={{
-            backgroundImage: `url(${src})`,
-            opacity: activeIndex === index ? 1 : 0
-          }}
-          aria-hidden="true"
-        />
+    <section className="relative overflow-hidden py-10 md:py-20 lg:py-32 text-primary-foreground min-h-[560px] md:min-h-[500px]" aria-label="Дезинфекция СЭС в Новосибирске">
+      {/* Background images with crossfade — <picture> with WebP + PNG fallback */}
+      {backgroundImages.map((bg, index) => (
+        <picture key={bg.webp}>
+          <source srcSet={bg.webp} type="image/webp" />
+          <img
+            src={bg.png}
+            alt=""
+            aria-hidden="true"
+            loading={index === 0 ? "eager" : "lazy"}
+            fetchPriority={index === 0 ? "high" : "low"}
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 will-change-[opacity]"
+            style={{ opacity: activeIndex === index ? 1 : 0 }}
+          />
+        </picture>
       ))}
 
       {/* Gradient overlay: lighter so photos remain visible, with text-shadow for legibility */}
       <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/40 to-transparent md:bg-black/30 md:bg-none" aria-hidden="true" />
+
 
       <div className="container relative px-4">
         <div className="mx-auto max-w-4xl text-center">
