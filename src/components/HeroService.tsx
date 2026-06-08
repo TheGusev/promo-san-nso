@@ -81,7 +81,7 @@ export function HeroService({
 
       toast({
         title: "Заявка отправлена!",
-        description: "Мы перезвоним в течение 15 минут",
+        description: "Мы перезвоним в течение 5 минут",
       });
 
       setFormData({ name: "", phone: "" });
@@ -89,7 +89,7 @@ export function HeroService({
       console.error("Form submit error:", err);
       toast({
         title: "Ошибка отправки",
-        description: "Попробуйте позвонить нам напрямую",
+        description: `Позвоните: ${SITE_CONFIG.phoneDisplay}`,
         variant: "destructive",
       });
     } finally {

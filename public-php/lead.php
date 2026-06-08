@@ -1,11 +1,11 @@
 <?php
 /**
- * Резервный канал отправки лидов в Telegram.
+ * Основной (и единственный) канал отправки заявок в Telegram.
  *
  * Куда положить: корень сайта гордэз.рф, путь /api/lead.php
  * Итоговый URL: https://гордэз.рф/api/lead.php
  *
- * ВАЖНО: вписать TOKEN и CHAT_ID ниже (Beget блокирует .env).
+ * ВАЖНО: вписать TOKEN ниже (Beget блокирует .env, секреты Lovable в PHP не попадают).
  * Никому этот файл не показывать — токен внутри.
  *
  * Лог пишется в /api/lead.log рядом.
@@ -44,9 +44,9 @@ if (!empty($data['honeypot']) || !empty($data['website'])) {
     exit;
 }
 
-// Валидация
-$name  = isset($data['name']) ? mb_substr(trim((string)$data['name']), 0, 100) : '';
-$phone = isset($data['phone']) ? preg_replace('/\D+/', '', (string)$data['phone']) : '';
+// Валидация телефона
+$phoneRaw = isset($data['phone']) ? (string)$data['phone'] : '';
+$phone = preg_replace('/\D+/', '', $phoneRaw);
 if (strlen($phone) < 10 || strlen($phone) > 11) {
     http_response_code(400);
     echo json_encode(['ok' => false, 'error' => 'bad_phone']);
@@ -74,60 +74,99 @@ if (count($hits) >= 5) {
 $hits[] = $now;
 @file_put_contents($rateFile, json_encode(array_values($hits)));
 
-// Сборка сообщения
-$source   = isset($data['source']) ? (string)$data['source'] : 'unknown';
-$service  = isset($data['service']) ? (string)$data['service'] : '';
-$price    = isset($data['final_price']) ? (int)$data['final_price'] : 0;
-$obj      = isset($data['object_type']) ? (string)$data['object_type'] : '';
-$utmSrc   = isset($data['utm_source']) ? (string)$data['utm_source'] : '';
-$utmCmp   = isset($data['utm_campaign']) ? (string)$data['utm_campaign'] : '';
-$page     = isset($data['last_page_url']) ? (string)$data['last_page_url'] : '';
+// Сбор полей (поддерживаем оба варианта именования: snake_case и camelCase)
+$pick = function(array $keys) use ($data) {
+    foreach ($keys as $k) {
+        if (isset($data[$k]) && $data[$k] !== '' && $data[$k] !== null) {
+            return is_scalar($data[$k]) ? mb_substr((string)$data[$k], 0, 500) : '';
+        }
+    }
+    return '';
+};
 
+$name     = $pick(['name']);
+$city     = $pick(['city']);
+$objType  = $pick(['object_type', 'objectType']);
+$problem  = $pick(['problem', 'pest']);
+$service  = $pick(['service']);
+$urgency  = $pick(['urgency']);
+$comment  = $pick(['comment', 'message']);
+$formName = $pick(['form_name', 'formName', 'source']);
+$price    = isset($data['final_price']) ? (int)$data['final_price']
+          : (isset($data['price']) ? (int)$data['price'] : 0);
+$page     = $pick(['page', 'last_page_url']);
+if (!$page) $page = $_SERVER['HTTP_REFERER'] ?? '';
+$utmSrc   = $pick(['utm_source']);
+$utmCmp   = $pick(['utm_campaign']);
+
+// Сообщение в Telegram
+$enc = fn($s) => htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8');
 $lines = [];
-$lines[] = '🚨 <b>НОВАЯ ЗАЯВКА (резерв PHP)</b>';
+$lines[] = '🔥 <b>Заявка с гордэз.рф</b>';
 $lines[] = '';
-if ($name)   $lines[] = "👤 Имя: <b>" . htmlspecialchars($name) . "</b>";
-$lines[] = "📞 Телефон: <b>" . htmlspecialchars($phoneClean) . "</b>";
-if ($service) $lines[] = "🔧 Услуга: " . htmlspecialchars($service);
-if ($obj)     $lines[] = "🏠 Объект: " . htmlspecialchars($obj);
-if ($price)   $lines[] = "💰 Цена: " . number_format($price, 0, '.', ' ') . " ₽";
-$lines[] = "📡 Источник: " . htmlspecialchars($source);
-if ($utmSrc)  $lines[] = "🎯 UTM: " . htmlspecialchars($utmSrc) . " / " . htmlspecialchars($utmCmp);
-if ($page)    $lines[] = "🔗 Страница: " . htmlspecialchars($page);
+$lines[] = '📞 Телефон: <b>' . $enc($phoneClean) . '</b>';
+if ($name)     $lines[] = '👤 Имя: ' . $enc($name);
+if ($city)     $lines[] = '🏙 Город: ' . $enc($city);
+if ($objType)  $lines[] = '🏠 Объект: ' . $enc($objType);
+if ($problem)  $lines[] = '⚠️ Проблема: ' . $enc($problem);
+if ($service)  $lines[] = '🧪 Услуга: ' . $enc($service);
+if ($urgency)  $lines[] = '⏱ Срочность: ' . $enc($urgency);
+if ($price)    $lines[] = '💰 Цена: ' . number_format($price, 0, '.', ' ') . ' ₽';
+if ($comment)  $lines[] = '💬 Коммент: ' . $enc($comment);
+if ($formName) $lines[] = '📋 Форма: ' . $enc($formName);
+if ($utmSrc)   $lines[] = '🎯 UTM: ' . $enc($utmSrc) . ' / ' . $enc($utmCmp);
 $lines[] = '';
-$lines[] = "⚠️ <i>Этот лид прислан резервным каналом — основной (Supabase) не ответил. В БД его нет.</i>";
+if ($page)     $lines[] = '🌐 ' . $enc($page);
+$lines[] = '🕒 ' . date('d.m.Y H:i:s');
 
 $text = implode("\n", $lines);
 
-// Отправка в Telegram
+// Отправка в Telegram через cURL (надёжнее file_get_contents на Beget)
 $tgUrl = "https://api.telegram.org/bot{$TELEGRAM_BOT_TOKEN}/sendMessage";
-$payload = http_build_query([
+$tgPayload = json_encode([
     'chat_id' => $TELEGRAM_CHAT_ID,
     'text' => $text,
     'parse_mode' => 'HTML',
-    'disable_web_page_preview' => 'true',
-]);
+    'disable_web_page_preview' => true,
+], JSON_UNESCAPED_UNICODE);
 
-$ctx = stream_context_create([
-    'http' => [
-        'method' => 'POST',
-        'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
-        'content' => $payload,
-        'timeout' => 8,
-        'ignore_errors' => true,
-    ],
-]);
+$tgOk = false;
+$tgResponse = '';
 
-$tgResponse = @file_get_contents($tgUrl, false, $ctx);
-$tgOk = $tgResponse && strpos($tgResponse, '"ok":true') !== false;
+if (function_exists('curl_init')) {
+    $ch = curl_init($tgUrl);
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => $tgPayload,
+        CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 10,
+        CURLOPT_SSL_VERIFYPEER => true,
+    ]);
+    $tgResponse = curl_exec($ch);
+    curl_close($ch);
+    $tgOk = $tgResponse && strpos($tgResponse, '"ok":true') !== false;
+} else {
+    $ctx = stream_context_create([
+        'http' => [
+            'method' => 'POST',
+            'header' => "Content-Type: application/json\r\n",
+            'content' => $tgPayload,
+            'timeout' => 10,
+            'ignore_errors' => true,
+        ],
+    ]);
+    $tgResponse = @file_get_contents($tgUrl, false, $ctx);
+    $tgOk = $tgResponse && strpos($tgResponse, '"ok":true') !== false;
+}
 
 // Лог
 $logLine = sprintf(
-    "[%s] ip=%s phone=%s src=%s tg=%s\n",
+    "[%s] ip=%s phone=%s form=%s tg=%s\n",
     date('c'),
     $ip,
     $phoneClean,
-    $source,
+    $formName,
     $tgOk ? 'ok' : 'fail'
 );
 @file_put_contents(__DIR__ . '/lead.log', $logLine, FILE_APPEND | LOCK_EX);

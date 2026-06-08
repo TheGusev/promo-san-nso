@@ -1,65 +1,44 @@
-## Цель
+## Что делаем
 
-Расширить разметку Schema.org так, чтобы Яндекс/Google/AI-боты точнее распознавали сущность бизнеса и оффер на главной — без переделок дизайна и логики.
-
-## Что уже есть (не трогаем)
-
-`index.html` содержит JSON-LD: WebSite, LocalBusiness (с `hasOfferCatalog`, `aggregateRating`, `areaServed`, `openingHours`), Organization (ИНН/ОГРН), BreadcrumbList, FAQPage, Service. Эти блоки сохраняются как есть.
-
-## Что добавляем
-
-### 1. Усиление LocalBusiness в `index.html`
-В существующий LocalBusiness-блок добавить (без ломки структуры):
-- `"@type": ["LocalBusiness", "PestControlService", "HomeAndConstructionBusiness"]` — точный тип по Schema.org;
-- `slogan` — «Дезинфекция и СЭС в Новосибирске под ключ»;
-- `knowsAbout` — массив тем (дезинфекция, дезинсекция, дератизация, СанПиН, СЭС, тараканы, клопы, крысы);
-- `serviceArea` с `GeoCircle` (центр = текущие координаты, радиус 50 км);
-- `makesOffer` — массив `Offer`, дублирующий ключевые услуги с `priceCurrency`, `price`, `priceValidUntil`, `availability`, `itemOffered: Service`;
-- `hasMap` — ссылка на 2GIS;
-- `image` — массив (WebP hero + PNG fallback).
-
-### 2. Новый JSON-LD «WebPage + Speakable» для главной
-Отдельный `<script type="application/ld+json">` в `index.html` после WebSite:
-- `WebPage` с `@id`, `primaryImageOfPage` (hero-bg-1.webp), `speakable` (`SpeakableSpecification` для H1 и блока KeyFacts) — помогает голосовым ассистентам Яндекс.Алиса.
-
-### 3. Микроразметка Hero (visible HTML, не JSON)
-В `src/components/Hero.tsx`:
-- Обернуть корневой `<section>` атрибутами `itemScope itemType="https://schema.org/Service"` с `itemProp="provider"` (ссылкой по `@id`);
-- На `<h1>` повесить `itemProp="name"`, на подзаголовок `itemProp="description"`;
-- На телефонный CTA — `itemProp="telephone"`.
-
-Это даёт Яндексу второй сигнал помимо JSON-LD (микроразметка в DOM).
-
-### 4. Микроразметка PriceTeaser и PriceTable
-`src/components/PriceTeaser.tsx`:
-- Корневой `<section>` → `itemScope itemType="https://schema.org/OfferCatalog"`, добавить скрытый `<meta itemProp="name">`;
-- Каждый `<li>` → `itemScope itemType="https://schema.org/Offer"` с `itemProp="itemOffered"` (вложенный Service), `itemProp="price"`, `itemProp="priceCurrency"="RUB"`, `itemProp="availability"`.
-
-`src/components/PriceTable.tsx`:
-- Аналогично — каждая карточка услуги получает `itemScope itemType="https://schema.org/Product"` с вложенными `Offer`-ами для квартиры/дома/коммерции (`AggregateOffer` с lowPrice/highPrice).
-- На блоке `features` — `itemProp="additionalProperty"` (`PropertyValue`).
-
-### 5. Hero JSON-LD для оффера на главной
-В `src/pages/Index.tsx` через `react-helmet-async` (уже стоит в проекте) добавить страничный `Product`-блок:
-- `@type: ["Product", "Service"]`, `name: "Дезинфекция СЭС в Новосибирске"`, `brand: Organization @id`, `aggregateRating` (ссылкой по `@id` LocalBusiness), `offers: AggregateOffer (lowPrice 1200, highPrice 150000, offerCount 6)`.
-
-Если `react-helmet-async` ещё не подключён в `Index.tsx`, добавить локально (импорт + `<Helmet>`), HelmetProvider уже стоит в `src/main.tsx` — проверю при имплементации.
-
-## Что НЕ трогаем
-
-- Дизайн, размеры, цвета, контент и тексты компонентов;
-- Логику калькулятора, формы, аналитику, edge-функции;
-- Тарифы и цены — только зеркалим существующие;
-- Программные страницы услуг (там уже есть `getServiceSchema`).
+Заявки идут только через PHP-файл на гордэз.рф, минуя Supabase edge function. Никакие компоненты форм не правим — все они уже используют единую функцию `sendLead()` из `src/lib/leadSender.ts`.
 
 ## Файлы
 
-- `index.html` — расширение существующих JSON-LD + новый WebPage/Speakable блок;
-- `src/components/Hero.tsx` — itemScope/itemProp атрибуты;
-- `src/components/PriceTeaser.tsx` — Offer microdata;
-- `src/components/PriceTable.tsx` — Product/AggregateOffer microdata;
-- `src/pages/Index.tsx` — `<Helmet>` с Product+AggregateOffer JSON-LD.
+### 1. `public-php/lead.php` — переписать
+- Принимать расширенный набор полей: `name`, `phone`, `city`, `object_type`/`objectType`, `problem`/`pest`, `service`, `urgency`, `comment`, `form_name`/`source`, `price`/`final_price`, `page`, `utm_source`, `utm_campaign`.
+- Сообщение в Telegram в новом формате: «🔥 Заявка с гордэз.рф» + эмодзи-разметка по полям + время.
+- Отправка через cURL (с fallback на `file_get_contents`) — на Beget cURL надёжнее.
+- Сохранить: honeypot (`website`, `honeypot`), валидацию телефона (10–11 цифр, нормализация в `+7XXXXXXXXXX`), rate-limit 5/мин/IP, лог в `lead.log`, CORS-заголовки.
+- `chat_id` = `-5244841627` зашит. Токен — placeholder `PASTE_YOUR_BOT_TOKEN_HERE`, вписывается вручную на Beget (Vite его не подставит).
+- Убрать пометку «резерв» — теперь это основной канал.
 
-## Проверка
+### 2. `src/lib/leadSender.ts` — упростить
+- Удалить `trySupabase()` и весь импорт `supabase` целиком.
+- Оставить одну функцию `postLead()` → POST на `https://xn--c1acj0ak3f.xn--p1ai/api/lead.php` (punycode для надёжного fetch).
+- `SendLeadResult.channel` теперь `'php' | 'failed'`.
+- При `failed` вызывающий код по-прежнему кладёт лид в `offlineQueue` (логика не меняется).
 
-После имплементации прогнать через Яндекс.Вебмастер «Валидатор микроразметки» и Google Rich Results Test (вручную, ссылки в финальном сообщении).
+### 3. Тосты — поправить две неточности
+- `src/components/HeroService.tsx` (стр. 84): «в течение 15 минут» → «в течение 5 минут»; текст ошибки «Попробуйте позвонить нам напрямую» → `Позвоните: ${SITE_CONFIG.phoneDisplay}`.
+- Остальные формы (`Hero`, `PopupForm`, `SimpleCalculator`, `Calculator`, `LandingLeadForm`, `WarrantyModal`) уже показывают «5 минут» и корректный номер — не трогаем.
+
+### 4. Память
+- `mem://technical/lead-processing-pipeline` — обновить: edge function `handle-lead` больше НЕ вызывается фронтом, основной канал — PHP `/api/lead.php` на Beget. Лиды не пишутся в БД.
+- Core-памятка про «Edge functions validate leads» — переформулировать.
+
+## Что НЕ трогаем
+- Edge function `handle-lead` физически остаётся в `supabase/functions/` (для возможного отката и для `test-telegram`).
+- Secret `TELEGRAM_BOT_TOKEN` в Supabase — нужен другим функциям.
+- Все компоненты форм — они идут через `sendLead()` и переключатся автоматически.
+- `offlineQueue`, `useTrafficLogging`, Я.Метрика goals — без изменений.
+- Edge function `log-traffic-event` — продолжает работать для аналитики посещений.
+
+## После деплоя — действия пользователя на Beget
+1. В `/api/lead.php` заменить `PASTE_YOUR_BOT_TOKEN_HERE` на реальный токен бота (тот же, что в Supabase-секрете `TELEGRAM_BOT_TOKEN`).
+2. Проверить `https://гордэз.рф/api/lead.php` — должен вернуть JSON `{"ok":false,"error":"method"}` на GET.
+3. Отправить тестовую заявку с сайта → должна прийти в группу DZN (`-5244841627`).
+
+## Принимаемые компромиссы
+- Лиды больше не пишутся в таблицу `leads` → `/admin/leads` будет показывать только исторические записи.
+- MVT Thompson Sampling перестаёт обучаться на конверсиях (показы продолжают логироваться).
+- На preview-доменах `*.lovable.app` отправка будет падать из-за CORS — заявки уходят только с продакшна `гордэз.рф`. Это явное следствие выбранного варианта «только PHP».

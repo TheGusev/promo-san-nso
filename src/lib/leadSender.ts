@@ -1,24 +1,21 @@
-import { supabase } from "@/integrations/supabase/client";
-
 /**
- * Универсальная отправка лида с резервным каналом.
+ * Отправка лида. Канал один — PHP-эндпоинт на гордэз.рф.
  *
- * Каналы по приоритету:
- *  1) supabase edge function `handle-lead` (основной, пишет в БД + TG)
- *  2) PHP-прокси на гордэз.рф/api/lead.php (резерв, шлёт только в TG)
+ * Лиды НЕ пишутся в БД и НЕ проходят edge function `handle-lead`
+ * (решение от 08.06.2026 — основной канал PHP на Beget,
+ *  Supabase edge на проде нестабилен с TG).
  *
- * Возвращает channel = 'supabase' | 'php' | 'failed'
+ * Возвращает channel = 'php' | 'failed'.
  * При 'failed' вызывающий код кладёт лид в offlineQueue.
  */
 
-const PRIMARY_TIMEOUT_MS = 6000;
-const FALLBACK_TIMEOUT_MS = 6000;
+const TIMEOUT_MS = 8000;
 
 // Punycode-домен надёжнее для fetch чем кириллица.
 // гордэз.рф === xn--c1acj0ak3f.xn--p1ai
-const FALLBACK_URL = "https://xn--c1acj0ak3f.xn--p1ai/api/lead.php";
+const ENDPOINT_URL = "https://xn--c1acj0ak3f.xn--p1ai/api/lead.php";
 
-export type LeadChannel = "supabase" | "php" | "failed";
+export type LeadChannel = "php" | "failed";
 
 export interface SendLeadResult {
   ok: boolean;
@@ -26,41 +23,15 @@ export interface SendLeadResult {
   error?: unknown;
 }
 
-async function trySupabase(leadData: Record<string, unknown>): Promise<boolean> {
+async function postLead(leadData: Record<string, unknown>): Promise<boolean> {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), PRIMARY_TIMEOUT_MS);
+  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
   try {
-    const invokePromise = supabase.functions.invoke("handle-lead", { body: leadData });
-    // Race: либо invoke ответит, либо abort через timeout
-    const result = await Promise.race([
-      invokePromise,
-      new Promise((_, reject) => {
-        controller.signal.addEventListener("abort", () =>
-          reject(new Error("supabase_timeout"))
-        );
-      }),
-    ]);
-    clearTimeout(timer);
-    const { error } = result as { error: unknown };
-    if (error) throw error;
-    return true;
-  } catch (e) {
-    clearTimeout(timer);
-    if (import.meta.env.DEV) console.warn("[leadSender] supabase failed:", e);
-    return false;
-  }
-}
-
-async function tryPhpFallback(leadData: Record<string, unknown>): Promise<boolean> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), FALLBACK_TIMEOUT_MS);
-  try {
-    const res = await fetch(FALLBACK_URL, {
+    const res = await fetch(ENDPOINT_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...leadData, _channel: "php-fallback" }),
+      body: JSON.stringify(leadData),
       signal: controller.signal,
-      // Не отправляем cookies — это публичный прокси
       credentials: "omit",
       mode: "cors",
     });
@@ -70,17 +41,13 @@ async function tryPhpFallback(leadData: Record<string, unknown>): Promise<boolea
     return data?.ok === true;
   } catch (e) {
     clearTimeout(timer);
-    if (import.meta.env.DEV) console.warn("[leadSender] php fallback failed:", e);
+    if (import.meta.env.DEV) console.warn("[leadSender] php failed:", e);
     return false;
   }
 }
 
 export async function sendLead(leadData: Record<string, unknown>): Promise<SendLeadResult> {
-  const okPrimary = await trySupabase(leadData);
-  if (okPrimary) return { ok: true, channel: "supabase" };
-
-  const okFallback = await tryPhpFallback(leadData);
-  if (okFallback) return { ok: true, channel: "php" };
-
+  const ok = await postLead(leadData);
+  if (ok) return { ok: true, channel: "php" };
   return { ok: false, channel: "failed" };
 }
