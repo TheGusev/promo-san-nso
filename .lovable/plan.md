@@ -1,75 +1,65 @@
-# План: 100/100 по всем 4 отчётам owndev.ru
+## Цель
 
-Сайт уже зелёный по большинству пунктов. Закрываем только жёлтое/красное, ничего не ломая в дизайне и логике.
+Расширить разметку Schema.org так, чтобы Яндекс/Google/AI-боты точнее распознавали сущность бизнеса и оффер на главной — без переделок дизайна и логики.
 
-## 1. SEO 81 → 100
+## Что уже есть (не трогаем)
 
-### Контент-минимум (16 → 25)
-- `<title>` сейчас 100 символов, выходит за норму 30–70. Сокращаю до **«Дезинфекция СЭС в Новосибирске — гарантия и выезд»** (~52 симв.).
-- `<meta description>` 222 симв. → ужимаю до 140–155 («Профессиональная дезинфекция, дезинсекция и дератизация в Новосибирске. Выезд в день обращения. Гарантия до 2 лет. ☎ 8 (906) 998-98-88»).
-- Проверяю, что H1 один (он один — в `Hero.tsx`), ≥600 слов на странице (есть, AboutSection+Services+FAQ).
+`index.html` содержит JSON-LD: WebSite, LocalBusiness (с `hasOfferCatalog`, `aggregateRating`, `areaServed`, `openingHours`), Organization (ИНН/ОГРН), BreadcrumbList, FAQPage, Service. Эти блоки сохраняются как есть.
 
-### Производительность (10 → 20)
-- Конвертирую `public/images/hero-bg-1.png`, `hero-bg-2.png` → WebP (1920×1080, q=82), сохраняю PNG как fallback.
-- В `Hero.tsx` рендерю фон через `<img loading="eager" fetchpriority="high" decoding="async" src=".webp">` вместо `background-image` + добавляю `<link rel="preload" as="image" type="image/webp" href="/images/hero-bg-1.webp">` в `index.html` (улучшает LCP).
-- Добавляю `font-display: swap` в `index.css` (на случай, если sans стек подключит web-font; декларация безопасная).
-- Проверяю lazy-loading на не-LCP `<img>` (`loading="lazy"` уже есть в трёх местах — добавлю в `AboutSection`, `Reviews`, `Services` для всех картинок).
+## Что добавляем
 
-## 2. GEO 95 → 100
+### 1. Усиление LocalBusiness в `index.html`
+В существующий LocalBusiness-блок добавить (без ломки структуры):
+- `"@type": ["LocalBusiness", "PestControlService", "HomeAndConstructionBusiness"]` — точный тип по Schema.org;
+- `slogan` — «Дезинфекция и СЭС в Новосибирске под ключ»;
+- `knowsAbout` — массив тем (дезинфекция, дезинсекция, дератизация, СанПиН, СЭС, тараканы, клопы, крысы);
+- `serviceArea` с `GeoCircle` (центр = текущие координаты, радиус 50 км);
+- `makesOffer` — массив `Offer`, дублирующий ключевые услуги с `priceCurrency`, `price`, `priceValidUntil`, `availability`, `itemOffered: Service`;
+- `hasMap` — ссылка на 2GIS;
+- `image` — массив (WebP hero + PNG fallback).
 
-### Семантический HTML (8 → 10)
-- Оборачиваю самостоятельные смысловые блоки на главной в `<article>`: `Services` карточки услуг, каждая карточка отзыва в `Reviews`, каждая запись FAQ в `<article itemscope itemtype="https://schema.org/Question">`.
-- Добавляю `<aside>` для боковых блоков «Почему мы / Гарантия».
+### 2. Новый JSON-LD «WebPage + Speakable» для главной
+Отдельный `<script type="application/ld+json">` в `index.html` после WebSite:
+- `WebPage` с `@id`, `primaryImageOfPage` (hero-bg-1.webp), `speakable` (`SpeakableSpecification` для H1 и блока KeyFacts) — помогает голосовым ассистентам Яндекс.Алиса.
 
-### Цитируемость (13 → 15)
-- Добавляю короткий «AI-friendly» блок-факты сразу после `Hero` (новый компонент `KeyFacts`): 4–5 самостоятельных предложений-фактов с цифрами («Гарантия до 2 лет», «Выезд 30–60 мин в Новосибирске», «От 1500 ₽ за 1-комн.», «150+ объектов с 2025 года», «IV класс безопасности препаратов»). Каждый факт — отдельный `<p>` с уникальным id, готовый для цитирования AI.
+### 3. Микроразметка Hero (visible HTML, не JSON)
+В `src/components/Hero.tsx`:
+- Обернуть корневой `<section>` атрибутами `itemScope itemType="https://schema.org/Service"` с `itemProp="provider"` (ссылкой по `@id`);
+- На `<h1>` повесить `itemProp="name"`, на подзаголовок `itemProp="description"`;
+- На телефонный CTA — `itemProp="telephone"`.
 
-### Q&A-формат (4 → 5)
-- FAQ на главной сейчас спрятан в `MobileCollapsibleSection` — на десктопе раскрыт, на мобиле свёрнут. Дополнительно встраиваю в `index.html` статический FAQPage JSON-LD (уже есть) + добавляю 2–3 коротких ответа прямо в видимой части (новый блок `QuickAnswers`) с H3-вопросами.
+Это даёт Яндексу второй сигнал помимо JSON-LD (микроразметка в DOM).
 
-## 3. CRO 86 → 100
+### 4. Микроразметка PriceTeaser и PriceTable
+`src/components/PriceTeaser.tsx`:
+- Корневой `<section>` → `itemScope itemType="https://schema.org/OfferCatalog"`, добавить скрытый `<meta itemProp="name">`;
+- Каждый `<li>` → `itemScope itemType="https://schema.org/Offer"` с `itemProp="itemOffered"` (вложенный Service), `itemProp="price"`, `itemProp="priceCurrency"="RUB"`, `itemProp="availability"`.
 
-### Цены (10 → 15)
-- Добавляю компактный блок «Прайс» прямо на главной (новый компонент `PriceTeaser`) с 5–6 строк из `calculatorPricing.ts`: квартира от 1500 ₽, дом от 2000 ₽, офис от 1800 ₽, склад от 2400 ₽, авто от 1200 ₽, участок от 2000 ₽. Кнопка «Рассчитать точно» ведёт в калькулятор (anchor #calculator).
+`src/components/PriceTable.tsx`:
+- Аналогично — каждая карточка услуги получает `itemScope itemType="https://schema.org/Product"` с вложенными `Offer`-ами для квартиры/дома/коммерции (`AggregateOffer` с lowPrice/highPrice).
+- На блоке `features` — `itemProp="additionalProperty"` (`PropertyValue`).
 
-### Соц. доказательства (4 → 10)
-- В `Hero` добавляю trust-bar под подзаголовком: «★ 4.9 · 150+ выполненных объектов · 2GIS / Яндекс.Карты».
-- На главной выношу из collapsible один статичный отзыв + счётчик отзывов поверх блока Reviews (видим до раскрытия).
-- Добавляю секцию «Нам доверяют» с 4–6 строчными «логотипами» клиентов (типизированные плашки «Кафе», «Магазин», «Жилой комплекс» — без выдуманных брендов).
+### 5. Hero JSON-LD для оффера на главной
+В `src/pages/Index.tsx` через `react-helmet-async` (уже стоит в проекте) добавить страничный `Product`-блок:
+- `@type: ["Product", "Service"]`, `name: "Дезинфекция СЭС в Новосибирске"`, `brand: Organization @id`, `aggregateRating` (ссылкой по `@id` LocalBusiness), `offers: AggregateOffer (lowPrice 1200, highPrice 150000, offerCount 6)`.
 
-### Каналы связи (7 → 10)
-- В `FloatingContact` уже есть Telegram + MAX + телефон. Добавляю:
-  - Кнопку «Заказать обратный звонок» (открывает существующий `PopupForm` в режиме callback).
-  - WhatsApp-ссылку (`https://wa.me/79069989888`).
-- В шапке (`Header`) добавляю иконку телефона + «Перезвоним» на десктопе.
+Если `react-helmet-async` ещё не подключён в `Index.tsx`, добавить локально (импорт + `<Helmet>`), HelmetProvider уже стоит в `src/main.tsx` — проверю при имплементации.
 
-## 4. Яндекс.Директ 70 → 100
+## Что НЕ трогаем
 
-### Готовность заголовка ≤35 симв. (0 → 15)
-- Скорер читает `<title>`. Текущий 100 симв. После сокращения до «Дезинфекция СЭС в Новосибирске» (31 симв.) — попадаем и в SEO-норму 30–70, и в Я.Директ ≤35. Длинную SEO-нагрузку переношу в `meta description` и H1.
-- На всякий случай оставляю `<meta name="ya:title">` (29 симв.) и добавляю `<meta property="og:title">` короткий.
+- Дизайн, размеры, цвета, контент и тексты компонентов;
+- Логику калькулятора, формы, аналитику, edge-функции;
+- Тарифы и цены — только зеркалим существующие;
+- Программные страницы услуг (там уже есть `getServiceSchema`).
 
-### Единая тематика (0 → 15)
-- Скорер ловит размытие темы из-за слов «отзывы / блог / FAQ» в первом экране и meta. Унифицирую лексику первого экрана и meta вокруг ключевого «дезинфекция / СЭС в Новосибирске»:
-  - H1, title, description, og:title, ya:title — все вокруг одной фразы.
-  - Подзаголовок hero и trust-метки — без off-topic слов.
-  - Убираю из meta keywords редкие термины («моль», «кожееды»), оставляю только основные.
+## Файлы
 
-## Технические детали
+- `index.html` — расширение существующих JSON-LD + новый WebPage/Speakable блок;
+- `src/components/Hero.tsx` — itemScope/itemProp атрибуты;
+- `src/components/PriceTeaser.tsx` — Offer microdata;
+- `src/components/PriceTable.tsx` — Product/AggregateOffer microdata;
+- `src/pages/Index.tsx` — `<Helmet>` с Product+AggregateOffer JSON-LD.
 
-- Файлы: `index.html`, `src/components/Hero.tsx`, `src/components/Header.tsx`, `src/components/FloatingContact.tsx`, `src/pages/Index.tsx`, `src/components/Footer.tsx`, `src/components/Services.tsx`, `src/components/AboutSection.tsx`, `src/components/Reviews.tsx`, `src/components/FAQ.tsx`, `src/index.css`.
-- Новые компоненты: `src/components/KeyFacts.tsx`, `src/components/QuickAnswers.tsx`, `src/components/PriceTeaser.tsx`, `src/components/TrustBar.tsx`, `src/components/ClientsBar.tsx`.
-- Конвертация изображений: `cwebp` через `nix run nixpkgs#libwebp`. Файлы кладу рядом с PNG (`hero-bg-1.webp`, `hero-bg-2.webp`).
-- Никаких изменений в backend, RLS, edge-функциях, аналитике, MVT, калькуляторе цен, пайплайне лидов.
+## Проверка
 
-## Что НЕ трогаю
-- Цветовую схему и дизайн-токены.
-- Реальные цены из `calculatorPricing.ts` и `programmaticMatrix.ts`.
-- Структуру роутинга и компоненты админки.
-- Контент блога и programmatic-страниц (там уже всё в норме после прошлых правок).
-
-## Риски
-- Сокращение title может временно «дёрнуть» позиции в поиске — компенсируем за счёт описания и H1 (контент остаётся).
-- WebP-фоны: гарантирую PNG-fallback через `<picture>`.
-
-После реализации запустим встроенный SEO-скан (`seo--trigger_scan`) для проверки. Финальную сверку с owndev.ru запустите вы — Lovable не имеет доступа к их API.
+После имплементации прогнать через Яндекс.Вебмастер «Валидатор микроразметки» и Google Rich Results Test (вручную, ссылки в финальном сообщении).
