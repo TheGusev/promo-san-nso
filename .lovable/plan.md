@@ -1,44 +1,39 @@
-## Что делаем
+## Решение: гибрид Supabase + PHP-резерв
 
-Заявки идут только через PHP-файл на гордэз.рф, минуя Supabase edge function. Никакие компоненты форм не правим — все они уже используют единую функцию `sendLead()` из `src/lib/leadSender.ts`.
+Возвращаю `leadSender` к двухканальной схеме. Работает сразу без действий с вашей стороны, PHP подхватится автоматически, когда (и если) зальёте на Beget.
 
-## Файлы
+## Шаги
 
-### 1. `public-php/lead.php` — переписать
-- Принимать расширенный набор полей: `name`, `phone`, `city`, `object_type`/`objectType`, `problem`/`pest`, `service`, `urgency`, `comment`, `form_name`/`source`, `price`/`final_price`, `page`, `utm_source`, `utm_campaign`.
-- Сообщение в Telegram в новом формате: «🔥 Заявка с гордэз.рф» + эмодзи-разметка по полям + время.
-- Отправка через cURL (с fallback на `file_get_contents`) — на Beget cURL надёжнее.
-- Сохранить: honeypot (`website`, `honeypot`), валидацию телефона (10–11 цифр, нормализация в `+7XXXXXXXXXX`), rate-limit 5/мин/IP, лог в `lead.log`, CORS-заголовки.
-- `chat_id` = `-5244841627` зашит. Токен — placeholder `PASTE_YOUR_BOT_TOKEN_HERE`, вписывается вручную на Beget (Vite его не подставит).
-- Убрать пометку «резерв» — теперь это основной канал.
+### 1. Откатить `src/lib/leadSender.ts`
+- Канал 1 (основной): `supabase.functions.invoke("handle-lead")`, таймаут 6 сек.
+- Канал 2 (резерв): POST на `https://xn--c1acj0ak3f.xn--p1ai/api/lead.php`, таймаут 6 сек.
+- При обоих fail → offlineQueue в localStorage (как и было).
+- `LeadChannel = "supabase" | "php" | "failed"`.
 
-### 2. `src/lib/leadSender.ts` — упростить
-- Удалить `trySupabase()` и весь импорт `supabase` целиком.
-- Оставить одну функцию `postLead()` → POST на `https://xn--c1acj0ak3f.xn--p1ai/api/lead.php` (punycode для надёжного fetch).
-- `SendLeadResult.channel` теперь `'php' | 'failed'`.
-- При `failed` вызывающий код по-прежнему кладёт лид в `offlineQueue` (логика не меняется).
+### 2. Проверить секреты edge-функции
+- `TELEGRAM_BOT_TOKEN` — есть.
+- `TELEGRAM_CHAT_ID` — есть, но в памяти указано, что актуальный chat_id `-5244841627`. Проверю через логи после первого теста: если функция пишет «chat not found», нужно будет обновить секрет. Спрошу вас отдельно, если потребуется.
 
-### 3. Тосты — поправить две неточности
-- `src/components/HeroService.tsx` (стр. 84): «в течение 15 минут» → «в течение 5 минут»; текст ошибки «Попробуйте позвонить нам напрямую» → `Позвоните: ${SITE_CONFIG.phoneDisplay}`.
-- Остальные формы (`Hero`, `PopupForm`, `SimpleCalculator`, `Calculator`, `LandingLeadForm`, `WarrantyModal`) уже показывают «5 минут» и корректный номер — не трогаем.
+### 3. Задеплоить `handle-lead`
+- `supabase--deploy_edge_functions(["handle-lead"])`.
 
-### 4. Память
-- `mem://technical/lead-processing-pipeline` — обновить: edge function `handle-lead` больше НЕ вызывается фронтом, основной канал — PHP `/api/lead.php` на Beget. Лиды не пишутся в БД.
-- Core-памятка про «Edge functions validate leads» — переформулировать.
+### 4. Реальный smoke-test
+- `supabase--curl_edge_functions` с тестовыми данными:
+  `{ name: "Lovable Test", phone: "+79999999999", source: "lovable_smoke", honeypot: "" }`.
+- Прочитать логи `supabase--edge_function_logs("handle-lead")`.
+- Если в логах «sent to telegram ok» и в группе DZN пришло сообщение — всё работает.
+- Если ошибка — отдиагностирую (неверный chat_id / бот не в группе / валидация).
+
+### 5. Память
+- Обновить `mem://technical/lead-processing-pipeline` — снова гибрид.
 
 ## Что НЕ трогаем
-- Edge function `handle-lead` физически остаётся в `supabase/functions/` (для возможного отката и для `test-telegram`).
-- Secret `TELEGRAM_BOT_TOKEN` в Supabase — нужен другим функциям.
-- Все компоненты форм — они идут через `sendLead()` и переключатся автоматически.
-- `offlineQueue`, `useTrafficLogging`, Я.Метрика goals — без изменений.
-- Edge function `log-traffic-event` — продолжает работать для аналитики посещений.
+- Компоненты форм (Hero, PopupForm, SimpleCalculator, Calculator, LandingLeadForm, HeroService) — они через `sendLead()`, переключаются автоматически.
+- Тосты «5 минут» уже исправлены.
+- `public-php/lead.php` оставляю как заготовку для Beget.
+- Edge function `handle-lead` уже существует — только деплою заново.
 
-## После деплоя — действия пользователя на Beget
-1. В `/api/lead.php` заменить `PASTE_YOUR_BOT_TOKEN_HERE` на реальный токен бота (тот же, что в Supabase-секрете `TELEGRAM_BOT_TOKEN`).
-2. Проверить `https://гордэз.рф/api/lead.php` — должен вернуть JSON `{"ok":false,"error":"method"}` на GET.
-3. Отправить тестовую заявку с сайта → должна прийти в группу DZN (`-5244841627`).
-
-## Принимаемые компромиссы
-- Лиды больше не пишутся в таблицу `leads` → `/admin/leads` будет показывать только исторические записи.
-- MVT Thompson Sampling перестаёт обучаться на конверсиях (показы продолжают логироваться).
-- На preview-доменах `*.lovable.app` отправка будет падать из-за CORS — заявки уходят только с продакшна `гордэз.рф`. Это явное следствие выбранного варианта «только PHP».
+## Итог
+- Заявки заработают сразу после деплоя.
+- Появляются записи в `/admin/leads`, MVT снова обучается.
+- Когда зальёте PHP на Beget — резерв включится сам, ничего больше делать не нужно.
