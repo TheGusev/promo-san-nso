@@ -33,6 +33,8 @@ export type GoalName =
   | "phone_click"
   | "max_click"
   | "telegram_click"
+  | "whatsapp_click"
+  | "callback_click"
   | "calc_calculate"
   | "review_submit";
 
@@ -43,9 +45,12 @@ const WEIGHTS: Record<GoalName, number> = {
   phone_click: 50,
   max_click: 50,
   telegram_click: 50,
+  whatsapp_click: 50,
+  callback_click: 75,
   calc_calculate: 0,
   review_submit: 0,
 };
+
 
 const WINDOW_MS = 1500;
 const STORAGE_KEY = "all_conversions:lastFired";
