@@ -54,11 +54,11 @@ export const generateH1 = (entry: MatrixEntry): string => {
     ],
     withPestNoDistrict: [
       `${entry.pestName} в ${objLoc}: ${svcLower} в ${SITE_CONFIG.regionPrepositional}`,
-      `Уничтожение ${getPestGenitive(entry.pestName)} в ${objLoc} — СЭС «${SITE_CONFIG.companyName}»`,
+      `Уничтожение ${getPestGenitive(entry.pestName)} в ${objLoc} — СЭС в ${SITE_CONFIG.regionPrepositional}`,
       `${svc} от ${getPestGenitive(entry.pestName)}: обработка ${getObjectGenitive(entry)}`,
     ],
     noPestWithDistrict: [
-      `${svc} ${getObjectGenitive(entry)} в ${districtLocative} — СЭС «${SITE_CONFIG.companyName}»`,
+      `${svc} ${getObjectGenitive(entry)} в ${districtLocative} — СЭС в ${SITE_CONFIG.regionPrepositional}`,
       `Обработка ${getObjectGenitive(entry)}: ${svcLower} в ${districtLocative}`,
       `СЭС ${entry.districtName}: ${svcLower} ${getObjectGenitive(entry)}`,
     ],
@@ -82,8 +82,6 @@ export const generateH1 = (entry: MatrixEntry): string => {
 
   const hash = entry.mainKeyword.split("").reduce((a, b) => a + b.charCodeAt(0), 0);
   return templateList[hash % templateList.length];
-  // suppress unused warnings
-  void objAcc;
 };
 
 // Генерация вступления
