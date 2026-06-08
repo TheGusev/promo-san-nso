@@ -42,7 +42,6 @@ const getObjectGenitivePlural = (entry: MatrixEntry): string =>
 export const generateH1 = (entry: MatrixEntry): string => {
   const districtLocative = getDistrictLocative(entry);
   const objLoc = getObjectLocative(entry);
-  const objAcc = getObjectAccusative(entry);
   const svc = entry.serviceName;
   const svcLower = svc.toLowerCase();
 
