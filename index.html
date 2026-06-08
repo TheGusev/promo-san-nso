@@ -124,15 +124,22 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "LocalBusiness",
+      "@type": ["LocalBusiness", "PestControlService", "HomeAndConstructionBusiness"],
       "@id": "https://xn--c1acj0ak3f.xn--p1ai/#business",
       "name": "Санитарные Решения",
       "alternateName": "ООО Санитарные Решения",
+      "slogan": "Дезинфекция и СЭС в Новосибирске под ключ",
       "description": "Профессиональная дезинфекция, дезинсекция и дератизация в Новосибирске и Новосибирской области. Уничтожение тараканов, клопов, крыс, мышей, вирусов и бактерий. Работаем с 2020 года.",
+      "knowsAbout": ["Дезинфекция", "Дезинсекция", "Дератизация", "СанПиН", "СЭС", "Уничтожение тараканов", "Уничтожение клопов", "Уничтожение крыс", "Озонирование", "Дезодорация"],
       "url": "https://xn--c1acj0ak3f.xn--p1ai",
       "telephone": "+7 (906) 998-98-88",
       "email": "west-centro@mail.ru",
-      "image": "https://xn--c1acj0ak3f.xn--p1ai/images/hero-bg-1.png",
+      "image": [
+        "https://xn--c1acj0ak3f.xn--p1ai/images/hero-bg-1.webp",
+        "https://xn--c1acj0ak3f.xn--p1ai/images/hero-bg-1.png",
+        "https://xn--c1acj0ak3f.xn--p1ai/images/hero-bg-2.webp"
+      ],
+      "hasMap": "https://2gis.ru/novosibirsk/firm/70000001076294299",
       "priceRange": "₽₽",
       "currenciesAccepted": "RUB",
       "paymentAccepted": "Cash, Credit Card, Bank Transfer",
@@ -159,27 +166,21 @@
           "@type": "AdministrativeArea",
           "name": "Новосибирская область"
         },
-        {
-          "@type": "City",
-          "name": "Бердск"
-        },
-        {
-          "@type": "City",
-          "name": "Искитим"
-        },
-        {
-          "@type": "City",
-          "name": "Академгородок"
-        },
-        {
-          "@type": "City",
-          "name": "Кольцово"
-        },
-        {
-          "@type": "City",
-          "name": "Краснообск"
-        }
+        { "@type": "City", "name": "Бердск" },
+        { "@type": "City", "name": "Искитим" },
+        { "@type": "City", "name": "Академгородок" },
+        { "@type": "City", "name": "Кольцово" },
+        { "@type": "City", "name": "Краснообск" }
       ],
+      "serviceArea": {
+        "@type": "GeoCircle",
+        "geoMidpoint": {
+          "@type": "GeoCoordinates",
+          "latitude": 55.0302,
+          "longitude": 82.9274
+        },
+        "geoRadius": "50000"
+      },
       "hasOfferCatalog": {
         "@type": "OfferCatalog",
         "name": "Санитарные услуги в Новосибирске",
@@ -481,6 +482,66 @@
       }
     }
     </script>
+
+    <!-- Schema.org WebPage + Speakable (для голосовых ассистентов и AI-ботов) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "@id": "https://xn--c1acj0ak3f.xn--p1ai/#webpage",
+      "url": "https://xn--c1acj0ak3f.xn--p1ai/",
+      "name": "Дезинфекция СЭС в Новосибирске — Санитарные Решения",
+      "inLanguage": "ru-RU",
+      "isPartOf": { "@id": "https://xn--c1acj0ak3f.xn--p1ai/#website" },
+      "about": { "@id": "https://xn--c1acj0ak3f.xn--p1ai/#business" },
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://xn--c1acj0ak3f.xn--p1ai/images/hero-bg-1.webp",
+        "width": 1920,
+        "height": 1080
+      },
+      "speakable": {
+        "@type": "SpeakableSpecification",
+        "cssSelector": ["h1", "[data-speakable]"]
+      }
+    }
+    </script>
+
+    <!-- Schema.org Product (главный оффер страницы) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "@id": "https://xn--c1acj0ak3f.xn--p1ai/#product",
+      "name": "Дезинфекция СЭС в Новосибирске",
+      "description": "Профессиональная дезинфекция, дезинсекция и дератизация квартир, домов, офисов и коммерческих объектов в Новосибирске. Выезд в день обращения, гарантия до 2 лет.",
+      "image": [
+        "https://xn--c1acj0ak3f.xn--p1ai/images/hero-bg-1.webp",
+        "https://xn--c1acj0ak3f.xn--p1ai/images/hero-bg-2.webp"
+      ],
+      "brand": { "@id": "https://xn--c1acj0ak3f.xn--p1ai/#organization" },
+      "category": "Санитарные услуги",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "bestRating": "5",
+        "worstRating": "1",
+        "reviewCount": "156",
+        "ratingCount": "156"
+      },
+      "offers": {
+        "@type": "AggregateOffer",
+        "priceCurrency": "RUB",
+        "lowPrice": "1200",
+        "highPrice": "150000",
+        "offerCount": "6",
+        "availability": "https://schema.org/InStock",
+        "priceValidUntil": "2026-12-31",
+        "seller": { "@id": "https://xn--c1acj0ak3f.xn--p1ai/#business" }
+      }
+    }
+    </script>
+
     <meta property="og:title" content="Дезинфекция в Новосибирске | Санитарные Решения — уничтожение насекомых, грызунов, вирусов">
   <meta name="twitter:title" content="Дезинфекция в Новосибирске | Санитарные Решения — уничтожение насекомых, грызунов, вирусов">
   <meta property="og:description" content="Профессиональная дезинфекция, дезинсекция и дератизация в Новосибирске и НСО. Уничтожение тараканов, клопов, крыс, мышей. Выезд в день обращения. Гарантия до 2 лет. ☎ +7 (906) 998-98-88">

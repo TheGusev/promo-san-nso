@@ -123,35 +123,52 @@ export default function PriceTable() {
         <div className="lg:hidden grid gap-4">
           {priceData.map((item, index) => (
             <AnimatedSection key={index} animation="fade-up" delay={index * 50}>
-              <Card className="p-4 sm:p-5">
-                <div className="flex justify-between items-start mb-3">
-                  <div>
-                    <h3 className="font-semibold text-base sm:text-lg">{item.service}</h3>
-                    <p className="text-sm text-muted-foreground">{item.description}</p>
+              <Card
+                className="p-4 sm:p-5"
+                itemScope
+                itemType="https://schema.org/Product"
+              >
+                <meta itemProp="name" content={`${item.service} в Новосибирске`} />
+                <meta itemProp="description" content={item.description} />
+                <link itemProp="brand" href="https://xn--c1acj0ak3f.xn--p1ai/#organization" />
+                <div
+                  itemProp="offers"
+                  itemScope
+                  itemType="https://schema.org/AggregateOffer"
+                  style={{ display: "contents" }}
+                >
+                  <meta itemProp="priceCurrency" content="RUB" />
+                  <meta itemProp="availability" content="https://schema.org/InStock" />
+                  <meta itemProp="offerCount" content="3" />
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <h3 className="font-semibold text-base sm:text-lg">{item.service}</h3>
+                      <p className="text-sm text-muted-foreground">{item.description}</p>
+                    </div>
                   </div>
+                  <div className="grid grid-cols-3 gap-2 mb-4 text-center">
+                    <div className="bg-muted/50 rounded-lg p-2">
+                      <div className="text-xs text-muted-foreground">Квартира</div>
+                      <div className="font-semibold text-primary text-sm">{item.apartment}</div>
+                    </div>
+                    <div className="bg-muted/50 rounded-lg p-2">
+                      <div className="text-xs text-muted-foreground">Дом</div>
+                      <div className="font-semibold text-primary text-sm">{item.house}</div>
+                    </div>
+                    <div className="bg-muted/50 rounded-lg p-2">
+                      <div className="text-xs text-muted-foreground">Офис</div>
+                      <div className="font-semibold text-primary text-sm">{item.commercial}</div>
+                    </div>
+                  </div>
+                  <ul className="space-y-1">
+                    {item.features.map((feature, idx) => (
+                      <li key={idx} className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Check className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <div className="grid grid-cols-3 gap-2 mb-4 text-center">
-                  <div className="bg-muted/50 rounded-lg p-2">
-                    <div className="text-xs text-muted-foreground">Квартира</div>
-                    <div className="font-semibold text-primary text-sm">{item.apartment}</div>
-                  </div>
-                  <div className="bg-muted/50 rounded-lg p-2">
-                    <div className="text-xs text-muted-foreground">Дом</div>
-                    <div className="font-semibold text-primary text-sm">{item.house}</div>
-                  </div>
-                  <div className="bg-muted/50 rounded-lg p-2">
-                    <div className="text-xs text-muted-foreground">Офис</div>
-                    <div className="font-semibold text-primary text-sm">{item.commercial}</div>
-                  </div>
-                </div>
-                <ul className="space-y-1">
-                  {item.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Check className="h-3.5 w-3.5 text-primary flex-shrink-0" />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
               </Card>
             </AnimatedSection>
           ))}
