@@ -46,7 +46,15 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative overflow-hidden py-10 md:py-20 lg:py-32 text-primary-foreground min-h-[560px] md:min-h-[500px]" aria-label="Дезинфекция СЭС в Новосибирске">
+    <section
+      className="relative overflow-hidden py-10 md:py-20 lg:py-32 text-primary-foreground min-h-[560px] md:min-h-[500px]"
+      aria-label="Дезинфекция СЭС в Новосибирске"
+      itemScope
+      itemType="https://schema.org/Service"
+    >
+      <link itemProp="provider" href="https://xn--c1acj0ak3f.xn--p1ai/#business" />
+      <meta itemProp="areaServed" content="Новосибирск" />
+      <meta itemProp="serviceType" content="Дезинфекция, дезинсекция, дератизация" />
       {/* Background images with crossfade — <picture> with WebP + PNG fallback */}
       {backgroundImages.map((bg, index) => (
         <picture key={bg.webp}>
@@ -75,7 +83,11 @@ export default function Hero() {
             <span className="text-[10px] md:text-sm font-bold md:font-medium uppercase md:normal-case tracking-widest md:tracking-normal">Сертифицированные услуги</span>
           </div>
 
-          <h1 className="mb-4 md:mb-6 text-[30px] leading-[1.15] md:text-5xl lg:text-6xl font-bold tracking-tight [text-shadow:0_2px_14px_rgba(0,0,0,0.65)]">
+          <h1
+            className="mb-4 md:mb-6 text-[30px] leading-[1.15] md:text-5xl lg:text-6xl font-bold tracking-tight [text-shadow:0_2px_14px_rgba(0,0,0,0.65)]"
+            itemProp="name"
+            data-speakable
+          >
             {copy.title}
             {copy.highlight && (
               <>
@@ -90,7 +102,11 @@ export default function Hero() {
             )}
           </h1>
 
-          <p className="mb-6 md:mb-8 text-sm md:text-lg lg:text-xl text-slate-300 md:text-primary-foreground/90 max-w-[90%] mx-auto">
+          <p
+            className="mb-6 md:mb-8 text-sm md:text-lg lg:text-xl text-slate-300 md:text-primary-foreground/90 max-w-[90%] mx-auto"
+            itemProp="description"
+            data-speakable
+          >
             {copy.subtitle}
           </p>
 

@@ -3,12 +3,12 @@ import { ArrowRight, Home, Building2, Warehouse, Car, Trees, Store } from "lucid
 import { scrollToAnchor } from "@/lib/scrollToAnchor";
 
 const ROWS = [
-  { icon: Home, label: "Квартира", price: "от 1 500 ₽" },
-  { icon: Building2, label: "Офис", price: "от 1 800 ₽" },
-  { icon: Store, label: "Кафе / магазин", price: "от 2 000 ₽" },
-  { icon: Warehouse, label: "Склад", price: "от 2 400 ₽" },
-  { icon: Trees, label: "Участок / дача", price: "от 2 000 ₽" },
-  { icon: Car, label: "Автомобиль", price: "от 1 200 ₽" },
+  { icon: Home, label: "Квартира", price: "от 1 500 ₽", priceValue: "1500" },
+  { icon: Building2, label: "Офис", price: "от 1 800 ₽", priceValue: "1800" },
+  { icon: Store, label: "Кафе / магазин", price: "от 2 000 ₽", priceValue: "2000" },
+  { icon: Warehouse, label: "Склад", price: "от 2 400 ₽", priceValue: "2400" },
+  { icon: Trees, label: "Участок / дача", price: "от 2 000 ₽", priceValue: "2000" },
+  { icon: Car, label: "Автомобиль", price: "от 1 200 ₽", priceValue: "1200" },
 ];
 
 export default function PriceTeaser() {
@@ -24,16 +24,32 @@ export default function PriceTeaser() {
           </p>
         </div>
 
-        <div className="max-w-3xl mx-auto rounded-2xl border border-border/60 bg-card overflow-hidden shadow-card">
+        <div
+          className="max-w-3xl mx-auto rounded-2xl border border-border/60 bg-card overflow-hidden shadow-card"
+          itemScope
+          itemType="https://schema.org/OfferCatalog"
+        >
+          <meta itemProp="name" content="Цены на дезинфекцию в Новосибирске" />
           <ul role="list" className="divide-y divide-border/40">
-            {ROWS.map(({ icon: Icon, label, price }) => (
+            {ROWS.map(({ icon: Icon, label, price, priceValue }) => (
               <li
                 key={label}
                 className="flex items-center justify-between gap-3 px-4 py-3 md:px-6 md:py-4"
+                itemProp="itemListElement"
+                itemScope
+                itemType="https://schema.org/Offer"
               >
-                <span className="flex items-center gap-3">
+                <meta itemProp="priceCurrency" content="RUB" />
+                <meta itemProp="price" content={priceValue} />
+                <meta itemProp="availability" content="https://schema.org/InStock" />
+                <span
+                  className="flex items-center gap-3"
+                  itemProp="itemOffered"
+                  itemScope
+                  itemType="https://schema.org/Service"
+                >
                   <Icon className="h-5 w-5 text-primary shrink-0" aria-hidden="true" />
-                  <span className="font-medium text-foreground">{label}</span>
+                  <span className="font-medium text-foreground" itemProp="name">{label}</span>
                 </span>
                 <span className="font-bold text-primary tabular-nums">{price}</span>
               </li>
