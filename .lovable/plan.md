@@ -1,84 +1,75 @@
+# План: 100/100 по всем 4 отчётам owndev.ru
 
-## 1. Грамматика на programmatic-страницах (главная причина «участокы», «дезинсекцияу», «дезинсекцияу участокы» и т. п.)
+Сайт уже зелёный по большинству пунктов. Закрываем только жёлтое/красное, ничего не ломая в дизайне и логике.
 
-Корень проблемы: в `src/lib/programmaticContent.ts` имена объектов и услуг склоняются «по букве» — `${entry.objectName}е/ы/у`, `${entry.serviceName.toLowerCase()}у/и`. Это работает только для «квартира» и ломается на «участок», «дом», «автомобиль», «офис», «склад», «ресторан», а также на любых услугах («дезинсекцияу», «дератизацияи»).
+## 1. SEO 81 → 100
 
-### Что сделаю
-В `src/data/programmaticMatrix.ts` (или рядом, в helpers) добавлю полные карты падежей и хелперы:
+### Контент-минимум (16 → 25)
+- `<title>` сейчас 100 символов, выходит за норму 30–70. Сокращаю до **«Дезинфекция СЭС в Новосибирске — гарантия и выезд»** (~52 симв.).
+- `<meta description>` 222 симв. → ужимаю до 140–155 («Профессиональная дезинфекция, дезинсекция и дератизация в Новосибирске. Выезд в день обращения. Гарантия до 2 лет. ☎ 8 (906) 998-98-88»).
+- Проверяю, что H1 один (он один — в `Hero.tsx`), ≥600 слов на странице (есть, AboutSection+Services+FAQ).
 
-- `OBJECT_CASES` — для каждого `objectName`: `nominative` («участок»), `genitive` («участка»), `accusative` («участок»), `dative` («участку»), `locative` («участке»).
-- `SERVICE_CASES` — для каждой услуги: `accusative` («дезинсекцию»), `genitive` («дезинсекции»), `dative` («дезинсекции»).
-- Хелперы: `getObjectLocative`, `getObjectGenitive`, `getObjectAccusative`, `getServiceAccusative`, `getServiceGenitive`.
+### Производительность (10 → 20)
+- Конвертирую `public/images/hero-bg-1.png`, `hero-bg-2.png` → WebP (1920×1080, q=82), сохраняю PNG как fallback.
+- В `Hero.tsx` рендерю фон через `<img loading="eager" fetchpriority="high" decoding="async" src=".webp">` вместо `background-image` + добавляю `<link rel="preload" as="image" type="image/webp" href="/images/hero-bg-1.webp">` в `index.html` (улучшает LCP).
+- Добавляю `font-display: swap` в `index.css` (на случай, если sans стек подключит web-font; декларация безопасная).
+- Проверяю lazy-loading на не-LCP `<img>` (`loading="lazy"` уже есть в трёх местах — добавлю в `AboutSection`, `Reviews`, `Services` для всех картинок).
 
-В `src/lib/programmaticContent.ts` заменю все «склейки»:
-- `${objectName}е` → `getObjectLocative(entry)` (H1, intro, situation, шаги).
-- `${objectName}ы` → `getObjectGenitive(entry)`.
-- `${objectName}у` → `getObjectAccusative(entry)`.
-- `${serviceName.toLowerCase()}у` → `getServiceAccusative(entry)`.
-- `${serviceName.toLowerCase()}и` → `getServiceGenitive(entry)`.
+## 2. GEO 95 → 100
 
-Проверю и FAQ, и шаги, и гарантию, и pricing-блок (там же «На дезинсекцияу участокы от клещей предоставляем гарантию…»).
+### Семантический HTML (8 → 10)
+- Оборачиваю самостоятельные смысловые блоки на главной в `<article>`: `Services` карточки услуг, каждая карточка отзыва в `Reviews`, каждая запись FAQ в `<article itemscope itemtype="https://schema.org/Question">`.
+- Добавляю `<aside>` для боковых блоков «Почему мы / Гарантия».
 
-Также пройдусь grep’ом по строкам в `src/data/*.ts` (faqData, serviceContent, objectContent, landingContent) на «участокы / участоку / дезинсекцияу / по Новосибирск» — там, где такие склейки оказались вручную, поправлю по месту.
+### Цитируемость (13 → 15)
+- Добавляю короткий «AI-friendly» блок-факты сразу после `Hero` (новый компонент `KeyFacts`): 4–5 самостоятельных предложений-фактов с цифрами («Гарантия до 2 лет», «Выезд 30–60 мин в Новосибирске», «От 1500 ₽ за 1-комн.», «150+ объектов с 2025 года», «IV класс безопасности препаратов»). Каждый факт — отдельный `<p>` с уникальным id, готовый для цитирования AI.
 
-## 2. Телефон → 8 906 998 98 88 (везде)
+### Q&A-формат (4 → 5)
+- FAQ на главной сейчас спрятан в `MobileCollapsibleSection` — на десктопе раскрыт, на мобиле свёрнут. Дополнительно встраиваю в `index.html` статический FAQPage JSON-LD (уже есть) + добавляю 2–3 коротких ответа прямо в видимой части (новый блок `QuickAnswers`) с H3-вопросами.
 
-Главный источник правды — `src/data/siteConfig.ts`. Обновлю:
-- `phone: "+7 (906) 998-98-88"`
-- `phoneClean: "+79069989888"`
-- `phoneDisplay: "8 (906) 998-98-88"`
-- `phoneTel: "+7-906-998-98-88"`
+## 3. CRO 86 → 100
 
-Затем grep’ом заменю все хардкоды (там, где не используется siteConfig):
-`index.html`, `public/404.html`, `public/llms.txt`, `public/robots.txt`, `src/components/Header.tsx`, `src/components/Footer.tsx`, `src/components/PriceTable.tsx`, `src/components/lp/LandingLeadForm.tsx`, `src/pages/Privacy.tsx`, `src/data/faqData.ts`, `src/data/landingContent.ts` (metaDescription × 3), schema.org / JSON-LD блоки в `index.html`.
+### Цены (10 → 15)
+- Добавляю компактный блок «Прайс» прямо на главной (новый компонент `PriceTeaser`) с 5–6 строк из `calculatorPricing.ts`: квартира от 1500 ₽, дом от 2000 ₽, офис от 1800 ₽, склад от 2400 ₽, авто от 1200 ₽, участок от 2000 ₽. Кнопка «Рассчитать точно» ведёт в калькулятор (anchor #calculator).
 
-Заменяемые шаблоны:
-- `+7 (383) 312-23-30` → `+7 (906) 998-98-88`
-- `8 (383) 312-23-30` → `8 (906) 998-98-88`
-- `tel:+73833122330` → `tel:+79069989888`
-- `+7-383-312-23-30` (schema) → `+7-906-998-98-88`
+### Соц. доказательства (4 → 10)
+- В `Hero` добавляю trust-bar под подзаголовком: «★ 4.9 · 150+ выполненных объектов · 2GIS / Яндекс.Карты».
+- На главной выношу из collapsible один статичный отзыв + счётчик отзывов поверх блока Reviews (видим до раскрытия).
+- Добавляю секцию «Нам доверяют» с 4–6 строчными «логотипами» клиентов (типизированные плашки «Кафе», «Магазин», «Жилой комплекс» — без выдуманных брендов).
 
-## 3. Бренд: «СанРешения» → «Санитарные Решения»
+### Каналы связи (7 → 10)
+- В `FloatingContact` уже есть Telegram + MAX + телефон. Добавляю:
+  - Кнопку «Заказать обратный звонок» (открывает существующий `PopupForm` в режиме callback).
+  - WhatsApp-ссылку (`https://wa.me/79069989888`).
+- В шапке (`Header`) добавляю иконку телефона + «Перезвоним» на десктопе.
 
-Где «СанРешения» как название компании (не как часть оборота «СЭС „Санитарные Решения“ / ООО „Санитарные Решения“»), заменю на «Санитарные Решения»:
-- `src/data/siteConfig.ts`: `companyName: "Санитарные Решения"`.
-- `src/components/Header.tsx` (логотип, aria-label).
-- `src/components/Footer.tsx`.
-- `src/pages/blog/Index.tsx` (заголовок-чип).
-- `src/pages/lp/LandingPage.tsx` (`Все услуги …`).
-- `src/pages/NotFound.tsx`, `public/404.html`, `public/llms.txt`, `public/robots.txt`.
-- `index.html`: `<title>`, `og:site_name`, JSON-LD `name`, видимые H1/strong-блоки.
-- `src/components/Articles.tsx` (schema.org publisher.name).
-- `src/data/districtContent.ts`, `src/data/objectContent.ts`, `src/data/landingContent.ts`, `src/data/faqData.ts`, `src/lib/blogContentGenerator.ts` — везде в meta-title и текстах.
+## 4. Яндекс.Директ 70 → 100
 
-Юр. оборот «ООО „Санитарные Решения“ (СанРешения)» в `public/llms.txt` и `index.html` оставлю с пометкой, что коротко = «Санитарные Решения» (СЭС). Это сохранит SEO и не запутает поиск.
+### Готовность заголовка ≤35 симв. (0 → 15)
+- Скорер читает `<title>`. Текущий 100 симв. После сокращения до «Дезинфекция СЭС в Новосибирске» (31 симв.) — попадаем и в SEO-норму 30–70, и в Я.Директ ≤35. Длинную SEO-нагрузку переношу в `meta description` и H1.
+- На всякий случай оставляю `<meta name="ya:title">` (29 симв.) и добавляю `<meta property="og:title">` короткий.
 
-## 4. Единый прайс на programmatic-страницах
+### Единая тематика (0 → 15)
+- Скорер ловит размытие темы из-за слов «отзывы / блог / FAQ» в первом экране и meta. Унифицирую лексику первого экрана и meta вокруг ключевого «дезинфекция / СЭС в Новосибирске»:
+  - H1, title, description, og:title, ya:title — все вокруг одной фразы.
+  - Подзаголовок hero и trust-метки — без off-topic слов.
+  - Убираю из meta keywords редкие термины («моль», «кожееды»), оставляю только основные.
 
-Сейчас на `/uslugi/dezinseksiya/.../uchastok` показывается «От 2400₽», тогда как на лендинге `/lp/uchastok` и в калькуляторе участок до 6 соток = 2000₽. Источник — `priceFrom` в `src/data/programmaticMatrix.ts`.
+## Технические детали
 
-Приведу `priceFrom` в матрице к единой базе по тарифу с лендингов и калькулятора:
-
-```text
-квартира (дезинсекция, дератизация, дезинфекция)   1500 ₽
-частный дом                                         2000 ₽
-офис                                                1800 ₽
-склад                                               2400 ₽
-ресторан / кафе                                     2000 ₽
-участок (до 6 соток, клещи/комары)                  2000 ₽
-автомобиль                                          1200 ₽
-озонирование квартиры                               2000 ₽
-комплекс (2 услуги)                                 2800 ₽
-```
-
-В матрице переоценю все 30+ записей по этой таблице, чтобы убрать разнобой (2400/3200/4000 для одних и тех же объектов из разных строк). В `src/data/serviceContent.ts` поправлю строки «от 2 400 ₽» (подвал, плесень, холодильная камера, договор) на согласованные значения. В тексте FAQ-генератора минимальная цена тоже подтянется из `priceFrom`.
-
-## 5. Проверка
-
-После правок:
-- Grep на `СанРешения`, `312-23-30`, `73833122330`, `участокы`, `участоку`, `дезинсекцияу`, `дезинсекцияи`, `по Новосибирск ` — должен возвращать только разрешённые места (юр. оборот, URL ассета).
-- Открою `/uslugi/dezinseksiya/kleshchi-uchastok` в превью на мобиле и проверю H1, breadcrumbs, цену, гарантию, FAQ, нижнюю CTA — везде корректные падежи и новый номер.
+- Файлы: `index.html`, `src/components/Hero.tsx`, `src/components/Header.tsx`, `src/components/FloatingContact.tsx`, `src/pages/Index.tsx`, `src/components/Footer.tsx`, `src/components/Services.tsx`, `src/components/AboutSection.tsx`, `src/components/Reviews.tsx`, `src/components/FAQ.tsx`, `src/index.css`.
+- Новые компоненты: `src/components/KeyFacts.tsx`, `src/components/QuickAnswers.tsx`, `src/components/PriceTeaser.tsx`, `src/components/TrustBar.tsx`, `src/components/ClientsBar.tsx`.
+- Конвертация изображений: `cwebp` через `nix run nixpkgs#libwebp`. Файлы кладу рядом с PNG (`hero-bg-1.webp`, `hero-bg-2.webp`).
+- Никаких изменений в backend, RLS, edge-функциях, аналитике, MVT, калькуляторе цен, пайплайне лидов.
 
 ## Что НЕ трогаю
-- Бизнес-логику лидов, edge-функции, RLS, аналитику, дизайн-токены, фоновые фото (это правилось в прошлых итерациях).
-- Калькулятор/прайс-матрицу (`calculatorPricing.ts`) — там уже актуальные значения.
+- Цветовую схему и дизайн-токены.
+- Реальные цены из `calculatorPricing.ts` и `programmaticMatrix.ts`.
+- Структуру роутинга и компоненты админки.
+- Контент блога и programmatic-страниц (там уже всё в норме после прошлых правок).
+
+## Риски
+- Сокращение title может временно «дёрнуть» позиции в поиске — компенсируем за счёт описания и H1 (контент остаётся).
+- WebP-фоны: гарантирую PNG-fallback через `<picture>`.
+
+После реализации запустим встроенный SEO-скан (`seo--trigger_scan`) для проверки. Финальную сверку с owndev.ru запустите вы — Lovable не имеет доступа к их API.
