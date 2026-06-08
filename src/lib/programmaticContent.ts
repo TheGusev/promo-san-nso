@@ -42,7 +42,6 @@ const getObjectGenitivePlural = (entry: MatrixEntry): string =>
 export const generateH1 = (entry: MatrixEntry): string => {
   const districtLocative = getDistrictLocative(entry);
   const objLoc = getObjectLocative(entry);
-  const objAcc = getObjectAccusative(entry);
   const svc = entry.serviceName;
   const svcLower = svc.toLowerCase();
 
@@ -54,11 +53,11 @@ export const generateH1 = (entry: MatrixEntry): string => {
     ],
     withPestNoDistrict: [
       `${entry.pestName} в ${objLoc}: ${svcLower} в ${SITE_CONFIG.regionPrepositional}`,
-      `Уничтожение ${getPestGenitive(entry.pestName)} в ${objLoc} — СЭС «${SITE_CONFIG.companyName}»`,
+      `Уничтожение ${getPestGenitive(entry.pestName)} в ${objLoc} — СЭС в ${SITE_CONFIG.regionPrepositional}`,
       `${svc} от ${getPestGenitive(entry.pestName)}: обработка ${getObjectGenitive(entry)}`,
     ],
     noPestWithDistrict: [
-      `${svc} ${getObjectGenitive(entry)} в ${districtLocative} — СЭС «${SITE_CONFIG.companyName}»`,
+      `${svc} ${getObjectGenitive(entry)} в ${districtLocative} — СЭС в ${SITE_CONFIG.regionPrepositional}`,
       `Обработка ${getObjectGenitive(entry)}: ${svcLower} в ${districtLocative}`,
       `СЭС ${entry.districtName}: ${svcLower} ${getObjectGenitive(entry)}`,
     ],
@@ -82,8 +81,6 @@ export const generateH1 = (entry: MatrixEntry): string => {
 
   const hash = entry.mainKeyword.split("").reduce((a, b) => a + b.charCodeAt(0), 0);
   return templateList[hash % templateList.length];
-  // suppress unused warnings
-  void objAcc;
 };
 
 // Генерация вступления
@@ -121,7 +118,7 @@ export const generateSituation = (entry: MatrixEntry): string => {
 
     tarakany: (e) => `Тараканы в ${getObjectLocative(e)} — переносчики более 40 видов опасных заболеваний, включая дизентерию, сальмонеллёз, гельминтозы. ${e.districtSlug ? `В ${getDistrictLocative(e)} тараканы активно мигрируют между помещениями через коммуникации.` : "Одна самка таракана за год производит до 800 потомков."}\n\nДля ${e.objectSlug === "restoran" ? "ресторанов и кафе появление тараканов грозит штрафами Роспотребнадзора до 1 млн рублей и закрытием заведения" : "жилых помещений тараканы создают антисанитарные условия и портят продукты"}.`,
 
-    krysy: (e) => `Крысы ${e.objectSlug === "sklad" || e.objectSlug === "uchastok" ? "на" : "в"} ${e.objectSlug === "sklad" ? "складе" : e.objectSlug === "uchastok" ? "участке" : getObjectLocative(e)} — это не только порча имущества и продуктов, но и опасные заболевания: лептоспироз, чума, туляремия, бешенство. ${e.districtSlug ? `В ${getDistrictLocative(e)} крысы обитают вблизи пищевых производств и складов.` : ""}\n\nКрысы повреждают электропроводку (риск пожара), портят упаковку и товары, загрязняют помещения экскрементами. Самостоятельная борьба малоэффективна — нужна профессиональная дератизация.`,
+    krysy: (e) => `Крысы ${e.objectSlug === "uchastok" ? "на" : "в"} ${getObjectLocative(e)} — это не только порча имущества и продуктов, но и опасные заболевания: лептоспироз, чума, туляремия, бешенство. ${e.districtSlug ? `В ${getDistrictLocative(e)} крысы обитают вблизи пищевых производств и складов.` : ""}\n\nКрысы повреждают электропроводку (риск пожара), портят упаковку и товары, загрязняют помещения экскрементами. Самостоятельная борьба малоэффективна — нужна профессиональная дератизация.`,
 
     myshi: (e) => `Мыши в ${getObjectLocative(e)} активизируются в холодный сезон, проникая в помещения в поисках тепла и пищи. ${e.districtSlug ? `В ${getDistrictLocative(e)} это особенно актуально для частного сектора и первых этажей многоэтажек.` : ""}\n\nПомимо порчи продуктов и имущества, мыши переносят опасные заболевания и аллергены. Грызуны размножаются очень быстро — одна пара за год может дать до 2000 потомков.`,
 
