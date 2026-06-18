@@ -6,10 +6,25 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Origin allow-list — отсекаем парсеры/боты с чужих доменов
+const ALLOWED_ORIGIN_PATTERNS = [
+  /^https:\/\/xn--c1acj0ak3f\.xn--p1ai$/i,        // гордэз.рф (punycode)
+  /^https:\/\/(www\.)?xn--c1acj0ak3f\.xn--p1ai$/i,
+  /^https:\/\/.*\.lovable\.app$/i,                 // preview/published
+  /^https:\/\/.*\.lovableproject\.com$/i,
+  /^https:\/\/lovable\.dev$/i,
+];
+
+function isOriginAllowed(origin: string | null, referer: string | null): boolean {
+  const source = origin || (referer ? new URL(referer).origin : null);
+  if (!source) return false; // нет Origin/Referer — скорее всего бот/curl
+  return ALLOWED_ORIGIN_PATTERNS.some((re) => re.test(source));
+}
+
 // Rate limiting map: composite key (IP:session_id) -> [timestamps]
 const rateLimitMap = new Map<string, number[]>();
 const RATE_LIMIT_WINDOW = 60000; // 1 minute
-const MAX_LEADS_PER_WINDOW = 5; // Max 5 leads per minute per IP+session
+const MAX_LEADS_PER_WINDOW = 3; // Max 3 leads per minute per IP+session
 
 // Validation patterns
 const PHONE_REGEX = /^\+7\d{10}$/; // +7 и 10 цифр
@@ -22,6 +37,7 @@ const MAX_STRING_LENGTH = 500;
 
 // Minimum time (ms) between page load and form submit to detect bots
 const MIN_FORM_FILL_TIME = 2000;
+
 
 // Sanitize name: remove HTML tags and dangerous characters
 function sanitizeName(name: string): string {
@@ -55,7 +71,19 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Origin allow-list — отсекаем парсеры и заявки с чужих доменов
+  const origin = req.headers.get('origin');
+  const referer = req.headers.get('referer');
+  if (!isOriginAllowed(origin, referer)) {
+    console.warn('Blocked request from disallowed origin:', { origin, referer });
+    return new Response(
+      JSON.stringify({ error: 'Forbidden' }),
+      { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
   try {
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
