@@ -71,7 +71,19 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Origin allow-list — отсекаем парсеры и заявки с чужих доменов
+  const origin = req.headers.get('origin');
+  const referer = req.headers.get('referer');
+  if (!isOriginAllowed(origin, referer)) {
+    console.warn('Blocked request from disallowed origin:', { origin, referer });
+    return new Response(
+      JSON.stringify({ error: 'Forbidden' }),
+      { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
   try {
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
