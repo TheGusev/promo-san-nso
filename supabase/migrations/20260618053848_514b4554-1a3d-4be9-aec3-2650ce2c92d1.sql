@@ -1,0 +1,1 @@
+DELETE FROM public.leads WHERE id = 'd75de156-825a-4d15-9cb2-17fd27541e09';
