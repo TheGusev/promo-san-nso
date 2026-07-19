@@ -34,16 +34,20 @@ export default function FloatingContact() {
     return clearTimer;
   }, [isOpen, resetTimer]);
 
-  // Закрытие по клику вне виджета
+  // Закрытие по клику/тапу вне виджета
   useEffect(() => {
     if (!isOpen) return;
-    const handleClickOutside = (e: MouseEvent) => {
+    const handleOutside = (e: Event) => {
       if (!containerRef.current?.contains(e.target as Node)) {
         setIsOpen(false);
       }
     };
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
+    document.addEventListener("mousedown", handleOutside);
+    document.addEventListener("touchstart", handleOutside, { passive: true });
+    return () => {
+      document.removeEventListener("mousedown", handleOutside);
+      document.removeEventListener("touchstart", handleOutside);
+    };
   }, [isOpen]);
 
   const doCall = () => {
