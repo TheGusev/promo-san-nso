@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Phone, X } from "lucide-react";
+import { Phone } from "lucide-react";
 import { SITE_CONFIG } from "@/data/siteConfig";
 import { trackGoal } from "@/lib/analytics";
 import { logTrafficEvent } from "@/hooks/useTrafficLogging";
