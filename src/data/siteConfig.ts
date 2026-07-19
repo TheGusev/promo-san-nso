@@ -49,7 +49,7 @@ export const SITE_CONFIG = {
   // Социальные сети и ссылки
   links: {
     twoGis: "https://go.2gis.com/oSzHM",
-    max: "https://max.ru/u/f9LHodD0cOLpbsvDSn1NINA4hi9531hIqb1SAy6xUzvVnOUhOCvyXk9AG0w",
+    max: "https://max.ru/u/f9LHodD0cOLiUyWa_VfefOTALeW3UZQoPjKtoCWCRfLLAk0QxvTZkWtg2Kc",
     telegram: "https://t.me/sanitarnye_resheniya_nsk",
   },
   
