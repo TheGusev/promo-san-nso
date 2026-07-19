@@ -1,40 +1,55 @@
-import { useState, useRef, useEffect } from "react";
-import { Phone, X, PhoneCall } from "lucide-react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { Phone } from "lucide-react";
 import { SITE_CONFIG } from "@/data/siteConfig";
 import { trackGoal } from "@/lib/analytics";
 import { logTrafficEvent } from "@/hooks/useTrafficLogging";
 import { cn } from "@/lib/utils";
 
+const AUTO_CLOSE_MS = 5000;
+
 export default function FloatingContact() {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const timerRef = useRef<number | null>(null);
+
+  const clearTimer = () => {
+    if (timerRef.current !== null) {
+      window.clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  const resetTimer = useCallback(() => {
+    clearTimer();
+    timerRef.current = window.setTimeout(() => setIsOpen(false), AUTO_CLOSE_MS);
+  }, []);
+
+  // Автосворачивание через 5 сек бездействия
+  useEffect(() => {
+    if (!isOpen) {
+      clearTimer();
+      return;
+    }
+    resetTimer();
+    return clearTimer;
+  }, [isOpen, resetTimer]);
 
   // Закрытие по клику вне виджета
   useEffect(() => {
     if (!isOpen) return;
-
     const handleClickOutside = (e: MouseEvent) => {
       if (!containerRef.current?.contains(e.target as Node)) {
         setIsOpen(false);
       }
     };
-
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, [isOpen]);
 
-  const handleCall = () => {
+  const doCall = () => {
     trackGoal("phone_click");
     logTrafficEvent("phone_click");
     window.location.href = `tel:${SITE_CONFIG.phoneClean}`;
-    setIsOpen(false);
-  };
-
-  const handleCallback = () => {
-    trackGoal("callback_click");
-    logTrafficEvent("callback_click");
-    // Открываем существующий PopupForm
-    window.dispatchEvent(new CustomEvent("open-popup-form", { detail: { mode: "callback" } }));
     setIsOpen(false);
   };
 
@@ -59,29 +74,25 @@ export default function FloatingContact() {
     setIsOpen(false);
   };
 
-  const handleToggle = (e: React.MouseEvent) => {
+  const handleMainButton = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsOpen(!isOpen);
+    if (isOpen) {
+      // Повторный тап — звонок
+      doCall();
+    } else {
+      setIsOpen(true);
+    }
   };
 
   return (
     <div
       ref={containerRef}
+      onMouseMove={isOpen ? resetTimer : undefined}
+      onTouchStart={isOpen ? resetTimer : undefined}
       className="fixed bottom-6 right-4 z-50 flex flex-col items-end gap-2"
     >
-      {/* Раскрытое меню */}
       {isOpen && (
         <div className="flex flex-col gap-2 animate-in slide-in-from-bottom-2 fade-in duration-200">
-          {/* Обратный звонок */}
-          <button
-            onClick={handleCallback}
-            className="h-12 w-12 rounded-full bg-secondary hover:bg-secondary/90 shadow-lg flex items-center justify-center transition-colors"
-            aria-label="Заказать обратный звонок"
-            title="Перезвоним за 30 сек"
-          >
-            <PhoneCall className="h-6 w-6 text-secondary-foreground" />
-          </button>
-
           {/* WhatsApp */}
           <button
             onClick={handleWhatsApp}
@@ -112,36 +123,19 @@ export default function FloatingContact() {
           >
             <span className="text-white font-bold text-xs">MAX</span>
           </button>
-
-          {/* Телефон */}
-          <button
-            onClick={handleCall}
-            className="h-12 w-12 rounded-full bg-primary hover:bg-primary/90 shadow-lg flex items-center justify-center transition-colors"
-            aria-label="Позвонить"
-          >
-            <Phone className="h-6 w-6 text-primary-foreground" />
-          </button>
         </div>
       )}
 
-      {/* Главная кнопка */}
+      {/* Главная кнопка: закрыто → раскрыть, открыто → позвонить */}
       <button
-        onClick={handleToggle}
+        onClick={handleMainButton}
         className={cn(
-          "h-14 w-14 rounded-full shadow-elevated flex items-center justify-center transition-all",
-          isOpen
-            ? "bg-muted hover:bg-muted/80"
-            : "bg-primary hover:bg-primary/90"
+          "h-14 w-14 rounded-full shadow-elevated flex items-center justify-center transition-all bg-primary hover:bg-primary/90"
         )}
-        aria-label={isOpen ? "Закрыть меню связи" : "Связаться с нами"}
+        aria-label={isOpen ? "Позвонить" : "Связаться с нами"}
       >
-        {isOpen ? (
-          <X className="h-7 w-7 text-foreground" />
-        ) : (
-          <Phone className="h-7 w-7 text-primary-foreground" />
-        )}
+        <Phone className="h-7 w-7 text-primary-foreground" />
       </button>
     </div>
   );
 }
-
