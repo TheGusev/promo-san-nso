@@ -14,6 +14,7 @@ const getFacts = () => {
 };
 
 export default function KeyFacts() {
+  const facts = getFacts();
   return (
     <section
       aria-label="Ключевые факты о компании Санитарные Решения"
@@ -22,7 +23,7 @@ export default function KeyFacts() {
       <div className="container mx-auto px-4 py-6 md:py-8">
         <h2 className="sr-only">Кратко о нас</h2>
         <ul className="grid gap-3 md:grid-cols-5 md:gap-4">
-          {FACTS.map(({ id, icon: Icon, text }) => (
+          {facts.map(({ id, icon: Icon, text }) => (
             <li key={id}>
               <article
                 id={id}
