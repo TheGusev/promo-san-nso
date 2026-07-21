@@ -1,13 +1,17 @@
 import { Shield, Clock, Wallet, Award, FlaskConical } from "lucide-react";
+import { getCompletedObjectsCount } from "@/lib/completedObjects";
 
 // AI-citation friendly: каждый факт — самостоятельный <article> с уникальным id и одним предложением.
-const FACTS = [
-  { id: "fact-warranty", icon: Shield, text: "Гарантия на работы — до 2 лет с бесплатной повторной обработкой." },
-  { id: "fact-eta", icon: Clock, text: "Выезд по Новосибирску — 30–60 минут, ежедневно 24/7." },
-  { id: "fact-price", icon: Wallet, text: "Стоимость дезинсекции 1-комнатной квартиры — от 1 500 ₽." },
-  { id: "fact-experience", icon: Award, text: "Более 150 выполненных объектов с 2025 года." },
-  { id: "fact-safety", icon: FlaskConical, text: "Используем препараты IV класса безопасности — для людей и животных." },
-];
+const getFacts = () => {
+  const completed = getCompletedObjectsCount().toLocaleString("ru-RU");
+  return [
+    { id: "fact-warranty", icon: Shield, text: "Гарантия на работы — до 2 лет с бесплатной повторной обработкой." },
+    { id: "fact-eta", icon: Clock, text: "Выезд по Новосибирску — 30–60 минут, ежедневно 24/7." },
+    { id: "fact-price", icon: Wallet, text: "Стоимость дезинсекции 1-комнатной квартиры — от 1 500 ₽." },
+    { id: "fact-experience", icon: Award, text: `Более ${completed} выполненных объектов с 2025 года.` },
+    { id: "fact-safety", icon: FlaskConical, text: "Используем препараты IV класса безопасности — для людей и животных." },
+  ];
+};
 
 export default function KeyFacts() {
   return (

@@ -1,7 +1,9 @@
 import { Star, MapPin, ShieldCheck } from "lucide-react";
+import { getCompletedObjectsCount } from "@/lib/completedObjects";
 
 // Видимый соц-доказательный бар сразу под Hero — для CRO-скоринга.
 export default function TrustBar() {
+  const completed = getCompletedObjectsCount();
   return (
     <aside
       aria-label="Доверие к компании"
@@ -16,7 +18,7 @@ export default function TrustBar() {
           </li>
           <li className="flex items-center gap-1.5 text-muted-foreground">
             <ShieldCheck className="h-4 w-4 text-secondary" aria-hidden="true" />
-            <span><strong className="text-foreground">150+</strong> выполненных объектов</span>
+            <span><strong className="text-foreground">{completed.toLocaleString("ru-RU")}+</strong> выполненных объектов</span>
           </li>
           <li className="flex items-center gap-1.5 text-muted-foreground">
             <MapPin className="h-4 w-4 text-primary" aria-hidden="true" />
