@@ -87,7 +87,7 @@ export function LandingLeadForm({ source, ctaLabel = "Получить расч�
       console.error("[LandingLeadForm]", err);
       toast({
         title: "Ошибка",
-        description: "Попробуйте позже или позвоните: 8 (906) 998-98-88",
+        description: "Попробуйте позже или позвоните: 8 (999) 450-16-31",
         variant: "destructive",
       });
     } finally {

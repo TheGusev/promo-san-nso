@@ -194,9 +194,9 @@ export default function PriceTable() {
                 asChild
                 onClick={handleCallClick}
               >
-                <a href="tel:+79069989888" className="flex items-center gap-2">
+                <a href="tel:+79994501631" className="flex items-center gap-2">
                   <Phone className="h-4 w-4" />
-                  +7 (906) 998-98-88
+                  +7 (999) 450-16-31
                 </a>
               </Button>
             </div>

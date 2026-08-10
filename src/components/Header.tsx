@@ -77,13 +77,13 @@ export default function Header() {
         <div className="flex items-center gap-3">
           <ThemeToggle />
           <a 
-            href="tel:+79069989888" 
+            href="tel:+79994501631" 
             className="hidden sm:flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors"
             onClick={handlePhoneClick}
-            aria-label="Позвонить: +7 (906) 998-98-88"
+            aria-label="Позвонить: +7 (999) 450-16-31"
           >
             <Phone className="h-4 w-4" />
-            <span>+7 (906) 998-98-88</span>
+            <span>+7 (999) 450-16-31</span>
           </a>
           <Button 
             size="sm" 
